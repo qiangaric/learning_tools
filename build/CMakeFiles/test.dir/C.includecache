@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/pgdata/projetcs/cJSON/cJson.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+math.h
+-
+limits.h
+-
+float.h
+-
+ctype.h
+-
+cJson.h
+/pgdata/projetcs/cJSON/cJson.h
+
+/pgdata/projetcs/cJSON/cJson.h
+
+/pgdata/projetcs/cJSON/example.c
+stdio.h
+-
+cJson.h
+/pgdata/projetcs/cJSON/cJson.h
+
