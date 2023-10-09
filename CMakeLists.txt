@@ -35,4 +35,4 @@ add_executable(test example.c cJson.h cJson.c )
 #target_link_libraries(hello ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${GLIB_LIBRARIES})
 
 #Ìí¼Ópthread
-target_link_libraries(test ${GLIB_LIBRARIES} pthread )
+target_link_libraries(test ${GLIB_LIBRARIES} pthread -lm )

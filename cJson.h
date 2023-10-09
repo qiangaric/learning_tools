@@ -28,14 +28,13 @@ root ---> child(name)
 								frame rate
 */
 
-#define cJSON_False		0
-#define cJSON_True		1
-#define cJSON_NULL		2
-#define cJSON_Number	3
-#define cJSON_String	4
-#define cJSON_Array		5
-#define cJSON_Object	6
-
+#define cJSON_False 0
+#define cJSON_True 1
+#define cJSON_NULL 2
+#define cJSON_Number 3
+#define cJSON_String 4
+#define cJSON_Array 5
+#define cJSON_Object 6
 
 /*
 功能：创建一个string值为name的cJSON_False节点，并添加到object
@@ -44,30 +43,30 @@ root ---> child(name)
 	cJSON_AddItemToObject(object, name, cJSON_CreateFalse())
 
 /*创建一个string值为name的cJSON_True节点,并添加到object节点*/
-#define cJSON_AddTrueToObject(object,name) \
+#define cJSON_AddTrueToObject(object, name) \
 	cJSON_AddItemToObject(object, name, cJSON_CreateTrue())
 
 /*创建一个string值为name的cJSON_Bool/False节点,并添加到object节点*/
-#define cJSON_AddBoolToObject(object,name, b) \
+#define cJSON_AddBoolToObject(object, name, b) \
 	cJSON_AddItemToObject(object, name, cJSON_CreateBool(b))
 
 /*创建一个string值为name的cJSON_NULL节点,并添加到object节点*/
-#define cJSON_AddNULLToObject(object,name) \
+#define cJSON_AddNULLToObject(object, name) \
 	cJSON_AddItemToObject(object, name, cJSON_CreateNull())
 
 /*创建一个string值为name的cJSON_Number节点,并添加到object节点*/
-#define cJSON_AddNumberToObject(object,name, number) \
+#define cJSON_AddNumberToObject(object, name, number) \
 	cJSON_AddItemToObject(object, name, cJSON_CreateNumber(number))
 
 /*创建一个string值为name的cJSON_String节点,并添加到object节点*/
-#define cJSON_AddStringToObject(object,name, s) \
+#define cJSON_AddStringToObject(object, name, s) \
 	cJSON_AddItemToObject(object, name, cJSON_CreateString(s))
 
-#define cJSON_SetIntValue(object, val)\
-	((object)?((object)->valueInt=(object)->valueDouble=(val)):(val))
+#define cJSON_SetIntValue(object, val) \
+	((object) ? ((object)->valueInt = (object)->valueDouble = (val)) : (val))
 
-#define cJSON_SetNumberValue(object, val)\
-	((object)?((object)->valueInt=(object)->valueDouble=(val)):(val))
+#define cJSON_SetNumberValue(object, val) \
+	((object) ? ((object)->valueInt = (object)->valueDouble = (val)) : (val))
 
 typedef struct cJSON
 {
@@ -77,15 +76,15 @@ typedef struct cJSON
 	/*array以及obect类型需要设立子节点*/
 	int type;
 
+	/*value*/
 	char *valueString;
 	int valueInt;
 	double valueDouble;
-
+	/*key*/
 	char *string;
-}cJSON;
+} cJSON;
 
 /*常用解析函数*/
-
 
 /*
 函数功能：
@@ -202,7 +201,6 @@ cJSON *cJSON_CreateFalse(void);
 */
 cJSON *cJSON_CreateNull(void);
 
-
 /*
 函数功能：
 	将item节点名称设置为string，
@@ -228,7 +226,6 @@ void cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item);
 */
 void cJSON_AddItemToArray(cJSON *array, cJSON *item);
 
-
 cJSON *cJSON_ParseWithOpts(const char *value, const char **return_parse_end, int require_null_terminated);
 
 cJSON *cJSON_New_Item();
@@ -237,11 +234,11 @@ const char *skip(const char *in);
 char *cJSON_GetEndPosition(void);
 
 const char *parse_value(cJSON *item, const char *value);
-
-const char* parse_string(cJSON *item, const char *str);
-const char* parse_number(cJSON *item, const char *num);
-const char* parse_Array(cJSON *item, const char *value);
-const char* parse_Object(cJSON *item, const char *value);
+/*根据字符类型，解析*/
+const char *parse_string(cJSON *item, const char *str);
+const char *parse_number(cJSON *item, const char *num);
+const char *parse_Array(cJSON *item, const char *value);
+const char *parse_Object(cJSON *item, const char *value);
 
 char *cJSON_strdup(const char *str);
 char *print_number(cJSON *item);
@@ -251,12 +248,12 @@ char *print_string(cJSON *item, int isName);
 //["OSCAR",123,XXX]
 char *print_array(cJSON *item, int depth, int fmt);
 char *print_object(cJSON *item, int depth, int fmt);
-char *print_value(cJSON *item,int depth, int fmt);
+char *print_value(cJSON *item, int depth, int fmt);
 
 cJSON *cJSON_DetachItemFromArray(cJSON *array, int which);
 void cJSON_DeleteItemFromArray(cJSON *array, int which);
 
-int cJSON_strcasecmp(const char *s1, const char *s2); //strcmp()
+int cJSON_strcasecmp(const char *s1, const char *s2); // strcmp()
 
 cJSON *cJSON_DetachItemFromObject(cJSON *object, const char *string);
 void cJSON_DeleteItemFromObject(cJSON *object, int which);
