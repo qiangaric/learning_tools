@@ -1,1 +1,1 @@
-/usr/bin/gcc  -std=c99    CMakeFiles/test.dir/example.c.o CMakeFiles/test.dir/cJson.c.o  -o test -rdynamic -lglib-2.0 -lpthread 
+/usr/bin/gcc  -std=c99    CMakeFiles/test.dir/example.c.o CMakeFiles/test.dir/cJson.c.o  -o test -rdynamic -lglib-2.0 -lpthread -lm 
