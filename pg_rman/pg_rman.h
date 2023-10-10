@@ -9,7 +9,7 @@
 #ifndef PG_RMAN_H
 #define PG_RMAN_H
 
-#define FRONTEND	1
+#define FRONTEND 1
 #include "postgres_fe.h"
 
 #include <limits.h>
@@ -22,70 +22,70 @@
 #include "port/pg_crc32c.h"
 #include "parray.h"
 
-#define TXID_CURRENT_SQL	"SELECT txid_current();"
+#define TXID_CURRENT_SQL "SELECT txid_current();"
 
 /* Directory/File names */
-#define DATABASE_DIR			"database"
-#define ARCLOG_DIR				"arclog"
-#define SRVLOG_DIR				"srvlog"
-#define RESTORE_WORK_DIR		"backup"
-#define PG_XLOG_DIR				"pg_wal"
-#define PG_TBLSPC_DIR			"pg_tblspc"
-#define TIMELINE_HISTORY_DIR	"timeline_history"
-#define BACKUP_INI_FILE			"backup.ini"
-#define PG_RMAN_INI_FILE		"pg_rman.ini"
-#define SYSTEM_IDENTIFIER_FILE	"system_identifier"
-#define MKDIRS_SH_FILE			"mkdirs.sh"
-#define DATABASE_FILE_LIST		"file_database.txt"
-#define ARCLOG_FILE_LIST		"file_arclog.txt"
-#define SRVLOG_FILE_LIST		"file_srvlog.txt"
-#define SNAPSHOT_SCRIPT_FILE	"snapshot_script"
-#define PG_BACKUP_LABEL_FILE	"backup_label"
-#define PG_TBLSPC_MAP_FILE		"tablespace_map"
-#define PG_BLACK_LIST			"black_list"
+#define DATABASE_DIR "database"
+#define ARCLOG_DIR "arclog"
+#define SRVLOG_DIR "srvlog"
+#define RESTORE_WORK_DIR "backup"
+#define PG_XLOG_DIR "pg_wal"
+#define PG_TBLSPC_DIR "pg_tblspc"
+#define TIMELINE_HISTORY_DIR "timeline_history"
+#define BACKUP_INI_FILE "backup.ini"
+#define PG_RMAN_INI_FILE "pg_rman.ini"
+#define SYSTEM_IDENTIFIER_FILE "system_identifier"
+#define MKDIRS_SH_FILE "mkdirs.sh"
+#define DATABASE_FILE_LIST "file_database.txt"
+#define ARCLOG_FILE_LIST "file_arclog.txt"
+#define SRVLOG_FILE_LIST "file_srvlog.txt"
+#define SNAPSHOT_SCRIPT_FILE "snapshot_script"
+#define PG_BACKUP_LABEL_FILE "backup_label"
+#define PG_TBLSPC_MAP_FILE "tablespace_map"
+#define PG_BLACK_LIST "black_list"
 
 /* Snapshot script command */
-#define SNAPSHOT_FREEZE			"freeze"
-#define SNAPSHOT_UNFREEZE		"unfreeze"
-#define SNAPSHOT_SPLIT			"split"
-#define SNAPSHOT_RESYNC			"resync"
-#define SNAPSHOT_MOUNT			"mount"
-#define SNAPSHOT_UMOUNT			"umount"
+#define SNAPSHOT_FREEZE "freeze"
+#define SNAPSHOT_UNFREEZE "unfreeze"
+#define SNAPSHOT_SPLIT "split"
+#define SNAPSHOT_RESYNC "resync"
+#define SNAPSHOT_MOUNT "mount"
+#define SNAPSHOT_UMOUNT "umount"
 
 /* Directory/File permission */
-#define DIR_PERMISSION		(0700)
-#define FILE_PERMISSION		(0600)
+#define DIR_PERMISSION (0700)
+#define FILE_PERMISSION (0600)
 
 /* Exit code */
-#define ERROR_ARCHIVE_FAILED	20	/* cannot archive xlog file */
-#define ERROR_NO_BACKUP			21	/* backup was not found in the catalog */
-#define ERROR_CORRUPTED			22	/* backup catalog is corrupted */
-#define ERROR_ALREADY_RUNNING	23	/* another pg_rman is running */
-#define ERROR_PG_INCOMPATIBLE	24	/* block size is not compatible */
-#define ERROR_PG_RUNNING		25	/* PostgreSQL server is running */
-#define ERROR_PID_BROKEN		26	/* postmaster.pid file is broken */
+#define ERROR_ARCHIVE_FAILED 20	 /* cannot archive xlog file */
+#define ERROR_NO_BACKUP 21		 /* backup was not found in the catalog */
+#define ERROR_CORRUPTED 22		 /* backup catalog is corrupted */
+#define ERROR_ALREADY_RUNNING 23 /* another pg_rman is running */
+#define ERROR_PG_INCOMPATIBLE 24 /* block size is not compatible */
+#define ERROR_PG_RUNNING 25		 /* PostgreSQL server is running */
+#define ERROR_PID_BROKEN 26		 /* postmaster.pid file is broken */
 
 /* backup mode file */
 typedef struct pgFile
 {
-	time_t	mtime;			/* time of last modification */
-	mode_t	mode;			/* protection (file type and permission) */
-	size_t	size;			/* size of the file */
-	size_t	read_size;		/* size of the portion read (if only some pages are
-							   backed up partially, it's different from size) */
-	size_t	write_size;		/* size of the backed-up file. BYTES_INVALID means
-							   that the file existed but was not backed up
-							   because not modified since last backup. */
-	pg_crc32c crc;			/* CRC value of the file, regular file only */
-	char   *linked;			/* path of the linked file */
-	bool	is_datafile;	/* true if the file is PostgreSQL data file */
-	char	path[1]; 		/* path of the file */
+	time_t mtime;	   /* time of last modification */
+	mode_t mode;	   /* protection (file type and permission) */
+	size_t size;	   /* size of the file */
+	size_t read_size;  /* size of the portion read (if only some pages are
+						  backed up partially, it's different from size) */
+	size_t write_size; /* size of the backed-up file. BYTES_INVALID means
+						  that the file existed but was not backed up
+						  because not modified since last backup. */
+	pg_crc32c crc;	   /* CRC value of the file, regular file only */
+	char *linked;	   /* path of the linked file */
+	bool is_datafile;  /* true if the file is PostgreSQL data file */
+	char path[1];	   /* path of the file */
 } pgFile;
 
 typedef struct pgBackupRange
 {
-	time_t	begin;
-	time_t	end;			/* begin +1 when one backup is target */
+	time_t begin;
+	time_t end; /* begin +1 when one backup is target */
 } pgBackupRange;
 
 /*
@@ -94,48 +94,47 @@ typedef struct pgBackupRange
  */
 typedef struct BackupPageHeader
 {
-    BlockNumber block;          /* block number */
-    uint16      hole_offset;    /* number of bytes before "hole" */
-    uint16      hole_length;    /* number of bytes in "hole" */
-    bool        endpoint;       /* If set to true, this page marks the end
-                                   of relation, which means any subsequent
-                                   pages are truncated. */
+	BlockNumber block;	/* block number */
+	uint16 hole_offset; /* number of bytes before "hole" */
+	uint16 hole_length; /* number of bytes in "hole" */
+	bool endpoint;		/* If set to true, this page marks the end
+						   of relation, which means any subsequent
+						   pages are truncated. */
 } BackupPageHeader;
 
-
-#define pgBackupRangeIsValid(range)	\
-	(((range)->begin != (time_t) 0) || ((range)->end != (time_t) 0))
+#define pgBackupRangeIsValid(range) \
+	(((range)->begin != (time_t)0) || ((range)->end != (time_t)0))
 #define pgBackupRangeIsSingle(range) \
 	(pgBackupRangeIsValid(range) && (range)->begin == ((range)->end))
 
-#define IsValidTime(tm)	\
-	((tm.tm_sec >= 0 && tm.tm_sec <= 60) && 	/* range check for tm_sec (0-60)  */ \
-	 (tm.tm_min >= 0 && tm.tm_min <= 59) && 	/* range check for tm_min (0-59)  */ \
-	 (tm.tm_hour >= 0 && tm.tm_hour <= 23) && 	/* range check for tm_hour(0-23)  */ \
-	 (tm.tm_mday >= 1 && tm.tm_mday <= 31) && 	/* range check for tm_mday(1-31)  */ \
-	 (tm.tm_mon >= 0 && tm.tm_mon <= 11) && 	/* range check for tm_mon (0-23)  */ \
-	 (tm.tm_year + 1900 >= 1900)) 			/* range check for tm_year(70-)    */
+#define IsValidTime(tm)                                                            \
+	((tm.tm_sec >= 0 && tm.tm_sec <= 60) &&	  /* range check for tm_sec (0-60)  */ \
+	 (tm.tm_min >= 0 && tm.tm_min <= 59) &&	  /* range check for tm_min (0-59)  */ \
+	 (tm.tm_hour >= 0 && tm.tm_hour <= 23) && /* range check for tm_hour(0-23)  */ \
+	 (tm.tm_mday >= 1 && tm.tm_mday <= 31) && /* range check for tm_mday(1-31)  */ \
+	 (tm.tm_mon >= 0 && tm.tm_mon <= 11) &&	  /* range check for tm_mon (0-23)  */ \
+	 (tm.tm_year + 1900 >= 1900))			  /* range check for tm_year(70-)    */
 
 /* Backup status */
 /* XXX re-order ? */
 typedef enum BackupStatus
 {
-	BACKUP_STATUS_INVALID,		/* the pgBackup is invalid */
-	BACKUP_STATUS_OK,			/* completed backup */
-	BACKUP_STATUS_RUNNING,		/* running backup */
-	BACKUP_STATUS_ERROR,		/* aborted because of unexpected error */
-	BACKUP_STATUS_DELETING,		/* data files are being deleted */
-	BACKUP_STATUS_DELETED,		/* data files have been deleted */
-	BACKUP_STATUS_DONE,			/* completed but not validated yet */
-	BACKUP_STATUS_CORRUPT		/* files are corrupted, not available */
+	BACKUP_STATUS_INVALID,	/* the pgBackup is invalid */
+	BACKUP_STATUS_OK,		/* completed backup */
+	BACKUP_STATUS_RUNNING,	/* running backup */
+	BACKUP_STATUS_ERROR,	/* aborted because of unexpected error */
+	BACKUP_STATUS_DELETING, /* data files are being deleted */
+	BACKUP_STATUS_DELETED,	/* data files have been deleted */
+	BACKUP_STATUS_DONE,		/* completed but not validated yet */
+	BACKUP_STATUS_CORRUPT	/* files are corrupted, not available */
 } BackupStatus;
 
 typedef enum BackupMode
 {
 	BACKUP_MODE_INVALID,
-	BACKUP_MODE_ARCHIVE,		/* archive only */
-	BACKUP_MODE_INCREMENTAL,	/* incremental backup */
-	BACKUP_MODE_FULL			/* full backup */
+	BACKUP_MODE_ARCHIVE,	 /* archive only */
+	BACKUP_MODE_INCREMENTAL, /* incremental backup */
+	BACKUP_MODE_FULL		 /* full backup */
 } BackupMode;
 
 /*
@@ -146,80 +145,79 @@ typedef enum BackupMode
 typedef struct pgBackup
 {
 	/* Backup Level */
-	BackupMode	backup_mode;
-	bool		with_serverlog;
-	bool		compress_data;
-	bool		full_backup_on_error;
+	BackupMode backup_mode;
+	bool with_serverlog;
+	bool compress_data;
+	bool full_backup_on_error;
 
 	/* Status - one of BACKUP_STATUS_xxx */
-	BackupStatus	status;
+	BackupStatus status;
 
 	/* Timestamp, etc. */
-	TimeLineID	tli;
+	TimeLineID tli;
 
-	XLogRecPtr	start_lsn;
-	XLogRecPtr	stop_lsn;
+	XLogRecPtr start_lsn;
+	XLogRecPtr stop_lsn;
 
-	time_t		start_time;
-	time_t		end_time;
-	time_t		recovery_time;
-	uint32		recovery_xid;
+	time_t start_time;
+	time_t end_time;
+	time_t recovery_time;
+	uint32 recovery_xid;
 
 	/* Size (-1 means not-backup'ed) */
-	int64		total_data_bytes;
-	int64		read_data_bytes;
-	int64		read_arclog_bytes;
-	int64		read_srvlog_bytes;
-	int64		write_bytes;
+	int64 total_data_bytes;
+	int64 read_data_bytes;
+	int64 read_arclog_bytes;
+	int64 read_srvlog_bytes;
+	int64 write_bytes;
 
 	/* data/wal block size for compatibility check */
-	uint32		block_size;
-	uint32		wal_block_size;
+	uint32 block_size;
+	uint32 wal_block_size;
 
 	/* if backup from standby or not */
-	bool		is_from_standby;
+	bool is_from_standby;
 
 } pgBackup;
 
 typedef struct pgBackupOption
 {
 	bool smooth_checkpoint;
-	int  keep_arclog_files;
-	int  keep_arclog_days;
-	int  keep_srvlog_files;
-	int  keep_srvlog_days;
-	int  keep_data_generations;
-	int  keep_data_days;
+	int keep_arclog_files;
+	int keep_arclog_days;
+	int keep_srvlog_files;
+	int keep_srvlog_days;
+	int keep_data_generations;
+	int keep_data_days;
 	char *standby_host;
 	char *standby_port;
 } pgBackupOption;
 
-
 /* special values of pgBackup */
-#define KEEP_INFINITE			(INT_MAX)
-#define BYTES_INVALID			(-1)
+#define KEEP_INFINITE (INT_MAX)
+#define BYTES_INVALID (-1)
 
-#define HAVE_DATABASE(backup)	((backup)->backup_mode >= BACKUP_MODE_INCREMENTAL)
-#define HAVE_ARCLOG(backup)		((backup)->backup_mode >= BACKUP_MODE_ARCHIVE)
-#define TOTAL_READ_SIZE(backup)	\
+#define HAVE_DATABASE(backup) ((backup)->backup_mode >= BACKUP_MODE_INCREMENTAL)
+#define HAVE_ARCLOG(backup) ((backup)->backup_mode >= BACKUP_MODE_ARCHIVE)
+#define TOTAL_READ_SIZE(backup)                                  \
 	((HAVE_DATABASE((backup)) ? (backup)->read_data_bytes : 0) + \
 	 (HAVE_ARCLOG((backup)) ? (backup)->read_arclog_bytes : 0) + \
 	 ((backup)->with_serverlog ? (backup)->read_srvlog_bytes : 0))
 
 typedef struct pgTimeLine
 {
-	TimeLineID	tli;
-	XLogRecPtr	end;
+	TimeLineID tli;
+	XLogRecPtr end;
 } pgTimeLine;
 
 typedef struct pgRecoveryTarget
 {
-	bool		time_specified;
-	time_t		recovery_target_time;
-	bool		xid_specified;
-	unsigned int	recovery_target_xid;
-	bool		recovery_target_inclusive;
-	const char	*recovery_target_action;
+	bool time_specified;
+	time_t recovery_target_time;
+	bool xid_specified;
+	unsigned int recovery_target_xid;
+	bool recovery_target_inclusive;
+	const char *recovery_target_action;
 } pgRecoveryTarget;
 
 typedef enum CompressionMode
@@ -279,7 +277,7 @@ extern int do_show(pgBackupRange *range, bool show_detail, bool show_all);
 extern int do_delete(pgBackupRange *range, bool force);
 extern void pgBackupDelete(int keep_generations, int keep_days);
 extern int do_purge(void);
-extern char * getCountSuffix(int number);
+extern char *getCountSuffix(int number);
 
 /* in validate.c */
 extern int do_validate(pgBackupRange *range);
@@ -311,7 +309,7 @@ extern int pgBackupCompareIdDesc(const void *f1, const void *f2);
 /* in dir.c */
 extern void dir_list_file(parray *files, const char *root, const char *exclude[], bool omit_symlink, bool add_root);
 extern void dir_list_file_internal(parray *files, const char *root, const char *exclude[],
-					bool omit_symlink, bool add_root, parray *black_list);
+								   bool omit_symlink, bool add_root, parray *black_list);
 extern void dir_print_mkdirs_sh(FILE *out, const parray *files, const char *root);
 extern void dir_print_file_list(FILE *out, const parray *files, const char *root, const char *prefix);
 extern parray *dir_read_file_list(const char *root, const char *file_txt);
@@ -362,15 +360,16 @@ extern bool is_pg_running(void);
 #define PGRMAN_COMP_CRC32(crc, data, len) COMP_CRC32C(crc, data, len)
 #define PGRMAN_EQ_CRC32(c1, c2) EQ_CRC32C(c1, c2)
 
-#define NextLogSeg(logId, logSeg, wal_segment_size)	\
-	do { \
+#define NextLogSeg(logId, logSeg, wal_segment_size)                    \
+	do                                                                 \
+	{                                                                  \
 		if ((logSeg) >= XLogSegmentsPerXLogId((wal_segment_size)) - 1) \
-		{ \
-			(logId)++; \
-			(logSeg) = 0; \
-		} \
-		else \
-			(logSeg)++; \
+		{                                                              \
+			(logId)++;                                                 \
+			(logSeg) = 0;                                              \
+		}                                                              \
+		else                                                           \
+			(logSeg)++;                                                \
 	} while (0)
 
 #endif /* PG_RMAN_H */

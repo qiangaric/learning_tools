@@ -12,9 +12,9 @@
 /* members of struct parray are hidden from client. */
 struct parray
 {
-	void **data;		/* pointer array, expanded if necessary */
-	size_t alloced;		/* number of elements allocated */
-	size_t used;		/* number of elements in use */
+	void **data;	/* pointer array, expanded if necessary */
+	size_t alloced; /* number of elements allocated */
+	size_t used;	/* number of elements in use */
 };
 
 /*
@@ -40,8 +40,7 @@ parray_new(void)
  * Elements in expanded area are initialized to NULL.
  * Note: never returns NULL.
  */
-void
-parray_expand(parray *array, size_t newsize)
+void parray_expand(parray *array, size_t newsize)
 {
 	void **p;
 
@@ -58,8 +57,7 @@ parray_expand(parray *array, size_t newsize)
 	array->data = p;
 }
 
-void
-parray_free(parray *array)
+void parray_free(parray *array)
 {
 	if (array == NULL)
 		return;
@@ -67,8 +65,7 @@ parray_free(parray *array)
 	free(array);
 }
 
-void
-parray_append(parray *array, void *elem)
+void parray_append(parray *array, void *elem)
 {
 	if (array->used + 1 > array->alloced)
 		parray_expand(array, array->alloced * 2);
@@ -76,14 +73,13 @@ parray_append(parray *array, void *elem)
 	array->data[array->used++] = elem;
 }
 
-void
-parray_insert(parray *array, size_t index, void *elem)
+void parray_insert(parray *array, size_t index, void *elem)
 {
 	if (array->used + 1 > array->alloced)
 		parray_expand(array, array->alloced * 2);
 
 	memmove(array->data + index + 1, array->data + index,
-		(array->alloced - index - 1) * sizeof(void *));
+			(array->alloced - index - 1) * sizeof(void *));
 	array->data[index] = elem;
 
 	/* adjust used count */
@@ -110,8 +106,7 @@ parray_concat(parray *dest, const parray *src)
 	return dest;
 }
 
-void
-parray_set(parray *array, size_t index, void *elem)
+void parray_set(parray *array, size_t index, void *elem)
 {
 	if (index > array->alloced - 1)
 		parray_expand(array, index + 1);
@@ -145,7 +140,7 @@ parray_remove(parray *array, size_t index)
 	/* Do not move if the last element was removed. */
 	if (index < array->alloced - 1)
 		memmove(array->data + index, array->data + index + 1,
-			(array->alloced - index - 1) * sizeof(void *));
+				(array->alloced - index - 1) * sizeof(void *));
 
 	/* adjust used count */
 	array->used--;
@@ -153,8 +148,7 @@ parray_remove(parray *array, size_t index)
 	return val;
 }
 
-bool
-parray_rm(parray *array, const void *key, int(*compare)(const void *, const void *))
+bool parray_rm(parray *array, const void *key, int (*compare)(const void *, const void *))
 {
 	int i;
 
@@ -175,14 +169,12 @@ parray_num(const parray *array)
 	return array->used;
 }
 
-void
-parray_qsort(parray *array, int(*compare)(const void *, const void *))
+void parray_qsort(parray *array, int (*compare)(const void *, const void *))
 {
 	qsort(array->data, array->used, sizeof(void *), compare);
 }
 
-void
-parray_walk(parray *array, void (*action)(void *))
+void parray_walk(parray *array, void (*action)(void *))
 {
 	int i;
 	for (i = 0; i < array->used; i++)
@@ -190,8 +182,7 @@ parray_walk(parray *array, void (*action)(void *))
 }
 
 void *
-parray_bsearch(parray *array, const void *key, int(*compare)(const void *, const void *))
+parray_bsearch(parray *array, const void *key, int (*compare)(const void *, const void *))
 {
 	return bsearch(&key, array->data, array->used, sizeof(void *), compare);
 }
-

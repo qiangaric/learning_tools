@@ -22,16 +22,16 @@
 #include "common/controldata_utils.h"
 #include "pgut/pgut-port.h"
 
-#define TIMEOUT_ARCHIVE		10		/* wait 10 sec until WAL archive complete */
+#define TIMEOUT_ARCHIVE 10 /* wait 10 sec until WAL archive complete */
 
-static bool		 in_backup = false;	/* TODO: more robust logic */
-static parray	*cleanup_list;		/* list of command to execute at error processing for snapshot */
+static bool in_backup = false; /* TODO: more robust logic */
+static parray *cleanup_list;   /* list of command to execute at error processing for snapshot */
 
 /*
  * data_checksum_enabled as read from the control file of the database
  * cluster.  Exposed for use in data.c.
  */
-bool	data_checksum_enabled = false;
+bool data_checksum_enabled = false;
 static void init_data_checksum_enabled(void);
 
 /*
@@ -41,7 +41,7 @@ static void backup_cleanup(bool fatal, void *userdata);
 static void delete_old_files(const char *root, parray *files, int keep_files,
 							 int keep_days, bool is_arclog);
 static void backup_files(const char *from_root, const char *to_root,
-	parray *files, parray *prev_files, const XLogRecPtr *lsn, bool compress, const char *prefix);
+						 parray *files, parray *prev_files, const XLogRecPtr *lsn, bool compress, const char *prefix);
 static parray *do_backup_database(parray *backup_list, pgBackupOption bkupopt);
 static parray *do_backup_arclog(parray *backup_list);
 static parray *do_backup_srvlog(parray *backup_list);
@@ -79,17 +79,17 @@ static int wal_segment_size = 0;
 static parray *
 do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 {
-	int			i;
-	parray	   *files;				/* backup file list from non-snapshot */
-	parray	   *prev_files = NULL;	/* file list of previous database backup */
-	FILE	   *fp;
-	char		path[MAXPGPATH];
-	char		label[1024];
+	int i;
+	parray *files;			   /* backup file list from non-snapshot */
+	parray *prev_files = NULL; /* file list of previous database backup */
+	FILE *fp;
+	char path[MAXPGPATH];
+	char label[1024];
 	XLogRecPtr *lsn = NULL;
-	char		prev_file_txt[MAXPGPATH];	/* path of the previous backup list file */
+	char prev_file_txt[MAXPGPATH]; /* path of the previous backup list file */
 
 	/* repack the options */
-	bool	smooth_checkpoint = bkupopt.smooth_checkpoint;
+	bool smooth_checkpoint = bkupopt.smooth_checkpoint;
 
 	check_server_version();
 
@@ -100,7 +100,7 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 		/* check if arclog backup. if arclog backup and no suitable full backup, */
 		if (HAVE_ARCLOG(&current))
 		{
-			pgBackup   *prev_backup;
+			pgBackup *prev_backup;
 
 			/* find last completed database backup */
 			prev_backup = catalog_get_last_data_backup(backup_list);
@@ -109,17 +109,17 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 				if (current.full_backup_on_error)
 				{
 					ereport(NOTICE,
-						(errmsg("turn to take a full backup"),
-						 errdetail("There is no validated full backup with current timeline.")));
+							(errmsg("turn to take a full backup"),
+							 errdetail("There is no validated full backup with current timeline.")));
 					current.backup_mode = BACKUP_MODE_FULL;
 				}
 				else
 					ereport(ERROR,
-						(errcode(ERROR_SYSTEM),
-						errmsg("cannot take an incremental backup"),
-						errdetail("There is no validated full backup with current timeline."),
-						errhint("Please take a full backup and validate it before doing an archive backup. "
-							"Or use with --full-backup-on-error command line option.")));
+							(errcode(ERROR_SYSTEM),
+							 errmsg("cannot take an incremental backup"),
+							 errdetail("There is no validated full backup with current timeline."),
+							 errhint("Please take a full backup and validate it before doing an archive backup. "
+									 "Or use with --full-backup-on-error command line option.")));
 			}
 			else
 				return NULL;
@@ -146,8 +146,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 		 */
 		disconnect();
 		ereport(ERROR,
-			(errcode(ERROR_SYSTEM),
-			 errmsg("could not execute restartpoint")));
+				(errcode(ERROR_SYSTEM),
+				 errmsg("could not execute restartpoint")));
 	}
 
 	/*
@@ -165,16 +165,16 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 		fp = fopen(path, "wt");
 		if (fp == NULL)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not open make directory script \"%s\": %s",
-						path, strerror(errno))));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not open make directory script \"%s\": %s",
+							path, strerror(errno))));
 		dir_print_mkdirs_sh(fp, files, pgdata);
 		fclose(fp);
 		if (chmod(path, DIR_PERMISSION) == -1)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not change mode of \"%s\": %s", path,
-						strerror(errno))));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not change mode of \"%s\": %s", path,
+							strerror(errno))));
 	}
 
 	/* Free no longer needed memory. */
@@ -192,8 +192,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	 */
 	if (current.backup_mode < BACKUP_MODE_FULL)
 	{
-		pgBackup   *prev_backup;
-		uint32		xlogid, xrecoff;
+		pgBackup *prev_backup;
+		uint32 xlogid, xrecoff;
 
 		/* find last completed database backup */
 		prev_backup = catalog_get_last_data_backup(backup_list);
@@ -202,32 +202,32 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 			if (current.full_backup_on_error)
 			{
 				ereport(NOTICE,
-					(errmsg("turn to take a full backup"),
-					 errdetail("There is no validated full backup with current timeline.")));
+						(errmsg("turn to take a full backup"),
+						 errdetail("There is no validated full backup with current timeline.")));
 				current.backup_mode = BACKUP_MODE_FULL;
 			}
 			else
 				ereport(ERROR,
-					(errcode(ERROR_SYSTEM),
-					 errmsg("cannot take an incremental backup"),
-					 errdetail("There is no validated full backup with current timeline."),
-					 errhint("Please take a full backup and validate it before doing an incremental backup. "
-						"Or use with --full-backup-on-error command line option.")));
+						(errcode(ERROR_SYSTEM),
+						 errmsg("cannot take an incremental backup"),
+						 errdetail("There is no validated full backup with current timeline."),
+						 errhint("Please take a full backup and validate it before doing an incremental backup. "
+								 "Or use with --full-backup-on-error command line option.")));
 		}
 		else
 		{
 			pgBackupGetPath(prev_backup, prev_file_txt, lengthof(prev_file_txt),
-				DATABASE_FILE_LIST);
+							DATABASE_FILE_LIST);
 			prev_files = dir_read_file_list(pgdata, prev_file_txt);
 
 			/*
 			 * Do backup only pages having larger LSN than previous backup.
 			 */
 			lsn = &prev_backup->start_lsn;
-			xlogid = (uint32) (*lsn >> 32);
-			xrecoff = (uint32) *lsn;
+			xlogid = (uint32)(*lsn >> 32);
+			xrecoff = (uint32)*lsn;
 			elog(DEBUG, _("backup only the page updated after LSN(%X/%08X)"),
-							xlogid, xrecoff);
+				 xlogid, xrecoff);
 		}
 	}
 
@@ -243,7 +243,7 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	{
 		/* Nope.  Perform a simple backup by copying files. */
 
-		parray		*stop_backup_files;
+		parray *stop_backup_files;
 
 		/*
 		 * List files contained in PGDATA, omitting all sub-directories beside
@@ -281,10 +281,10 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	{
 		/* Use snapshot_script. */
 
-		parray		*tblspc_list;	/* list of name of TABLESPACE backup from snapshot */
-		parray		*tblspcmp_list;	/* list of mounted directory of TABLESPACE in snapshot volume */
-		PGresult	*tblspc_res;	/* contain spcname and oid in TABLESPACE */
-		parray		*stop_backup_files;	/* list of files that pg_backup_stop() wrote */
+		parray *tblspc_list;	   /* list of name of TABLESPACE backup from snapshot */
+		parray *tblspcmp_list;	   /* list of mounted directory of TABLESPACE in snapshot volume */
+		PGresult *tblspc_res;	   /* contain spcname and oid in TABLESPACE */
+		parray *stop_backup_files; /* list of files that pg_backup_stop() wrote */
 
 		/* if backup is from standby, snapshot backup is unsupported */
 		if (current.is_from_standby)
@@ -295,9 +295,9 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 			 */
 			disconnect();
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("cannot take a backup"),
-				 errdetail("Taking backup from standby server with snapshot-script is not supported")));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("cannot take a backup"),
+					 errdetail("Taking backup from standby server with snapshot-script is not supported")));
 		}
 
 		tblspc_list = parray_new();
@@ -308,7 +308,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 		 * append 'pg_tblspc' to list of directory excluded from copy.
 		 * because DB cluster and TABLESPACE are copied separately.
 		 */
-		for (i = 0; pgdata_exclude[i]; i++);	/* find first empty slot */
+		for (i = 0; pgdata_exclude[i]; i++)
+			; /* find first empty slot */
 		pgdata_exclude[i] = PG_TBLSPC_DIR;
 
 		/* set the error processing for the snapshot */
@@ -344,7 +345,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 
 		Assert(connection != NULL);
 		tblspc_res = execute("SELECT spcname, oid FROM pg_tablespace WHERE "
-			"spcname NOT IN ('pg_default', 'pg_global') ORDER BY spcname ASC", 0, NULL);
+							 "spcname NOT IN ('pg_default', 'pg_global') ORDER BY spcname ASC",
+							 0, NULL);
 		for (i = 0; i < PQntuples(tblspc_res); i++)
 		{
 			char *name = PQgetvalue(tblspc_res, i, 0);
@@ -369,8 +371,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 		 */
 		if (parray_num(tblspc_list) > 0)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("snapshot-script output the name of tablespace that not exist")));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("snapshot-script output the name of tablespace that not exist")));
 
 		/* clear array */
 		parray_walk(tblspc_list, free);
@@ -399,7 +401,7 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 		{
 			char *spcname;
 			char *mp = NULL;
-			char *item = (char *) parray_get(tblspcmp_list, i);
+			char *item = (char *)parray_get(tblspcmp_list, i);
 			parray *snapshot_files = parray_new();
 
 			/*
@@ -409,8 +411,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 			 */
 			if ((spcname = strtok(item, "=")) == NULL || (mp = strtok(NULL, "\0")) == NULL)
 				ereport(ERROR,
-					(errcode(ERROR_SYSTEM),
-					 errmsg("snapshot-script output illegal format: %s", item)));
+						(errcode(ERROR_SYSTEM),
+						 errmsg("snapshot-script output illegal format: %s", item)));
 
 			if (verbose)
 			{
@@ -421,8 +423,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 			/* tablespace storage directory not exist */
 			if (!dirExists(mp))
 				ereport(ERROR,
-					(errcode(ERROR_SYSTEM),
-					 errmsg("tablespace storage directory doesn't exist: %s", mp)));
+						(errcode(ERROR_SYSTEM),
+						 errmsg("tablespace storage directory doesn't exist: %s", mp)));
 
 			/*
 			 * create the previous backup file list to take incremental backup
@@ -455,8 +457,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 				 */
 				for (j = 0; j < PQntuples(tblspc_res); j++)
 				{
-					char  dest[MAXPGPATH];
-					char  prefix[MAXPGPATH];
+					char dest[MAXPGPATH];
+					char prefix[MAXPGPATH];
 					char *name = PQgetvalue(tblspc_res, j, 0);
 					char *oid = PQgetvalue(tblspc_res, j, 1);
 
@@ -488,8 +490,8 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 		 */
 		if (parray_num(tblspcmp_list) > 0)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("snapshot-script output the name of tablespace that not exist")));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("snapshot-script output the name of tablespace that not exist")));
 
 		/* clear array */
 		parray_walk(tblspcmp_list, free);
@@ -514,7 +516,7 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	/* Update various size fields in current. */
 	for (i = 0; i < parray_num(files); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 		if (!S_ISREG(file->mode))
 			continue;
 		current.total_data_bytes += file->size;
@@ -526,7 +528,7 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	if (verbose)
 	{
 		printf(_("database backup completed(read: " INT64_FORMAT " write: " INT64_FORMAT ")\n"),
-			current.read_data_bytes, current.write_bytes);
+			   current.read_data_bytes, current.write_bytes);
 		printf(_("========================================\n"));
 	}
 
@@ -545,9 +547,9 @@ static bool
 execute_restartpoint(pgBackupOption bkupopt, pgBackup *backup)
 {
 	PGconn *sby_conn = NULL;
-	PGresult	*res;
-	XLogRecPtr	replayed_lsn;
-	int	sleep_time = 1;
+	PGresult *res;
+	XLogRecPtr replayed_lsn;
+	int sleep_time = 1;
 
 	/*
 	 * Change connection to standby server, so that any commands executed from
@@ -575,7 +577,7 @@ execute_restartpoint(pgBackupOption bkupopt, pgBackup *backup)
 		sscanf(PQgetvalue(res, 0, 0), "%X/%X", &xlogid, &xrecoff);
 		PQclear(res);
 
-		replayed_lsn = (XLogRecPtr) ((uint64) xlogid << 32) | xrecoff;
+		replayed_lsn = (XLogRecPtr)((uint64)xlogid << 32) | xrecoff;
 		if (replayed_lsn >= backup->start_lsn)
 			break;
 		sleep(sleep_time);
@@ -601,16 +603,16 @@ execute_restartpoint(pgBackupOption bkupopt, pgBackup *backup)
 static parray *
 do_backup_arclog(parray *backup_list)
 {
-	int			i;
-	parray	   *files;
-	parray	   *prev_files = NULL;	/* file list of previous database backup */
-	FILE	   *fp;
-	char		path[MAXPGPATH];
-	char		timeline_dir[MAXPGPATH];
-	char		prev_file_txt[MAXPGPATH];
-	pgBackup   *prev_backup;
-	int64		arclog_write_bytes = 0;
-	char		last_wal[MAXPGPATH];
+	int i;
+	parray *files;
+	parray *prev_files = NULL; /* file list of previous database backup */
+	FILE *fp;
+	char path[MAXPGPATH];
+	char timeline_dir[MAXPGPATH];
+	char prev_file_txt[MAXPGPATH];
+	pgBackup *prev_backup;
+	int64 arclog_write_bytes = 0;
+	char last_wal[MAXPGPATH];
 
 	if (!HAVE_ARCLOG(&current) || check)
 		return NULL;
@@ -625,7 +627,7 @@ do_backup_arclog(parray *backup_list)
 	current.read_arclog_bytes = 0;
 
 	/* switch xlog if database is not backed up */
-	if (((uint32) current.stop_lsn)  == 0)
+	if (((uint32)current.stop_lsn) == 0)
 		pg_switch_wal(&current);
 
 	/*
@@ -639,7 +641,7 @@ do_backup_arclog(parray *backup_list)
 	if (prev_backup)
 	{
 		pgBackupGetPath(prev_backup, prev_file_txt, lengthof(prev_file_txt),
-			ARCLOG_FILE_LIST);
+						ARCLOG_FILE_LIST);
 		prev_files = dir_read_file_list(arclog_path, prev_file_txt);
 	}
 
@@ -652,7 +654,7 @@ do_backup_arclog(parray *backup_list)
 			   wal_segment_size);
 	for (i = 0; i < parray_num(files); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 		char *fname;
 		if ((fname = last_dir_separator(file->path)))
 			fname++;
@@ -679,9 +681,9 @@ do_backup_arclog(parray *backup_list)
 		fp = fopen(path, "wt");
 		if (fp == NULL)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not open file list \"%s\": %s", path,
-					strerror(errno))));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not open file list \"%s\": %s", path,
+							strerror(errno))));
 		dir_print_file_list(fp, files, arclog_path, NULL);
 		fclose(fp);
 	}
@@ -689,7 +691,7 @@ do_backup_arclog(parray *backup_list)
 	/* print summary of size of backup files */
 	for (i = 0; i < parray_num(files); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 		if (!S_ISREG(file->mode))
 			continue;
 		current.read_arclog_bytes += file->read_size;
@@ -708,11 +710,11 @@ do_backup_arclog(parray *backup_list)
 	join_path_components(timeline_dir, backup_path, TIMELINE_HISTORY_DIR);
 	for (i = 0; i < parray_num(files); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 		if (!S_ISREG(file->mode))
 			continue;
 		if (strstr(file->path, ".history") ==
-				file->path + strlen(file->path) - strlen(".history"))
+			file->path + strlen(file->path) - strlen(".history"))
 		{
 			elog(DEBUG, _("(timeline history) %s"), file->path);
 			copy_file(arclog_path, timeline_dir, file, NO_COMPRESSION);
@@ -722,7 +724,7 @@ do_backup_arclog(parray *backup_list)
 	if (verbose)
 	{
 		printf(_("archived WAL backup completed(read: " INT64_FORMAT " write: " INT64_FORMAT ")\n"),
-			current.read_arclog_bytes, arclog_write_bytes);
+			   current.read_arclog_bytes, arclog_write_bytes);
 		printf(_("========================================\n"));
 	}
 
@@ -735,14 +737,14 @@ do_backup_arclog(parray *backup_list)
 static parray *
 do_backup_srvlog(parray *backup_list)
 {
-	int			i;
-	parray	   *files;
-	parray	   *prev_files = NULL;	/* file list of previous database backup */
-	FILE	   *fp;
-	char		path[MAXPGPATH];
-	char		prev_file_txt[MAXPGPATH];
-	pgBackup   *prev_backup;
-	int64		srvlog_write_bytes = 0;
+	int i;
+	parray *files;
+	parray *prev_files = NULL; /* file list of previous database backup */
+	FILE *fp;
+	char path[MAXPGPATH];
+	char prev_file_txt[MAXPGPATH];
+	pgBackup *prev_backup;
+	int64 srvlog_write_bytes = 0;
 
 	if (!current.with_serverlog)
 		return NULL;
@@ -767,7 +769,7 @@ do_backup_srvlog(parray *backup_list)
 	if (prev_backup)
 	{
 		pgBackupGetPath(prev_backup, prev_file_txt, lengthof(prev_file_txt),
-			SRVLOG_FILE_LIST);
+						SRVLOG_FILE_LIST);
 		prev_files = dir_read_file_list(srvlog_path, prev_file_txt);
 	}
 
@@ -785,9 +787,9 @@ do_backup_srvlog(parray *backup_list)
 		fp = fopen(path, "wt");
 		if (fp == NULL)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not open file list \"%s\": %s", path,
-					strerror(errno))));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not open file list \"%s\": %s", path,
+							strerror(errno))));
 		dir_print_file_list(fp, files, srvlog_path, NULL);
 		fclose(fp);
 	}
@@ -795,7 +797,7 @@ do_backup_srvlog(parray *backup_list)
 	/* print summary of size of backup mode files */
 	for (i = 0; i < parray_num(files); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 		if (!S_ISREG(file->mode))
 			continue;
 		current.read_srvlog_bytes += file->read_size;
@@ -809,56 +811,55 @@ do_backup_srvlog(parray *backup_list)
 	if (verbose)
 	{
 		printf(_("serverlog backup completed(read: " INT64_FORMAT " write: " INT64_FORMAT ")\n"),
-			current.read_srvlog_bytes, srvlog_write_bytes);
+			   current.read_srvlog_bytes, srvlog_write_bytes);
 		printf(_("========================================\n"));
 	}
 
 	return files;
 }
 
-int
-do_backup(pgBackupOption bkupopt)
+int do_backup(pgBackupOption bkupopt)
 {
 	parray *backup_list;
 	parray *files_database;
 	parray *files_arclog;
 	parray *files_srvlog;
-	int    ret;
-	char   path[MAXPGPATH];
+	int ret;
+	char path[MAXPGPATH];
 
 	/* repack the necesary options */
-	int	keep_arclog_files = bkupopt.keep_arclog_files;
-	int	keep_arclog_days  = bkupopt.keep_arclog_days;
-	int	keep_srvlog_files = bkupopt.keep_srvlog_files;
-	int	keep_srvlog_days  = bkupopt.keep_srvlog_days;
-	int	keep_data_generations = bkupopt.keep_data_generations;
-	int	keep_data_days        = bkupopt.keep_data_days;
+	int keep_arclog_files = bkupopt.keep_arclog_files;
+	int keep_arclog_days = bkupopt.keep_arclog_days;
+	int keep_srvlog_files = bkupopt.keep_srvlog_files;
+	int keep_srvlog_days = bkupopt.keep_srvlog_days;
+	int keep_data_generations = bkupopt.keep_data_generations;
+	int keep_data_days = bkupopt.keep_data_days;
 
 	ControlFileData *controlFile;
-	bool	crc_ok;
+	bool crc_ok;
 
 	/* PGDATA and BACKUP_MODE are always required */
 	if (pgdata == NULL)
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("required parameter not specified: PGDATA (-D, --pgdata)")));
+				(errcode(ERROR_ARGS),
+				 errmsg("required parameter not specified: PGDATA (-D, --pgdata)")));
 
 	if (current.backup_mode == BACKUP_MODE_INVALID)
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("required parameter not specified: BACKUP_MODE (-b, --backup-mode)")));
+				(errcode(ERROR_ARGS),
+				 errmsg("required parameter not specified: BACKUP_MODE (-b, --backup-mode)")));
 
 	/* ARCLOG_PATH is required only when backup archive WAL */
 	if (HAVE_ARCLOG(&current) && arclog_path == NULL)
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("required parameter not specified: ARCLOG_PATH (-A, --arclog-path)")));
+				(errcode(ERROR_ARGS),
+				 errmsg("required parameter not specified: ARCLOG_PATH (-A, --arclog-path)")));
 
 	/* SRVLOG_PATH is required only when backup serverlog */
 	if (current.with_serverlog && srvlog_path == NULL)
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("required parameter not specified: SRVLOG_PATH (-S, --srvlog-path)")));
+				(errcode(ERROR_ARGS),
+				 errmsg("required parameter not specified: SRVLOG_PATH (-S, --srvlog-path)")));
 	/*
 	 * If we are taking backup from standby
 	 * (ie, $PGDATA has recovery.conf or standby.signal),
@@ -868,8 +869,8 @@ do_backup(pgBackupOption bkupopt)
 	{
 		if (!bkupopt.standby_host || !bkupopt.standby_port)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("please specify both standby host and port")));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("please specify both standby host and port")));
 
 		current.is_from_standby = true;
 	}
@@ -880,8 +881,8 @@ do_backup(pgBackupOption bkupopt)
 	if (current.compress_data)
 	{
 		ereport(WARNING,
-			(errmsg("this pg_rman build does not support compression"),
-			 errhint("Please build PostgreSQL with zlib to use compression.")));
+				(errmsg("this pg_rman build does not support compression"),
+				 errhint("Please build PostgreSQL with zlib to use compression.")));
 		current.compress_data = false;
 	}
 #endif
@@ -912,37 +913,37 @@ do_backup(pgBackupOption bkupopt)
 	ret = catalog_lock();
 	if (ret == -1)
 		ereport(ERROR,
-			(errcode(ERROR_SYSTEM),
-			 errmsg("could not lock backup catalog")));
+				(errcode(ERROR_SYSTEM),
+				 errmsg("could not lock backup catalog")));
 	else if (ret == 1)
 		ereport(ERROR,
-			(errcode(ERROR_ALREADY_RUNNING),
-			 errmsg("could not lock backup catalog"),
-			 errdetail("Another pg_rman is just running. Skip this backup.")));
+				(errcode(ERROR_ALREADY_RUNNING),
+				 errmsg("could not lock backup catalog"),
+				 errdetail("Another pg_rman is just running. Skip this backup.")));
 
 	/* initialize backup result */
 	current.status = BACKUP_STATUS_RUNNING;
-	current.tli = 0;		/* get from result of pg_backup_start() */
-	current.start_lsn = current.stop_lsn = (XLogRecPtr) 0;
+	current.tli = 0; /* get from result of pg_backup_start() */
+	current.start_lsn = current.stop_lsn = (XLogRecPtr)0;
 	current.start_time = time(NULL);
-	current.end_time = (time_t) 0;
+	current.end_time = (time_t)0;
 	current.total_data_bytes = BYTES_INVALID;
 	current.read_data_bytes = BYTES_INVALID;
 	current.read_arclog_bytes = BYTES_INVALID;
 	current.read_srvlog_bytes = BYTES_INVALID;
-	current.write_bytes = 0;		/* write_bytes is valid always */
+	current.write_bytes = 0; /* write_bytes is valid always */
 	current.block_size = BLCKSZ;
 	current.wal_block_size = XLOG_BLCKSZ;
 	current.recovery_xid = 0;
-	current.recovery_time = (time_t) 0;
+	current.recovery_time = (time_t)0;
 
 	/* create backup directory and backup.ini */
 	if (!check)
 	{
 		if (pgBackupCreateDir(&current))
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not create backup directory")));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not create backup directory")));
 		pgBackupWriteIni(&current);
 	}
 
@@ -950,10 +951,10 @@ do_backup(pgBackupOption bkupopt)
 
 	/* get list of backups already taken */
 	backup_list = catalog_get_backup_list(NULL);
-	if(!backup_list)
+	if (!backup_list)
 		ereport(ERROR,
-			(errcode(ERROR_SYSTEM),
-			 errmsg("could not get list of backup already taken")));
+				(errcode(ERROR_SYSTEM),
+				 errmsg("could not get list of backup already taken")));
 
 	/* set the error processing function for the backup process */
 	pgut_atexit_push(backup_cleanup, NULL);
@@ -986,9 +987,8 @@ do_backup(pgBackupOption bkupopt)
 		if (TOTAL_READ_SIZE(&current) == 0)
 			printf(_("nothing to backup\n"));
 		else
-			printf(_("all backup completed(read: " INT64_FORMAT " write: "
-				INT64_FORMAT ")\n"),
-				TOTAL_READ_SIZE(&current), current.write_bytes);
+			printf(_("all backup completed(read: " INT64_FORMAT " write: " INT64_FORMAT ")\n"),
+				   TOTAL_READ_SIZE(&current), current.write_bytes);
 		printf(_("========================================\n"));
 	}
 
@@ -1002,10 +1002,10 @@ do_backup(pgBackupOption bkupopt)
 	 */
 	if (HAVE_ARCLOG(&current))
 		delete_old_files(arclog_path, files_arclog, keep_arclog_files,
-			keep_arclog_days, true);
+						 keep_arclog_days, true);
 	if (current.with_serverlog)
 		delete_old_files(srvlog_path, files_srvlog, keep_srvlog_files,
-			keep_srvlog_days, false);
+						 keep_srvlog_days, false);
 
 	/* Delete old backup files after all backup operation. */
 	pgBackupDelete(keep_data_generations, keep_data_days);
@@ -1045,7 +1045,7 @@ do_backup(pgBackupOption bkupopt)
 static void
 check_server_version(void)
 {
-	int		server_version;
+	int server_version;
 
 	if (connection == NULL)
 		reconnect();
@@ -1056,16 +1056,16 @@ check_server_version(void)
 	server_version = PQserverVersion(connection);
 	if (server_version < 80400)
 		ereport(ERROR,
-			(errcode(ERROR_PG_INCOMPATIBLE),
-			 errmsg("server version is %d.%d.%d, but must be 8.4 or higher",
-				server_version / 10000,
-				(server_version / 100) % 100,
-				server_version % 100)));
+				(errcode(ERROR_PG_INCOMPATIBLE),
+				 errmsg("server version is %d.%d.%d, but must be 8.4 or higher",
+						server_version / 10000,
+						(server_version / 100) % 100,
+						server_version % 100)));
 
 	elog(DEBUG, "server version is %d.%d.%d",
-				server_version / 10000,
-				(server_version / 100) % 100,
-				server_version % 100);
+		 server_version / 10000,
+		 (server_version / 100) % 100,
+		 server_version % 100);
 
 	/* confirm block_size (BLCKSZ) and wal_block_size (XLOG_BLCKSZ) */
 	confirm_block_size("block_size", BLCKSZ);
@@ -1077,16 +1077,16 @@ check_server_version(void)
 static void
 confirm_block_size(const char *name, int blcksz)
 {
-	PGresult   *res;
-	char	   *endp;
-	int			block_size;
+	PGresult *res;
+	char *endp;
+	int block_size;
 
 	elog(DEBUG, "checking block size setting");
 	res = execute("SELECT current_setting($1)", 1, &name);
 	if (PQntuples(res) != 1 || PQnfields(res) != 1)
 		ereport(ERROR,
-			(errcode(ERROR_PG_COMMAND),
-			 errmsg("could not get %s: %s", name, PQerrorMessage(connection))));
+				(errcode(ERROR_PG_COMMAND),
+				 errmsg("could not get %s: %s", name, PQerrorMessage(connection))));
 	block_size = strtol(PQgetvalue(res, 0, 0), &endp, 10);
 	if (strcmp(name, "block_size") == 0)
 		elog(DEBUG, "block size is %d", block_size);
@@ -1095,8 +1095,8 @@ confirm_block_size(const char *name, int blcksz)
 
 	if ((endp && *endp) || block_size != blcksz)
 		ereport(ERROR,
-			(errcode(ERROR_PG_INCOMPATIBLE),
-			 errmsg("%s(%d) is not compatible(%d expected)", name, block_size, blcksz)));
+				(errcode(ERROR_PG_INCOMPATIBLE),
+				 errmsg("%s(%d) is not compatible(%d expected)", name, block_size, blcksz)));
 	PQclear(res);
 }
 
@@ -1109,8 +1109,8 @@ confirm_block_size(const char *name, int blcksz)
 static void
 pg_backup_start(const char *label, bool smooth, pgBackup *backup)
 {
-	PGresult	   *res;
-	const char	   *params[2];
+	PGresult *res;
+	const char *params[2];
 	params[0] = label;
 
 	elog(DEBUG, "executing pg_backup_start()");
@@ -1132,7 +1132,7 @@ pg_backup_start(const char *label, bool smooth, pgBackup *backup)
 		get_lsn(res, &backup->tli, &backup->start_lsn);
 
 	elog(DEBUG, "backup start point is (WAL file: %s, xrecoff: %s)",
-			PQgetvalue(res, 0, 0), PQgetvalue(res, 0, 1));
+		 PQgetvalue(res, 0, 0), PQgetvalue(res, 0, 1));
 
 	PQclear(res);
 }
@@ -1152,9 +1152,9 @@ static void
 wait_for_archive(pgBackup *backup, const char *sql, int nParams,
 				 const char **params)
 {
-	PGresult	   *res;
-	char			done_path[MAXPGPATH];
-	int				try_count;
+	PGresult *res;
+	char done_path[MAXPGPATH];
+	int try_count;
 
 	Assert(connection != NULL);
 
@@ -1163,18 +1163,18 @@ wait_for_archive(pgBackup *backup, const char *sql, int nParams,
 	{
 		get_lsn(res, &backup->tli, &backup->stop_lsn);
 		elog(DEBUG, "backup end point is (WAL file: %s, xrecoff: %s)",
-				PQgetvalue(res, 0, 0), PQgetvalue(res, 0, 1));
+			 PQgetvalue(res, 0, 0), PQgetvalue(res, 0, 1));
 	}
 
 	/* get filename from the result of pg_walfile_name_offset() */
 	elog(DEBUG, "waiting for %s is archived", PQgetvalue(res, 0, 0));
 	snprintf(done_path, lengthof(done_path),
-		"%s/pg_wal/archive_status/%s.done", pgdata, PQgetvalue(res, 0, 0));
+			 "%s/pg_wal/archive_status/%s.done", pgdata, PQgetvalue(res, 0, 0));
 
 	PQclear(res);
 
 	res = execute(TXID_CURRENT_SQL, 0, NULL);
-	if(backup != NULL)
+	if (backup != NULL)
 	{
 		get_xid(res, &backup->recovery_xid);
 		backup->recovery_time = time(NULL);
@@ -1187,18 +1187,18 @@ wait_for_archive(pgBackup *backup, const char *sql, int nParams,
 		sleep(1);
 		if (interrupted)
 			ereport(FATAL,
-				(errcode(ERROR_INTERRUPTED),
-				 errmsg("interrupted during waiting for WAL archiving")));
+					(errcode(ERROR_INTERRUPTED),
+					 errmsg("interrupted during waiting for WAL archiving")));
 		try_count++;
 		if (try_count > TIMEOUT_ARCHIVE)
 			ereport(ERROR,
-				(errcode(ERROR_ARCHIVE_FAILED),
-				 errmsg("switched WAL could not be archived in %d seconds",
-					TIMEOUT_ARCHIVE)));
+					(errcode(ERROR_ARCHIVE_FAILED),
+					 errmsg("switched WAL could not be archived in %d seconds",
+							TIMEOUT_ARCHIVE)));
 	}
 
 	elog(DEBUG, "WAL file containing backup end point is archived after waiting for %d seconds",
-			try_count);
+		 try_count);
 }
 
 /*
@@ -1218,15 +1218,15 @@ wait_for_archive(pgBackup *backup, const char *sql, int nParams,
 static parray *
 pg_backup_stop(pgBackup *backup)
 {
-	parray		   *result = parray_new();
-	pgFile		   *file;
-	PGresult	   *res;
-	char		   *backup_lsn;
-	char		   *backuplabel = NULL;
-	int				backuplabel_len;
-	char		   *tblspcmap = NULL;
-	int				tblspcmap_len;
-	const char	   *params[1];
+	parray *result = parray_new();
+	pgFile *file;
+	PGresult *res;
+	char *backup_lsn;
+	char *backuplabel = NULL;
+	int backuplabel_len;
+	char *tblspcmap = NULL;
+	int tblspcmap_len;
+	const char *params[1];
 
 	elog(DEBUG, "executing pg_backup_stop()");
 
@@ -1248,9 +1248,9 @@ pg_backup_stop(pgBackup *backup)
 
 	if (res == NULL || PQntuples(res) != 1 || PQnfields(res) != 3)
 		ereport(ERROR,
-			(errcode(ERROR_PG_COMMAND),
-			 errmsg("result of pg_backup_stop($1) is invalid: %s",
-				PQerrorMessage(connection))));
+				(errcode(ERROR_PG_COMMAND),
+				 errmsg("result of pg_backup_stop($1) is invalid: %s",
+						PQerrorMessage(connection))));
 
 	backup_lsn = PQgetvalue(res, 0, 0);
 	backuplabel = PQgetvalue(res, 0, 1);
@@ -1261,19 +1261,19 @@ pg_backup_stop(pgBackup *backup)
 	Assert(backuplabel_len > 0);
 	file = write_stop_backup_file(backup, backuplabel, backuplabel_len,
 								  PG_BACKUP_LABEL_FILE);
-	parray_append(result, (void *) file);
+	parray_append(result, (void *)file);
 
 	if (tblspcmap_len > 0)
 	{
 		file = write_stop_backup_file(backup, tblspcmap, tblspcmap_len,
 									  PG_TBLSPC_MAP_FILE);
-		parray_append(result, (void *) file);
+		parray_append(result, (void *)file);
 	}
 
 	params[0] = backup_lsn;
 	wait_for_archive(backup,
-		"SELECT * FROM pg_walfile_name_offset($1)",
-		1, params);
+					 "SELECT * FROM pg_walfile_name_offset($1)",
+					 1, params);
 
 	/* Done with the connection. */
 	disconnect();
@@ -1290,8 +1290,8 @@ pg_switch_wal(pgBackup *backup)
 	reconnect();
 
 	wait_for_archive(backup,
-		"SELECT * FROM pg_walfile_name_offset(pg_switch_wal())",
-		0, NULL);
+					 "SELECT * FROM pg_walfile_name_offset(pg_switch_wal())",
+					 0, NULL);
 
 	disconnect();
 }
@@ -1307,25 +1307,25 @@ get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 
 	if (res == NULL || PQntuples(res) != 1 || PQnfields(res) != 2)
 		ereport(ERROR,
-			(errcode(ERROR_PG_COMMAND),
-			 errmsg("result of pg_walfile_name_offset() is invalid: %s",
-				PQerrorMessage(connection))));
+				(errcode(ERROR_PG_COMMAND),
+				 errmsg("result of pg_walfile_name_offset() is invalid: %s",
+						PQerrorMessage(connection))));
 
 	/* get TimeLineID, LSN from result of pg_backup_stop() */
 	if (sscanf(PQgetvalue(res, 0, 0), "%08X%08X%08X",
-			timeline, &xlogid, &off_upper) != 3 ||
+			   timeline, &xlogid, &off_upper) != 3 ||
 		sscanf(PQgetvalue(res, 0, 1), "%u", &xrecoff) != 1)
 	{
 		ereport(ERROR,
-			(errcode(ERROR_PG_COMMAND),
-			 errmsg("result of pg_walfile_name_offset() is invalid: %s",
-				PQerrorMessage(connection))));
+				(errcode(ERROR_PG_COMMAND),
+				 errmsg("result of pg_walfile_name_offset() is invalid: %s",
+						PQerrorMessage(connection))));
 	}
 
 	Assert(wal_segment_size > 0);
-	xrecoff += off_upper << ((uint32) log2(wal_segment_size));
+	xrecoff += off_upper << ((uint32)log2(wal_segment_size));
 
-	*lsn = (XLogRecPtr) ((uint64) xlogid << 32) | xrecoff;
+	*lsn = (XLogRecPtr)((uint64)xlogid << 32) | xrecoff;
 	return;
 }
 
@@ -1335,18 +1335,18 @@ get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 static void
 get_xid(PGresult *res, uint32 *xid)
 {
-	if(res == NULL || PQntuples(res) != 1 || PQnfields(res) != 1)
+	if (res == NULL || PQntuples(res) != 1 || PQnfields(res) != 1)
 		ereport(ERROR,
-			(errcode(ERROR_PG_COMMAND),
-			 errmsg("result of txid_current() is invalid: %s",
-				PQerrorMessage(connection))));
+				(errcode(ERROR_PG_COMMAND),
+				 errmsg("result of txid_current() is invalid: %s",
+						PQerrorMessage(connection))));
 
-	if(sscanf(PQgetvalue(res, 0, 0), "%u", xid) != 1)
+	if (sscanf(PQgetvalue(res, 0, 0), "%u", xid) != 1)
 	{
 		ereport(ERROR,
-			(errcode(ERROR_PG_COMMAND),
-			 errmsg("result of txid_current() is invalid: %s",
-				PQerrorMessage(connection))));
+				(errcode(ERROR_PG_COMMAND),
+				 errmsg("result of txid_current() is invalid: %s",
+						PQerrorMessage(connection))));
 	}
 	elog(DEBUG, "current XID is %s", PQgetvalue(res, 0, 0));
 }
@@ -1404,10 +1404,10 @@ backup_files(const char *from_root,
 			 bool compress,
 			 const char *prefix)
 {
-	int				i;
-	int				num_skipped = 0;
-	struct timeval	tv;
-	bool			prev_file_not_found = false;
+	int i;
+	int num_skipped = 0;
+	struct timeval tv;
+	bool prev_file_not_found = false;
 
 	/* sort pathname ascending */
 	parray_qsort(files, pgFileComparePath);
@@ -1417,35 +1417,35 @@ backup_files(const char *from_root,
 	/* backup a file or create a directory */
 	for (i = 0; i < parray_num(files); i++)
 	{
-		int			ret;
-		struct stat	buf;
+		int ret;
+		struct stat buf;
 
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 
 		/* If current time is rewinded, abort this backup. */
-		if(tv.tv_sec < file->mtime)
+		if (tv.tv_sec < file->mtime)
 			ereport(FATAL,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("cannot take a backup"),
-				 errdetail("There is a file with future timestamp from system time.\n"
-						"Current system time may be rewound."),
-				 errhint("The file is %s.\n"
-						"If this is a database file, please retry with the full backup mode.\n"
-						"If this is a server log or archived WAL file, change the timestamp.",
-									file->path)));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("cannot take a backup"),
+					 errdetail("There is a file with future timestamp from system time.\n"
+							   "Current system time may be rewound."),
+					 errhint("The file is %s.\n"
+							 "If this is a database file, please retry with the full backup mode.\n"
+							 "If this is a server log or archived WAL file, change the timestamp.",
+							 file->path)));
 
 		/* check for interrupt */
 		if (interrupted)
 			ereport(FATAL,
-				(errcode(ERROR_INTERRUPTED),
-				 errmsg("interrupted during backup")));
+					(errcode(ERROR_INTERRUPTED),
+					 errmsg("interrupted during backup")));
 
-		/* For correct operation of incremental backup, 
-		 * initialize prev_file_not_found variable to false of 
+		/* For correct operation of incremental backup,
+		 * initialize prev_file_not_found variable to false of
 		 * checking to next backup files.
 		 */
 		prev_file_not_found = false;
-		
+
 		/* print progress in verbose mode */
 		if (verbose)
 		{
@@ -1453,11 +1453,11 @@ backup_files(const char *from_root,
 			{
 				char path[MAXPGPATH];
 				join_path_components(path, prefix, file->path + strlen(from_root) + 1);
-				printf(_("(%d/%lu) %s "), i + 1, (unsigned long) parray_num(files), path);
+				printf(_("(%d/%lu) %s "), i + 1, (unsigned long)parray_num(files), path);
 			}
 			else
-				printf(_("(%d/%lu) %s "), i + 1, (unsigned long) parray_num(files),
-					file->path + strlen(from_root) + 1);
+				printf(_("(%d/%lu) %s "), i + 1, (unsigned long)parray_num(files),
+					   file->path + strlen(from_root) + 1);
 		}
 
 		/* stat file to get file type, size and modify timestamp */
@@ -1478,9 +1478,9 @@ backup_files(const char *from_root,
 				if (verbose)
 					printf("\n");
 				ereport(ERROR,
-					(errcode(ERROR_SYSTEM),
-					 errmsg("could not stat \"%s\": %s",
-						file->path, strerror(errno))));
+						(errcode(ERROR_SYSTEM),
+						 errmsg("could not stat \"%s\": %s",
+								file->path, strerror(errno))));
 			}
 		}
 
@@ -1514,7 +1514,7 @@ backup_files(const char *from_root,
 
 					for (j = 0; j < parray_num(prev_files); j++)
 					{
-						pgFile *p = (pgFile *) parray_get(prev_files, j);
+						pgFile *p = (pgFile *)parray_get(prev_files, j);
 						char *prev_path;
 						char curr_path[MAXPGPATH];
 
@@ -1529,14 +1529,14 @@ backup_files(const char *from_root,
 				}
 				else
 				{
-					pgFile **p = (pgFile **) parray_bsearch(prev_files, file, pgFileComparePath);
+					pgFile **p = (pgFile **)parray_bsearch(prev_files, file, pgFileComparePath);
 					if (p)
 						prev_file = *p;
 				}
 
 				if (prev_file)
 				{
-					if(prev_file->mtime == file->mtime)
+					if (prev_file->mtime == file->mtime)
 					{
 						/* record as skipped file in file_xxx.txt */
 						file->write_size = BYTES_INVALID;
@@ -1569,9 +1569,9 @@ backup_files(const char *from_root,
 
 			/* copy the file into backup */
 			if (!(file->is_datafile
-					? backup_data_file(from_root, to_root, file, lsn, compress, prev_file_not_found)
-					: copy_file(from_root, to_root, file,
-								compress ? COMPRESSION : NO_COMPRESSION)))
+					  ? backup_data_file(from_root, to_root, file, lsn, compress, prev_file_not_found)
+					  : copy_file(from_root, to_root, file,
+								  compress ? COMPRESSION : NO_COMPRESSION)))
 			{
 				/* record as skipped file in file_xxx.txt */
 				file->write_size = BYTES_INVALID;
@@ -1586,28 +1586,27 @@ backup_files(const char *from_root,
 				/* print compression rate */
 				if (file->write_size != file->size)
 					printf(_("compressed %lu (%.2f%% of %lu)\n"),
-						(unsigned long) file->write_size,
-						100.0 * file->write_size / file->size,
-						(unsigned long) file->size);
+						   (unsigned long)file->write_size,
+						   100.0 * file->write_size / file->size,
+						   (unsigned long)file->size);
 				else
-					printf(_("copied %lu\n"), (unsigned long) file->write_size);
+					printf(_("copied %lu\n"), (unsigned long)file->write_size);
 
 				continue;
 			}
 
-show_progress:
+		show_progress:
 			/* print progress in non-verbose format */
 			if (progress)
 			{
 				fprintf(stderr, _("Processed %d of %lu files, skipped %d"),
-						i + 1, (unsigned long) parray_num(files), num_skipped);
+						i + 1, (unsigned long)parray_num(files), num_skipped);
 
-				if (i + 1 < (unsigned long) parray_num(files))
+				if (i + 1 < (unsigned long)parray_num(files))
 					fprintf(stderr, "\r");
 				else
 					fprintf(stderr, "\n");
 			}
-
 		}
 		else
 		{
@@ -1628,18 +1627,17 @@ delete_old_files(const char *root,
 				 int keep_days,
 				 bool is_arclog)
 {
-	int		i;
-	int		j;
-	int		file_num = 0;
-	char	*target_file;
-	char	*target_path;
-	time_t	tim;
-	time_t	days_threshold = 0;
-	struct	tm *ltm;
-	char 	files_str[100];
-	char 	days_str[100];
-	char	days_threshold_timestamp[20];
-
+	int i;
+	int j;
+	int file_num = 0;
+	char *target_file;
+	char *target_path;
+	time_t tim;
+	time_t days_threshold = 0;
+	struct tm *ltm;
+	char files_str[100];
+	char days_str[100];
+	char days_threshold_timestamp[20];
 
 	if (files == NULL)
 		return;
@@ -1660,13 +1658,13 @@ delete_old_files(const char *root,
 	/* delete files through the given conditions */
 	if (keep_files != KEEP_INFINITE && keep_days != KEEP_INFINITE)
 		elog(INFO, "start deleting old %s files from %s (keep files = %s, keep days = %s)",
-			target_file, target_path, files_str, days_str);
+			 target_file, target_path, files_str, days_str);
 	else if (keep_files != KEEP_INFINITE)
 		elog(INFO, "start deleting old %s files from %s (keep files = %s)",
-			target_file, target_path, files_str);
+			 target_file, target_path, files_str);
 	else if (keep_days != KEEP_INFINITE)
 		elog(INFO, "start deleting old %s files from %s (keep days = %s)",
-			target_file, target_path, days_str);
+			 target_file, target_path, days_str);
 	else
 	{
 		elog(DEBUG, "do not delete old %s files", target_file);
@@ -1674,13 +1672,13 @@ delete_old_files(const char *root,
 	}
 
 	/* calculate the threshold day from given keep_days. */
-	if ( keep_days != KEEP_INFINITE)
+	if (keep_days != KEEP_INFINITE)
 	{
 		tim = current.start_time - (keep_days * 60 * 60 * 24);
 		ltm = localtime(&tim);
 		ltm->tm_hour = 0;
-		ltm->tm_min  = 0;
-		ltm->tm_sec  = 0;
+		ltm->tm_min = 0;
+		ltm->tm_sec = 0;
 		days_threshold = mktime(ltm);
 		time2iso(days_threshold_timestamp, lengthof(days_threshold_timestamp), days_threshold);
 		elog(INFO, "the threshold timestamp calculated by keep days is \"%s\"", days_threshold_timestamp);
@@ -1689,7 +1687,7 @@ delete_old_files(const char *root,
 	parray_qsort(files, pgFileCompareMtime);
 	for (i = parray_num(files) - 1; i >= 0; i--)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 
 		elog(DEBUG, "checking \"%s\"", file->path);
 		/* Delete completed WALs only. */
@@ -1712,9 +1710,9 @@ delete_old_files(const char *root,
 			if (file_num <= keep_files)
 			{
 				ereport(DEBUG,
-					(errmsg("keep the file : \"%s\"", file->path),
-					 errdetail("This is the %d%s latest file.",
-						file_num, getCountSuffix(file_num))));
+						(errmsg("keep the file : \"%s\"", file->path),
+						 errdetail("This is the %d%s latest file.",
+								   file_num, getCountSuffix(file_num))));
 				continue;
 			}
 		}
@@ -1723,8 +1721,8 @@ delete_old_files(const char *root,
 			if (file->mtime >= days_threshold)
 			{
 				ereport(DEBUG,
-					(errmsg("keep the file : \"%s\"", file->path),
-					 errdetail("This is newer than the threshold \"%s\".", days_threshold_timestamp)));
+						(errmsg("keep the file : \"%s\"", file->path),
+						 errdetail("This is newer than the threshold \"%s\".", days_threshold_timestamp)));
 				continue;
 			}
 		}
@@ -1732,7 +1730,7 @@ delete_old_files(const char *root,
 		/* Now we found a file should be deleted. */
 		elog(INFO, ("delete \"%s\""), file->path + strlen(root) + 1);
 
-		file = (pgFile *) parray_remove(files, i);
+		file = (pgFile *)parray_remove(files, i);
 		/* delete corresponding backup history file if exists */
 		for (j = parray_num(files) - 1; j >= 0; j--)
 		{
@@ -1741,7 +1739,7 @@ delete_old_files(const char *root,
 			{
 				file2 = (pgFile *)parray_remove(files, j);
 				elog(INFO, "delete \"%s\"",
-						file2->path + strlen(root) + 1);
+					 file2->path + strlen(root) + 1);
 				if (!check)
 					pgFileDelete(file2);
 				pgFileFree(file2);
@@ -1767,7 +1765,7 @@ delete_online_wal_backup(void)
 	}
 
 	snprintf(work_path, lengthof(work_path), "%s/%s/%s", backup_path,
-		RESTORE_WORK_DIR, PG_XLOG_DIR);
+			 RESTORE_WORK_DIR, PG_XLOG_DIR);
 	/* don't delete root dir */
 	dir_list_file(files, work_path, NULL, true, false);
 	if (parray_num(files) == 0)
@@ -1776,10 +1774,10 @@ delete_online_wal_backup(void)
 		return;
 	}
 
-	parray_qsort(files, pgFileComparePathDesc);	/* delete from leaf */
+	parray_qsort(files, pgFileComparePathDesc); /* delete from leaf */
 	for (i = 0; i < parray_num(files); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 		if (verbose)
 			printf(_("delete \"%s\"\n"), file->path);
 		if (!check)
@@ -1808,7 +1806,7 @@ delete_arclog_link(void)
 	dir_list_file(files, arclog_path, NULL, false, false);
 	for (i = 0; i < parray_num(files); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(files, i);
+		pgFile *file = (pgFile *)parray_get(files, i);
 
 		if (!S_ISLNK(file->mode))
 			continue;
@@ -1818,9 +1816,9 @@ delete_arclog_link(void)
 
 		if (!check && remove(file->path) == -1)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not remove link \"%s\": %s", file->path,
-					strerror(errno))));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not remove link \"%s\": %s", file->path,
+							strerror(errno))));
 	}
 
 	parray_walk(files, pgFileFree);
@@ -1849,15 +1847,15 @@ execute_freeze(void)
 static void
 execute_unfreeze(void)
 {
-	int	i;
+	int i;
 
 	/* remove 'unfreeze' command from cleanup list */
 	for (i = 0; i < parray_num(cleanup_list); i++)
 	{
-		char	*mode;
+		char *mode;
 
-		mode = (char *) parray_get(cleanup_list, i);
-		if (strcmp(mode,SNAPSHOT_UNFREEZE) == 0)
+		mode = (char *)parray_get(cleanup_list, i);
+		if (strcmp(mode, SNAPSHOT_UNFREEZE) == 0)
 		{
 			parray_remove(cleanup_list, i);
 			break;
@@ -1889,14 +1887,14 @@ execute_split(parray *tblspc_list)
 static void
 execute_resync(void)
 {
-	int	i;
+	int i;
 
 	/* remove 'resync' command from cleanup list */
 	for (i = 0; i < parray_num(cleanup_list); i++)
 	{
 		char *mode;
 
-		mode = (char *) parray_get(cleanup_list, i);
+		mode = (char *)parray_get(cleanup_list, i);
 		if (strcmp(mode, SNAPSHOT_RESYNC) == 0)
 		{
 			parray_remove(cleanup_list, i);
@@ -1929,12 +1927,12 @@ execute_mount(parray *tblspcmp_list)
 static void
 execute_umount(void)
 {
-	int	i;
+	int i;
 
 	/* remove 'umount' command from cleanup list */
 	for (i = 0; i < parray_num(cleanup_list); i++)
 	{
-		char *mode = (char *) parray_get(cleanup_list, i);
+		char *mode = (char *)parray_get(cleanup_list, i);
 
 		if (strcmp(mode, SNAPSHOT_UMOUNT) == 0)
 		{
@@ -1954,24 +1952,24 @@ execute_umount(void)
 static void
 execute_script(const char *mode, bool is_cleanup, parray *output)
 {
-	char	 ss_script[MAXPGPATH];
-	char	 command[1024];
-	char	 fline[2048];
-	int		 num;
-	FILE	*out;
-	parray	*lines;
+	char ss_script[MAXPGPATH];
+	char command[1024];
+	char fline[2048];
+	int num;
+	FILE *out;
+	parray *lines;
 
 	/* obtain the path of snapshot-script. */
 	join_path_components(ss_script, backup_path, SNAPSHOT_SCRIPT_FILE);
 	snprintf(command, sizeof(command),
-		"%s %s %s", ss_script, mode, is_cleanup ? "cleanup" : "");
+			 "%s %s %s", ss_script, mode, is_cleanup ? "cleanup" : "");
 
 	/* execute snapshot-script */
 	out = popen(command, "r");
 	if (out == NULL)
 		ereport(ERROR,
-			(errcode(ERROR_SYSTEM),
-			 errmsg("could not execute snapshot-script: %s\n", strerror(errno))));
+				(errcode(ERROR_SYSTEM),
+				 errmsg("could not execute snapshot-script: %s\n", strerror(errno))));
 
 	/* read STDOUT and store into the array each line */
 	lines = parray_new();
@@ -1989,16 +1987,16 @@ execute_script(const char *mode, bool is_cleanup, parray *output)
 	 * if last element is not 'SUCCESS', that means ERROR.
 	 */
 	num = parray_num(lines);
-	if (num <= 0 || strcmp((char *) parray_get(lines, num - 1), "SUCCESS") != 0)
+	if (num <= 0 || strcmp((char *)parray_get(lines, num - 1), "SUCCESS") != 0)
 		is_cleanup ? elog(WARNING, _("snapshot-script failed: %s"), mode)
-					: ereport(ERROR,
-						(errcode(ERROR_SYSTEM),
-						 errmsg("snapshot-script failed: %s", mode)));
+				   : ereport(ERROR,
+							 (errcode(ERROR_SYSTEM),
+							  errmsg("snapshot-script failed: %s", mode)));
 
 	/* if output is not NULL, concat array. */
 	if (output)
 	{
-		parray_remove(lines, num -1);	/* remove last element, that is command status */
+		parray_remove(lines, num - 1); /* remove last element, that is command status */
 		parray_concat(output, lines);
 	}
 	/* if output is NULL, clear directory list */
@@ -2017,13 +2015,13 @@ execute_script(const char *mode, bool is_cleanup, parray *output)
 static void
 snapshot_cleanup(bool fatal, void *userdata)
 {
-	parray	*cleanup_list;
-	int		 i;
+	parray *cleanup_list;
+	int i;
 
 	/* Execute snapshot-script for cleanup */
-	cleanup_list = (parray *) userdata;
+	cleanup_list = (parray *)userdata;
 	for (i = parray_num(cleanup_list) - 1; i >= 0; i--)
-		execute_script((char *) parray_get(cleanup_list, i), true, NULL);
+		execute_script((char *)parray_get(cleanup_list, i), true, NULL);
 }
 
 /*
@@ -2032,8 +2030,8 @@ snapshot_cleanup(bool fatal, void *userdata)
 static void
 add_files(parray *files, const char *root, bool add_root, bool is_pgdata)
 {
-	parray	*list_file;
-	int		 i;
+	parray *list_file;
+	int i;
 
 	list_file = parray_new();
 
@@ -2043,7 +2041,7 @@ add_files(parray *files, const char *root, bool add_root, bool is_pgdata)
 	/* mark files that are possible datafile as 'datafile' */
 	for (i = 0; i < parray_num(list_file); i++)
 	{
-		pgFile *file = (pgFile *) parray_get(list_file, i);
+		pgFile *file = (pgFile *)parray_get(list_file, i);
 		char *relative;
 		char *fname;
 
@@ -2079,7 +2077,7 @@ add_files(parray *files, const char *root, bool add_root, bool is_pgdata)
 static int
 strCompare(const void *str1, const void *str2)
 {
-	return strcmp(*(char **) str1, *(char **) str2);
+	return strcmp(*(char **)str1, *(char **)str2);
 }
 
 /*
@@ -2088,8 +2086,8 @@ strCompare(const void *str1, const void *str2)
 static void
 create_file_list(parray *files, const char *root, const char *prefix, bool is_append)
 {
-	FILE	*fp;
-	char	 path[MAXPGPATH];
+	FILE *fp;
+	char path[MAXPGPATH];
 
 	if (!check)
 	{
@@ -2098,9 +2096,9 @@ create_file_list(parray *files, const char *root, const char *prefix, bool is_ap
 		fp = fopen(path, is_append ? "at" : "wt");
 		if (fp == NULL)
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not open file list \"%s\": %s", path,
-					strerror(errno))));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not open file list \"%s\": %s", path,
+							strerror(errno))));
 		dir_print_file_list(fp, files, root, prefix);
 		fclose(fp);
 	}
@@ -2113,14 +2111,14 @@ create_file_list(parray *files, const char *root, const char *prefix, bool is_ap
 static void
 init_data_checksum_enabled()
 {
-	char				controlFilePath[MAXPGPATH];
-	ControlFileData    *controlFile;
+	char controlFilePath[MAXPGPATH];
+	ControlFileData *controlFile;
 
 	/* Read the value of the setting from the control file in PGDATA. */
 	snprintf(controlFilePath, MAXPGPATH, "%s/global/pg_control", pgdata);
 	if (fileExists(controlFilePath))
 	{
-		bool	crc_ok;
+		bool crc_ok;
 
 		controlFile = get_controlfile(pgdata, &crc_ok);
 		if (!crc_ok)
@@ -2128,7 +2126,7 @@ init_data_checksum_enabled()
 			ereport(WARNING,
 					(errmsg("control file appears to be corrupt"),
 					 errdetail("Calculated CRC checksum does not match value stored in file.")));
-			data_checksum_enabled = false;	/* can't really do anything */
+			data_checksum_enabled = false; /* can't really do anything */
 		}
 		else
 			data_checksum_enabled = controlFile->data_checksum_version > 0;
@@ -2137,8 +2135,8 @@ init_data_checksum_enabled()
 	}
 	else
 		elog(WARNING, _("pg_controldata file \"%s\" does not exist"),
-						controlFilePath);
+			 controlFilePath);
 
 	elog(DEBUG, "data checksum %s on the initially configured database",
-						data_checksum_enabled ? "enabled" : "disabled");
+		 data_checksum_enabled ? "enabled" : "disabled");
 }

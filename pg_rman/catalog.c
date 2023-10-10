@@ -25,33 +25,32 @@
 
 static pgBackup *catalog_read_ini(const char *path);
 
-#define BOOL_TO_STR(val)	((val) ? "true" : "false")
+#define BOOL_TO_STR(val) ((val) ? "true" : "false")
 
 static int lock_fd = -1;
 
 /*
  * system_identifier as read from the control file of the database cluster
  */
-uint64	system_identifier = 0;
+uint64 system_identifier = 0;
 
 /*
  * Lock of the catalog with pg_rman.ini file and return 0.
  * If the lock is held by another one, return 1 immediately.
  */
-int
-catalog_lock(void)
+int catalog_lock(void)
 {
-	int		ret;
-	char	id_path[MAXPGPATH];
+	int ret;
+	char id_path[MAXPGPATH];
 
 	join_path_components(id_path, backup_path, PG_RMAN_INI_FILE);
 	lock_fd = open(id_path, O_RDWR);
 	if (lock_fd == -1)
 		ereport(ERROR,
-			((errno == ENOENT ? errcode(ERROR_CORRUPTED) : errcode(ERROR_SYSTEM)),
-			 errmsg("could not open file \"%s\": %s", id_path, strerror(errno))));
+				((errno == ENOENT ? errcode(ERROR_CORRUPTED) : errcode(ERROR_SYSTEM)),
+				 errmsg("could not open file \"%s\": %s", id_path, strerror(errno))));
 
-	ret = flock(lock_fd, LOCK_EX | LOCK_NB);	/* non-blocking */
+	ret = flock(lock_fd, LOCK_EX | LOCK_NB); /* non-blocking */
 	if (ret == -1)
 	{
 		if (errno == EWOULDBLOCK)
@@ -65,9 +64,9 @@ catalog_lock(void)
 
 			close(lock_fd);
 			ereport(ERROR,
-				(errcode(ERROR_SYSTEM),
-				 errmsg("could not lock file \"%s\": %s", id_path,
-					strerror(errno_tmp))));
+					(errcode(ERROR_SYSTEM),
+					 errmsg("could not lock file \"%s\": %s", id_path,
+							strerror(errno_tmp))));
 		}
 	}
 
@@ -77,8 +76,7 @@ catalog_lock(void)
 /*
  * Release catalog lock.
  */
-void
-catalog_unlock(void)
+void catalog_unlock(void)
 {
 	close(lock_fd);
 	lock_fd = -1;
@@ -91,8 +89,8 @@ catalog_unlock(void)
 pgBackup *
 catalog_get_backup(time_t timestamp)
 {
-	pgBackup	tmp;
-	char		ini_path[MAXPGPATH];
+	pgBackup tmp;
+	char ini_path[MAXPGPATH];
 
 	tmp.start_time = timestamp;
 	pgBackupGetPath(&tmp, ini_path, lengthof(ini_path), BACKUP_INI_FILE);
@@ -107,8 +105,8 @@ IsDir(const char *dirpath, const DIR *dir, const struct dirent *ent)
 	/* Optimization for VC++ on Windows. */
 	return (dir->dd_dta.attrib & FILE_ATTRIBUTE_DIRECTORY) != 0;
 #else
-	char		path[MAXPGPATH];
-	struct stat	st;
+	char path[MAXPGPATH];
+	struct stat st;
 
 #if defined(_DIRENT_HAVE_D_TYPE)
 	/*
@@ -136,19 +134,19 @@ IsDir(const char *dirpath, const DIR *dir, const struct dirent *ent)
 parray *
 catalog_get_backup_list(const pgBackupRange *range)
 {
-	const pgBackupRange range_all = { 0, 0 };
-	DIR			   *date_dir = NULL;
-	struct dirent  *date_ent = NULL;
-	DIR			   *time_dir = NULL;
-	struct dirent  *time_ent = NULL;
-	char			date_path[MAXPGPATH];
-	parray		   *backups = NULL;
-	pgBackup	   *backup = NULL;
-	struct tm	   *tm;
-	char			begin_date[100];
-	char			begin_time[100];
-	char			end_date[100];
-	char			end_time[100];
+	const pgBackupRange range_all = {0, 0};
+	DIR *date_dir = NULL;
+	struct dirent *date_ent = NULL;
+	DIR *time_dir = NULL;
+	struct dirent *time_ent = NULL;
+	char date_path[MAXPGPATH];
+	parray *backups = NULL;
+	pgBackup *backup = NULL;
+	struct tm *tm;
+	char begin_date[100];
+	char begin_time[100];
+	char end_date[100];
+	char end_time[100];
 
 	if (range == NULL)
 		range = &range_all;
@@ -166,7 +164,7 @@ catalog_get_backup_list(const pgBackupRange *range)
 	if (date_dir == NULL)
 	{
 		elog(WARNING, _("could not open directory \"%s\": %s"), backup_path,
-			strerror(errno));
+			 strerror(errno));
 		goto err_proc;
 	}
 
@@ -188,8 +186,8 @@ catalog_get_backup_list(const pgBackupRange *range)
 
 		/* If the date is out of range, skip it. */
 		if (pgBackupRangeIsValid(range) &&
-				(strcmp(begin_date, date_ent->d_name) > 0 ||
-								strcmp(end_date, date_ent->d_name) < 0))
+			(strcmp(begin_date, date_ent->d_name) > 0 ||
+			 strcmp(end_date, date_ent->d_name) < 0))
 			continue;
 
 		/* open subdirectory (date directory) and search time directory */
@@ -198,7 +196,7 @@ catalog_get_backup_list(const pgBackupRange *range)
 		if (time_dir == NULL)
 		{
 			elog(WARNING, _("could not open directory \"%s\": %s"),
-				date_ent->d_name, strerror(errno));
+				 date_ent->d_name, strerror(errno));
 			goto err_proc;
 		}
 		for (; (time_ent = readdir(time_dir)) != NULL; errno = 0)
@@ -211,13 +209,13 @@ catalog_get_backup_list(const pgBackupRange *range)
 
 			/* If the time is out of range, skip it. */
 			if (pgBackupRangeIsValid(range) &&
-					(strcmp(begin_time, time_ent->d_name) > 0 ||
-									strcmp(end_time, time_ent->d_name) < 0))
+				(strcmp(begin_time, time_ent->d_name) > 0 ||
+				 strcmp(end_time, time_ent->d_name) < 0))
 				continue;
 
 			/* read backup information from backup.ini */
 			snprintf(ini_path, MAXPGPATH, "%s/%s/%s", date_path,
-				time_ent->d_name, BACKUP_INI_FILE);
+					 time_ent->d_name, BACKUP_INI_FILE);
 			backup = catalog_read_ini(ini_path);
 			/* ignore corrupted backup */
 			if (backup)
@@ -229,7 +227,7 @@ catalog_get_backup_list(const pgBackupRange *range)
 		if (errno && errno != ENOENT)
 		{
 			elog(WARNING, _("could not read date directory \"%s\": %s"),
-				date_ent->d_name, strerror(errno));
+				 date_ent->d_name, strerror(errno));
 			goto err_proc;
 		}
 		closedir(time_dir);
@@ -238,7 +236,7 @@ catalog_get_backup_list(const pgBackupRange *range)
 	if (errno)
 	{
 		elog(WARNING, _("could not read backup root directory \"%s\": %s"),
-			backup_path, strerror(errno));
+			 backup_path, strerror(errno));
 		goto err_proc;
 	}
 
@@ -268,16 +266,16 @@ err_proc:
 pgBackup *
 catalog_get_last_data_backup(parray *backup_list)
 {
-	int			i;
-	pgBackup   *backup = NULL;
+	int i;
+	pgBackup *backup = NULL;
 
 	/* backup_list is sorted in order of descending ID */
 	for (i = 0; i < parray_num(backup_list); i++)
 	{
-		backup = (pgBackup *) parray_get(backup_list, i);
+		backup = (pgBackup *)parray_get(backup_list, i);
 
 		/* we need completed database backup */
-		if (backup -> status == BACKUP_STATUS_OK && HAVE_DATABASE(backup))
+		if (backup->status == BACKUP_STATUS_OK && HAVE_DATABASE(backup))
 			return backup;
 	}
 
@@ -290,13 +288,13 @@ catalog_get_last_data_backup(parray *backup_list)
 pgBackup *
 catalog_get_last_arclog_backup(parray *backup_list)
 {
-	int			i;
-	pgBackup   *backup = NULL;
+	int i;
+	pgBackup *backup = NULL;
 
 	/* backup_list is sorted in order of descending ID */
 	for (i = 0; i < parray_num(backup_list); i++)
 	{
-		backup = (pgBackup *) parray_get(backup_list, i);
+		backup = (pgBackup *)parray_get(backup_list, i);
 
 		/* we need completed archived WAL backup */
 		if (backup->status == BACKUP_STATUS_OK && HAVE_ARCLOG(backup))
@@ -312,13 +310,13 @@ catalog_get_last_arclog_backup(parray *backup_list)
 pgBackup *
 catalog_get_last_srvlog_backup(parray *backup_list)
 {
-	int			i;
-	pgBackup   *backup = NULL;
+	int i;
+	pgBackup *backup = NULL;
 
 	/* backup_list is sorted in order of descending ID */
 	for (i = 0; i < parray_num(backup_list); i++)
 	{
-		backup = (pgBackup *) parray_get(backup_list, i);
+		backup = (pgBackup *)parray_get(backup_list, i);
 
 		/* we need completed serverlog backup */
 		if (backup->status == BACKUP_STATUS_OK && backup->with_serverlog)
@@ -329,12 +327,11 @@ catalog_get_last_srvlog_backup(parray *backup_list)
 }
 
 /* create backup directory in $BACKUP_PATH */
-int
-pgBackupCreateDir(pgBackup *backup)
+int pgBackupCreateDir(pgBackup *backup)
 {
-	int		i;
-	char	path[MAXPGPATH];
-	char   *subdirs[] = { DATABASE_DIR, ARCLOG_DIR, SRVLOG_DIR, NULL };
+	int i;
+	char path[MAXPGPATH];
+	char *subdirs[] = {DATABASE_DIR, ARCLOG_DIR, SRVLOG_DIR, NULL};
 
 	pgBackupGetPath(backup, path, lengthof(path), NULL);
 	dir_create_dir(path, DIR_PERMISSION);
@@ -352,10 +349,9 @@ pgBackupCreateDir(pgBackup *backup)
 /*
  * Write configuration section of backup.in to stream "out".
  */
-void
-pgBackupWriteConfigSection(FILE *out, pgBackup *backup)
+void pgBackupWriteConfigSection(FILE *out, pgBackup *backup)
 {
-	static const char *modes[] = { "", "ARCHIVE", "INCREMENTAL", "FULL"};
+	static const char *modes[] = {"", "ARCHIVE", "INCREMENTAL", "FULL"};
 
 	fprintf(out, "# configuration\n");
 
@@ -368,25 +364,24 @@ pgBackupWriteConfigSection(FILE *out, pgBackup *backup)
 /*
  * Write result section of backup.in to stream "out".
  */
-void
-pgBackupWriteResultSection(FILE *out, pgBackup *backup)
+void pgBackupWriteResultSection(FILE *out, pgBackup *backup)
 {
 	char timestamp[20];
-	uint32	start_xlogid, start_xrecoff;
-	uint32	stop_xlogid, stop_xrecoff;
+	uint32 start_xlogid, start_xrecoff;
+	uint32 stop_xlogid, stop_xrecoff;
 
 	fprintf(out, "# result\n");
 	fprintf(out, "TIMELINEID=%d\n", backup->tli);
 
-	start_xlogid = (uint32) (backup->start_lsn >> 32);
-	start_xrecoff = (uint32) backup->start_lsn;
-	stop_xlogid = (uint32) (backup->stop_lsn >> 32);
-	stop_xrecoff = (uint32) backup->stop_lsn;
+	start_xlogid = (uint32)(backup->start_lsn >> 32);
+	start_xrecoff = (uint32)backup->start_lsn;
+	stop_xlogid = (uint32)(backup->stop_lsn >> 32);
+	stop_xrecoff = (uint32)backup->stop_lsn;
 
 	fprintf(out, "START_LSN=%x/%08x\n",
-					start_xlogid, start_xrecoff);
+			start_xlogid, start_xrecoff);
 	fprintf(out, "STOP_LSN=%x/%08x\n",
-					stop_xlogid, stop_xrecoff);
+			stop_xlogid, stop_xrecoff);
 
 	time2iso(timestamp, lengthof(timestamp), backup->start_time);
 	fprintf(out, "START_TIME='%s'\n", timestamp);
@@ -412,7 +407,7 @@ pgBackupWriteResultSection(FILE *out, pgBackup *backup)
 				backup->read_data_bytes);
 	if (backup->read_arclog_bytes != BYTES_INVALID)
 		fprintf(out, "READ_ARCLOG_BYTES=" INT64_FORMAT "\n",
-			backup->read_arclog_bytes);
+				backup->read_arclog_bytes);
 	if (backup->read_srvlog_bytes != BYTES_INVALID)
 		fprintf(out, "READ_SRVLOG_BYTES=" INT64_FORMAT "\n",
 				backup->read_srvlog_bytes);
@@ -427,19 +422,18 @@ pgBackupWriteResultSection(FILE *out, pgBackup *backup)
 }
 
 /* create backup.ini */
-void
-pgBackupWriteIni(pgBackup *backup)
+void pgBackupWriteIni(pgBackup *backup)
 {
-	FILE   *fp = NULL;
-	char	ini_path[MAXPGPATH];
+	FILE *fp = NULL;
+	char ini_path[MAXPGPATH];
 
 	pgBackupGetPath(backup, ini_path, lengthof(ini_path), BACKUP_INI_FILE);
 	fp = fopen(ini_path, "wt");
 	if (fp == NULL)
 		ereport(ERROR,
-			(errcode(ERROR_SYSTEM),
-			 errmsg("could not open INI file \"%s\": %s", ini_path,
-				strerror(errno))));
+				(errcode(ERROR_SYSTEM),
+				 errmsg("could not open INI file \"%s\": %s", ini_path,
+						strerror(errno))));
 
 	/* configuration section */
 	pgBackupWriteConfigSection(fp, backup);
@@ -458,36 +452,35 @@ pgBackupWriteIni(pgBackup *backup)
 static pgBackup *
 catalog_read_ini(const char *path)
 {
-	pgBackup   *backup;
-	char	   *backup_mode = NULL;
-	char	   *start_lsn = NULL;
-	char	   *stop_lsn = NULL;
-	char	   *status = NULL;
-	int			i;
+	pgBackup *backup;
+	char *backup_mode = NULL;
+	char *start_lsn = NULL;
+	char *stop_lsn = NULL;
+	char *status = NULL;
+	int i;
 
 	pgut_option options[] =
-	{
-		{ 's', 0, "backup-mode"			, NULL, SOURCE_ENV },
-		{ 'b', 0, "with-serverlog"		, NULL, SOURCE_ENV },
-		{ 'b', 0, "compress-data"		, NULL, SOURCE_ENV },
-		{ 'b', 0, "full-backup-on-error"		, NULL, SOURCE_ENV },
-		{ 'u', 0, "timelineid"			, NULL, SOURCE_ENV },
-		{ 's', 0, "start-lsn"			, NULL, SOURCE_ENV },
-		{ 's', 0, "stop-lsn"			, NULL, SOURCE_ENV },
-		{ 't', 0, "start-time"			, NULL, SOURCE_ENV },
-		{ 't', 0, "end-time"			, NULL, SOURCE_ENV },
-		{ 'u', 0, "recovery-xid"				, NULL, SOURCE_ENV },
-		{ 't', 0, "recovery-time"				, NULL, SOURCE_ENV },
-		{ 'I', 0, "total-data-bytes"	, NULL, SOURCE_ENV },
-		{ 'I', 0, "read-data-bytes"		, NULL, SOURCE_ENV },
-		{ 'I', 0, "read-arclog-bytes"	, NULL, SOURCE_ENV },
-		{ 'I', 0, "read-srvlog-bytes"	, NULL, SOURCE_ENV },
-		{ 'I', 0, "write-bytes"			, NULL, SOURCE_ENV },
-		{ 'u', 0, "block-size"			, NULL, SOURCE_ENV },
-		{ 'u', 0, "xlog-block-size"		, NULL, SOURCE_ENV },
-		{ 's', 0, "status"				, NULL, SOURCE_ENV },
-		{ 0 }
-	};
+		{
+			{'s', 0, "backup-mode", NULL, SOURCE_ENV},
+			{'b', 0, "with-serverlog", NULL, SOURCE_ENV},
+			{'b', 0, "compress-data", NULL, SOURCE_ENV},
+			{'b', 0, "full-backup-on-error", NULL, SOURCE_ENV},
+			{'u', 0, "timelineid", NULL, SOURCE_ENV},
+			{'s', 0, "start-lsn", NULL, SOURCE_ENV},
+			{'s', 0, "stop-lsn", NULL, SOURCE_ENV},
+			{'t', 0, "start-time", NULL, SOURCE_ENV},
+			{'t', 0, "end-time", NULL, SOURCE_ENV},
+			{'u', 0, "recovery-xid", NULL, SOURCE_ENV},
+			{'t', 0, "recovery-time", NULL, SOURCE_ENV},
+			{'I', 0, "total-data-bytes", NULL, SOURCE_ENV},
+			{'I', 0, "read-data-bytes", NULL, SOURCE_ENV},
+			{'I', 0, "read-arclog-bytes", NULL, SOURCE_ENV},
+			{'I', 0, "read-srvlog-bytes", NULL, SOURCE_ENV},
+			{'I', 0, "write-bytes", NULL, SOURCE_ENV},
+			{'u', 0, "block-size", NULL, SOURCE_ENV},
+			{'u', 0, "xlog-block-size", NULL, SOURCE_ENV},
+			{'s', 0, "status", NULL, SOURCE_ENV},
+			{0}};
 
 	if (access(path, F_OK) != 0)
 		return NULL;
@@ -530,7 +523,7 @@ catalog_read_ini(const char *path)
 		uint32 xlogid, xrecoff;
 
 		if (sscanf(start_lsn, "%X/%X", &xlogid, &xrecoff) == 2)
-			backup->start_lsn = (XLogRecPtr) ((uint64) xlogid << 32) | xrecoff;
+			backup->start_lsn = (XLogRecPtr)((uint64)xlogid << 32) | xrecoff;
 		else
 			elog(WARNING, _("invalid START_LSN \"%s\""), start_lsn);
 		free(start_lsn);
@@ -541,7 +534,7 @@ catalog_read_ini(const char *path)
 		uint32 xlogid, xrecoff;
 
 		if (sscanf(stop_lsn, "%X/%X", &xlogid, &xrecoff) == 2)
-			backup->stop_lsn = (XLogRecPtr) ((uint64) xlogid << 32) | xrecoff;
+			backup->stop_lsn = (XLogRecPtr)((uint64)xlogid << 32) | xrecoff;
 		else
 			elog(WARNING, _("invalid STOP_LSN \"%s\""), stop_lsn);
 		free(stop_lsn);
@@ -575,9 +568,12 @@ BackupMode
 parse_backup_mode(const char *value, int elevel)
 {
 	const char *v = value;
-	size_t		len;
+	size_t len;
 
-	while (IsSpace(*v)) { v++; }
+	while (IsSpace(*v))
+	{
+		v++;
+	}
 	len = strlen(v);
 
 	if (len > 0 && pg_strncasecmp("full", v, len) == 0)
@@ -589,8 +585,8 @@ parse_backup_mode(const char *value, int elevel)
 
 	if (elevel >= ERROR)
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("invalid backup-mode \"%s\"", value)));
+				(errcode(ERROR_ARGS),
+				 errmsg("invalid backup-mode \"%s\"", value)));
 	else
 		elog(elevel, "invalid backup-mode \"%s\"", value);
 
@@ -598,15 +594,13 @@ parse_backup_mode(const char *value, int elevel)
 }
 
 /* free pgBackup object */
-void
-pgBackupFree(void *backup)
+void pgBackupFree(void *backup)
 {
 	free(backup);
 }
 
 /* Compare two pgBackup with their IDs (start time) in ascending order */
-int
-pgBackupCompareId(const void *l, const void *r)
+int pgBackupCompareId(const void *l, const void *r)
 {
 	pgBackup *lp = *(pgBackup **)l;
 	pgBackup *rp = *(pgBackup **)r;
@@ -620,8 +614,7 @@ pgBackupCompareId(const void *l, const void *r)
 }
 
 /* Compare two pgBackup with their IDs in descending order */
-int
-pgBackupCompareIdDesc(const void *l, const void *r)
+int pgBackupCompareIdDesc(const void *l, const void *r)
 {
 	return -pgBackupCompareId(l, r);
 }
@@ -630,11 +623,10 @@ pgBackupCompareIdDesc(const void *l, const void *r)
  * Construct absolute path of the backup directory.
  * If subdir is not NULL, it will be appended after the path.
  */
-void
-pgBackupGetPath(const pgBackup *backup, char *path, size_t len, const char *subdir)
+void pgBackupGetPath(const pgBackup *backup, char *path, size_t len, const char *subdir)
 {
-	char		datetime[20];
-	struct tm  *tm;
+	char datetime[20];
+	struct tm *tm;
 
 	/* generate $BACKUP_PATH/date/time path */
 	tm = localtime(&backup->start_time);
@@ -645,8 +637,7 @@ pgBackupGetPath(const pgBackup *backup, char *path, size_t len, const char *subd
 		snprintf(path, len, "%s/%s", backup_path, datetime);
 }
 
-void
-catalog_init_config(pgBackup *backup)
+void catalog_init_config(pgBackup *backup)
 {
 	backup->backup_mode = BACKUP_MODE_INVALID;
 	backup->with_serverlog = false;
@@ -654,11 +645,11 @@ catalog_init_config(pgBackup *backup)
 	backup->full_backup_on_error = false;
 	backup->status = BACKUP_STATUS_INVALID;
 	backup->tli = 0;
-	backup->start_lsn = backup->stop_lsn = (XLogRecPtr) 0;
-	backup->start_time = (time_t) 0;
-	backup->end_time = (time_t) 0;
+	backup->start_lsn = backup->stop_lsn = (XLogRecPtr)0;
+	backup->start_time = (time_t)0;
+	backup->end_time = (time_t)0;
 	backup->recovery_xid = 0;
-	backup->recovery_time = (time_t) 0;
+	backup->recovery_time = (time_t)0;
 	backup->total_data_bytes = BYTES_INVALID;
 	backup->read_data_bytes = BYTES_INVALID;
 	backup->read_arclog_bytes = BYTES_INVALID;
@@ -666,17 +657,16 @@ catalog_init_config(pgBackup *backup)
 	backup->write_bytes = BYTES_INVALID;
 }
 
-void
-check_system_identifier()
+void check_system_identifier()
 {
-	FILE   *fp;
-	char	path[MAXPGPATH];
-	char	buf[1024];
-	char	key[1024];
-	char	value[1024];
-	uint64	controlfile_system_identifier;
+	FILE *fp;
+	char path[MAXPGPATH];
+	char buf[1024];
+	char key[1024];
+	char value[1024];
+	uint64 controlfile_system_identifier;
 	ControlFileData *controlFile;
-	bool	crc_ok;
+	bool crc_ok;
 
 	/* get system identifier of backup configuration */
 	join_path_components(path, backup_path, SYSTEM_IDENTIFIER_FILE);
@@ -684,14 +674,14 @@ check_system_identifier()
 
 	if (fp == NULL)
 		ereport(ERROR,
-			(errcode(ERROR_SYSTEM),
-			 errmsg("could not open system identifier file \"%s\"", path)));
+				(errcode(ERROR_SYSTEM),
+				 errmsg("could not open system identifier file \"%s\"", path)));
 
 	while (fgets(buf, lengthof(buf), fp) != NULL)
 	{
-		size_t      i;
+		size_t i;
 		for (i = strlen(buf); i > 0 && IsSpace(buf[i - 1]); i--)
-		buf[i - 1] = '\0';
+			buf[i - 1] = '\0';
 		if (parse_pair(buf, key, value))
 		{
 			elog(DEBUG, "the initially configured target database : %s = %s", key, value);
@@ -712,14 +702,14 @@ check_system_identifier()
 	controlfile_system_identifier = controlFile->system_identifier;
 	pg_free(controlFile);
 	elog(DEBUG, "the system identifier of current target database : " UINT64_FORMAT,
-				controlfile_system_identifier);
+		 controlfile_system_identifier);
 
 	if (controlfile_system_identifier != system_identifier)
 		ereport(ERROR,
-			(errcode(ERROR_SYSTEM),
-			 errmsg("could not start backup"),
-			 errdetail("system identifier of target database is different"
-				" from the one of initially configured database")));
+				(errcode(ERROR_SYSTEM),
+				 errmsg("could not start backup"),
+				 errdetail("system identifier of target database is different"
+						   " from the one of initially configured database")));
 	else
 		elog(DEBUG, "the backup target database is the same as initial configured one.");
 }
@@ -728,14 +718,14 @@ check_system_identifier()
 TimeLineID
 get_current_timeline(void)
 {
-	TimeLineID	result = 0;
-	char		ControlFilePath[MAXPGPATH];
+	TimeLineID result = 0;
+	char ControlFilePath[MAXPGPATH];
 	ControlFileData *controlFile;
 
 	snprintf(ControlFilePath, MAXPGPATH, "%s/global/pg_control", pgdata);
 	if (fileExists(ControlFilePath))
 	{
-		bool	crc_ok;
+		bool crc_ok;
 
 		controlFile = get_controlfile(pgdata, &crc_ok);
 
@@ -753,7 +743,7 @@ get_current_timeline(void)
 	}
 	else
 		elog(WARNING, _("pg_controldata file \"%s\" does not exist"),
-						ControlFilePath);
+			 ControlFilePath);
 
 	return result;
 }
