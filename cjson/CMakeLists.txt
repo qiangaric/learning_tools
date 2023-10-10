@@ -20,9 +20,12 @@ link_directories(${GLIB_LIBRARY_DIRS})
 # set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 # find_package(GLIB2)
 
+# set(CMAKE_C_FLAGS "-std=c99")
 set(CMAKE_C_FLAGS "-std=c99")
-
+# set(CMAKE_C_FLAGS_DEBUG " ${CMAKE_C_FLAGS_DEBUG} -O0 -g -ggdb  -Wall  -mavx2 -maes -msse -mssse3 -mavx")
+set(CMAKE_BUILD_TYPE "Debug")
 option(BUILD_DOCS "Build the documentation" ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -Wall -g -ggdb")
 
 
 #ÏîÄ¿Ãû³Æ 

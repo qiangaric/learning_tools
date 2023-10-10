@@ -38,10 +38,10 @@ EQUALS = =
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /pgdata/projetcs/cJSON
+CMAKE_SOURCE_DIR = /pgdata/projetcs/cJSON/cjson
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /pgdata/projetcs/cJSON/build
+CMAKE_BINARY_DIR = /pgdata/projetcs/cJSON/cjson/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/test.dir/depend.make
@@ -54,17 +54,17 @@ include CMakeFiles/test.dir/flags.make
 
 CMakeFiles/test.dir/example.c.o: CMakeFiles/test.dir/flags.make
 CMakeFiles/test.dir/example.c.o: ../example.c
-	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/cjson/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/test.dir/example.c.o"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test.dir/example.c.o   -c /pgdata/projetcs/cJSON/example.c
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test.dir/example.c.o   -c /pgdata/projetcs/cJSON/cjson/example.c
 
 CMakeFiles/test.dir/example.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/example.c.i"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -E /pgdata/projetcs/cJSON/example.c > CMakeFiles/test.dir/example.c.i
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -E /pgdata/projetcs/cJSON/cjson/example.c > CMakeFiles/test.dir/example.c.i
 
 CMakeFiles/test.dir/example.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/example.c.s"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -S /pgdata/projetcs/cJSON/example.c -o CMakeFiles/test.dir/example.c.s
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -S /pgdata/projetcs/cJSON/cjson/example.c -o CMakeFiles/test.dir/example.c.s
 
 CMakeFiles/test.dir/example.c.o.requires:
 .PHONY : CMakeFiles/test.dir/example.c.o.requires
@@ -77,17 +77,17 @@ CMakeFiles/test.dir/example.c.o.provides.build: CMakeFiles/test.dir/example.c.o
 
 CMakeFiles/test.dir/cJson.c.o: CMakeFiles/test.dir/flags.make
 CMakeFiles/test.dir/cJson.c.o: ../cJson.c
-	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/build/CMakeFiles $(CMAKE_PROGRESS_2)
+	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/cjson/build/CMakeFiles $(CMAKE_PROGRESS_2)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/test.dir/cJson.c.o"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test.dir/cJson.c.o   -c /pgdata/projetcs/cJSON/cJson.c
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test.dir/cJson.c.o   -c /pgdata/projetcs/cJSON/cjson/cJson.c
 
 CMakeFiles/test.dir/cJson.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/cJson.c.i"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -E /pgdata/projetcs/cJSON/cJson.c > CMakeFiles/test.dir/cJson.c.i
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -E /pgdata/projetcs/cJSON/cjson/cJson.c > CMakeFiles/test.dir/cJson.c.i
 
 CMakeFiles/test.dir/cJson.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/cJson.c.s"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -S /pgdata/projetcs/cJSON/cJson.c -o CMakeFiles/test.dir/cJson.c.s
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -S /pgdata/projetcs/cJSON/cjson/cJson.c -o CMakeFiles/test.dir/cJson.c.s
 
 CMakeFiles/test.dir/cJson.c.o.requires:
 .PHONY : CMakeFiles/test.dir/cJson.c.o.requires
@@ -126,6 +126,6 @@ CMakeFiles/test.dir/clean:
 .PHONY : CMakeFiles/test.dir/clean
 
 CMakeFiles/test.dir/depend:
-	cd /pgdata/projetcs/cJSON/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /pgdata/projetcs/cJSON /pgdata/projetcs/cJSON /pgdata/projetcs/cJSON/build /pgdata/projetcs/cJSON/build /pgdata/projetcs/cJSON/build/CMakeFiles/test.dir/DependInfo.cmake --color=$(COLOR)
+	cd /pgdata/projetcs/cJSON/cjson/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /pgdata/projetcs/cJSON/cjson /pgdata/projetcs/cJSON/cjson /pgdata/projetcs/cJSON/cjson/build /pgdata/projetcs/cJSON/cjson/build /pgdata/projetcs/cJSON/cjson/build/CMakeFiles/test.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/test.dir/depend
 

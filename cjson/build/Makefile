@@ -42,10 +42,10 @@ EQUALS = =
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /pgdata/projetcs/cJSON
+CMAKE_SOURCE_DIR = /pgdata/projetcs/cJSON/cjson
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /pgdata/projetcs/cJSON/build
+CMAKE_BINARY_DIR = /pgdata/projetcs/cJSON/cjson/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -72,9 +72,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/build/CMakeFiles /pgdata/projetcs/cJSON/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/cjson/build/CMakeFiles /pgdata/projetcs/cJSON/cjson/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/cjson/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

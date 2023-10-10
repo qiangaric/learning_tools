@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/pgdata/projetcs/cJSON/cJson.c
+/pgdata/projetcs/cJSON/cjson/cJson.c
 stdio.h
 -
 stdlib.h
@@ -22,13 +22,13 @@ float.h
 ctype.h
 -
 cJson.h
-/pgdata/projetcs/cJSON/cJson.h
+/pgdata/projetcs/cJSON/cjson/cJson.h
 
-/pgdata/projetcs/cJSON/cJson.h
+/pgdata/projetcs/cJSON/cjson/cJson.h
 
-/pgdata/projetcs/cJSON/example.c
+/pgdata/projetcs/cJSON/cjson/example.c
 stdio.h
 -
 cJson.h
-/pgdata/projetcs/cJSON/cJson.h
+/pgdata/projetcs/cJSON/cjson/cJson.h
 

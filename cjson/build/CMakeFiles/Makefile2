@@ -50,10 +50,10 @@ EQUALS = =
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /pgdata/projetcs/cJSON
+CMAKE_SOURCE_DIR = /pgdata/projetcs/cJSON/cjson
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /pgdata/projetcs/cJSON/build
+CMAKE_BINARY_DIR = /pgdata/projetcs/cJSON/cjson/build
 
 #=============================================================================
 # Target rules for target CMakeFiles/test.dir
@@ -62,7 +62,7 @@ CMAKE_BINARY_DIR = /pgdata/projetcs/cJSON/build
 CMakeFiles/test.dir/all:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/depend
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/build/CMakeFiles  1 2
+	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/cjson/build/CMakeFiles  1 2
 	@echo "Built target test"
 .PHONY : CMakeFiles/test.dir/all
 
@@ -72,9 +72,9 @@ all: CMakeFiles/test.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/cjson/build/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/cjson/build/CMakeFiles 0
 .PHONY : CMakeFiles/test.dir/rule
 
 # Convenience name for target.

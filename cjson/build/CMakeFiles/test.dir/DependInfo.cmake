@@ -4,8 +4,8 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_C
-  "/pgdata/projetcs/cJSON/cJson.c" "/pgdata/projetcs/cJSON/build/CMakeFiles/test.dir/cJson.c.o"
-  "/pgdata/projetcs/cJSON/example.c" "/pgdata/projetcs/cJSON/build/CMakeFiles/test.dir/example.c.o"
+  "/pgdata/projetcs/cJSON/cjson/cJson.c" "/pgdata/projetcs/cJSON/cjson/build/CMakeFiles/test.dir/cJson.c.o"
+  "/pgdata/projetcs/cJSON/cjson/example.c" "/pgdata/projetcs/cJSON/cjson/build/CMakeFiles/test.dir/example.c.o"
   )
 SET(CMAKE_C_COMPILER_ID "GNU")
 
