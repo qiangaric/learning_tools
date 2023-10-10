@@ -1,0 +1,177 @@
+\! bash sql/option.sh
+###### COMMAND OPTION TEST-0001 ######
+###### help option ######
+pg_rman manage backup/recovery of PostgreSQL database.
+
+Usage:
+  pg_rman OPTION init
+  pg_rman OPTION backup
+  pg_rman OPTION restore
+  pg_rman OPTION show [DATE]
+  pg_rman OPTION show detail [DATE]
+  pg_rman OPTION validate [DATE]
+  pg_rman OPTION delete DATE
+  pg_rman OPTION purge
+
+Common Options:
+  -D, --pgdata=PATH         location of the database storage area
+  -A, --arclog-path=PATH    location of archive WAL storage area
+  -S, --srvlog-path=PATH    location of server log storage area
+  -B, --backup-path=PATH    location of the backup storage area
+  -G, --pgconf-path=PATH    location of the configuration storage area
+  -c, --check               show what would have been done
+  -v, --verbose             show what detail messages
+  -P, --progress            show progress of processed files
+
+Backup options:
+  -b, --backup-mode=MODE    full, incremental, or archive
+  -s, --with-serverlog      also backup server log files
+  -Z, --compress-data       compress data backup with zlib
+  -C, --smooth-checkpoint   do smooth checkpoint before backup
+  -F, --full-backup-on-error   switch to full backup mode
+                               if pg_rman cannot find validate full backup
+                               on current timeline
+      NOTE: this option is only used in --backup-mode=incremental or archive.
+  --keep-data-generations=NUM keep NUM generations of full data backup
+  --keep-data-days=NUM        keep enough data backup to recover to N days ago
+  --keep-arclog-files=NUM   keep NUM of archived WAL
+  --keep-arclog-days=DAY    keep archived WAL modified in DAY days
+  --keep-srvlog-files=NUM   keep NUM of serverlogs
+  --keep-srvlog-days=DAY    keep serverlog modified in DAY days
+  --standby-host=HOSTNAME   standby host when taking backup from standby
+  --standby-port=PORT       standby port when taking backup from standby
+
+Restore options:
+  --recovery-target-time    time stamp up to which recovery will proceed
+  --recovery-target-xid     transaction ID up to which recovery will proceed
+  --recovery-target-inclusive whether we stop just after the recovery target
+  --recovery-target-timeline  recovering into a particular timeline
+  --recovery-target-action    action the server should take once the recovery target is reached
+  --hard-copy                 copying archivelog not symbolic link
+
+Catalog options:
+  -a, --show-all            show deleted backup too
+
+Delete options:
+  -f, --force               forcibly delete backup older than given DATE
+
+Connection options:
+  -d, --dbname=DBNAME       database to connect
+  -h, --host=HOSTNAME       database server host or socket directory
+  -p, --port=PORT           database server port
+  -U, --username=USERNAME   user name to connect as
+  -w, --no-password         never prompt for password
+  -W, --password            force password prompt
+
+Generic options:
+  -q, --quiet               don't show any INFO or DEBUG messages
+  --debug                   show DEBUG messages
+  --help                    show this help, then exit
+  --version                 output version information, then exit
+
+Read the website for details. <http://github.com/ossc-db/pg_rman>
+Report bugs to <http://github.com/ossc-db/pg_rman/issues>.
+1
+
+###### COMMAND OPTION TEST-0002 ######
+###### version option ######
+pg_rman 1.3.15
+1
+
+###### COMMAND OPTION TEST-0003 ######
+###### backup command failure without backup path option ######
+ERROR: required parameter not specified: BACKUP_PATH (-B, --backup-path)
+12
+
+###### COMMAND OPTION TEST-0004 ######
+###### backup command failure without arclog path option ######
+ERROR: required parameter not specified: ARCLOG_PATH (-A, --arclog-path)
+12
+
+###### COMMAND OPTION TEST-0005 ######
+###### backup command failure without srvlog path option ######
+ERROR: required parameter not specified: SRVLOG_PATH (-S, --srvlog-path)
+12
+
+###### COMMAND OPTION TEST-0006 ######
+###### backup command failure without backup mode option ######
+ERROR: required parameter not specified: BACKUP_MODE (-b, --backup-mode)
+12
+
+###### COMMAND OPTION TEST-0007 ######
+###### backup command failure with invalid backup mode option ######
+ERROR: invalid backup-mode "bad"
+12
+
+###### COMMAND OPTION TEST-0008 ######
+###### delete failure without DATE ######
+ERROR: delete range option not specified
+HINT: Please run with 'pg_rman delete DATE'.
+12
+
+###### COMMAND OPTION TEST-0009 ######
+###### syntax error in pg_rman.ini ######
+WARNING: syntax error in " = INFINITE"
+ERROR: required parameter not specified: BACKUP_MODE (-b, --backup-mode)
+12
+
+###### COMMAND OPTION TEST-0010 ######
+###### invalid value in pg_rman.ini ######
+ERROR: invalid backup-mode ""
+12
+
+###### COMMAND OPTION TEST-0011 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option -Z, --compress-data should be a boolean: 'FOO'
+12
+
+###### COMMAND OPTION TEST-0012 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option --keep-arclog-files should be a 32bit signed integer: 'TRUE'
+12
+
+###### COMMAND OPTION TEST-0013 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option --keep-arclog-days should be a 32bit signed integer: 'TRUE'
+12
+
+###### COMMAND OPTION TEST-0014 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option --keep-srvlog-files should be a 32bit signed integer: 'TRUE'
+12
+
+###### COMMAND OPTION TEST-0015 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option --keep-srvlog-days should be a 32bit signed integer: 'TRUE'
+12
+
+###### COMMAND OPTION TEST-0016 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option --keep-data-generations should be a 32bit signed integer: 'TRUE'
+12
+
+###### COMMAND OPTION TEST-0017 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option -C, --smooth-checkpoint should be a boolean: 'FOO'
+12
+
+###### COMMAND OPTION TEST-0018 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option -s, --with-serverlog should be a boolean: 'FOO'
+12
+
+###### COMMAND OPTION TEST-0019 ######
+###### invalid value in pg_rman.ini ######
+ERROR: option --hard-copy should be a boolean: 'FOO'
+12
+
+###### COMMAND OPTION TEST-0020 ######
+###### invalid option in pg_rman.ini ######
+ERROR: invalid option "TIMELINEID"
+12
+
+###### COMMAND OPTION TEST-0021 ######
+###### check priority of several pg_rman.ini files ######
+ERROR: invalid backup-mode "ENV_PATH"
+12
+

@@ -1,0 +1,39 @@
+\! bash sql/backup_from_standby.sh
+###### BACKUP COMMAND FROM STANDBY SERVER TEST-0001 ######
+###### full backup mode ######
+0
+0
+0
+
+###### BACKUP COMMAND FROM STANDBY SERVER TEST-0002 ######
+###### full + incremental backup mode ######
+0
+0
+0
+0
+0
+
+###### BACKUP COMMAND FROM STANDBY SERVER TEST-0003 ######
+0
+0
+0
+
+###### must be primary even if the recovery target is latest ######
+ pg_is_in_recovery 
+-------------------
+ f
+(1 row)
+
+###### BACKUP COMMAND FROM STANDBY SERVER TEST-0004 ######
+0
+0
+0
+
+###### must be standby and synchronized with the primary server ######
+  status   
+-----------
+ streaming
+(1 row)
+
+###### BACKUP COMMAND FROM STANDBY SERVER TEST-0005 ######
+ERROR: please specify both standby host and port
