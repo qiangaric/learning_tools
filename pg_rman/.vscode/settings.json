@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "pg_rman.h": "c",
+        "xlog_internal.h": "c"
+    }
+}
