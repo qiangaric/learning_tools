@@ -133,8 +133,16 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	current.read_data_bytes = 0;
 
 	/* notify start of backup to PostgreSQL server */
+	/*开始备份时间*/
 	time2iso(label, lengthof(label), current.start_time);
+	printf("label = %s \n",label);
+	/*
+	strncat（连接两字符串）
+	strlen()用来计算指定的字符串s的长度，不包括结束字符"\0"。
+	lengthof 预分配长度
+	 */
 	strncat(label, " with pg_rman", lengthof(label) - strlen(label) - 1);
+	printf("label = %s \n",label);
 	pg_backup_start(label, smooth_checkpoint, &current);
 
 	/* Execute restartpoint on standby once replay reaches the backup LSN */
@@ -1106,6 +1114,7 @@ confirm_block_size(const char *name, int blcksz)
  * As of now, this always contacts a primary PostgreSQL server, even in the
  * case of taking a backup from standby.
  */
+/*开始备份*/
 static void
 pg_backup_start(const char *label, bool smooth, pgBackup *backup)
 {
@@ -1126,6 +1135,8 @@ pg_backup_start(const char *label, bool smooth, pgBackup *backup)
 	params[1] = smooth ? "false" : "true";
 
 	/* non-exclusive' mode (assumes PG version >= 15) */
+	printf("parameter =  %s  %s\n",params[0],params[1]);
+	/*查询开始备份时的lsn在日志文件中的偏移量 */
 	res = execute("SELECT * from pg_walfile_name_offset(pg_backup_start($1, $2))", 2, params);
 
 	if (backup != NULL)

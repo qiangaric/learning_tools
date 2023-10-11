@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/test.dir/hello.cpp.o CMakeFiles/test.dir/swap.cpp.o  -o test -rdynamic 

@@ -155,7 +155,7 @@ typedef struct pgBackup
 
 	/* Timestamp, etc. */
 	TimeLineID tli;
-
+	/* ¿ªÊ¼lsn*/
 	XLogRecPtr start_lsn;
 	XLogRecPtr stop_lsn;
 

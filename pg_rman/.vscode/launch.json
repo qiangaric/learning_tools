@@ -13,6 +13,7 @@
                 "backup",
                 "--backup-mode=full",
                 "--with-serverlog",
+                "--debug",
                 "-h",
                 "127.0.0.1",
                 "-p",
