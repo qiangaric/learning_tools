@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                // "/usr/include/glib-2.0/**",
+                // "/usr/include/mysql/**",
+                // "/usr/lib64/mysql/**",
+                "${workspaceFolder}/**",
+                "/usr/include/glib-2.0",
+                "/usr/lib64/glib-2.0/include",
+                "/pgdata/projetcs/cJSON/pg_rman/**",
+                "/pgdata/clone_pg/pg15_3_data/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "linux-gcc-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}

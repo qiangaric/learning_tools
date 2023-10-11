@@ -1135,7 +1135,7 @@ pg_backup_start(const char *label, bool smooth, pgBackup *backup)
 	params[1] = smooth ? "false" : "true";
 
 	/* non-exclusive' mode (assumes PG version >= 15) */
-	printf("parameter =  %s  %s\n",params[0],params[1]);
+	printf("parameter 参数 =  %s  %s\n",params[0],params[1]);
 	/*查询开始备份时的lsn在日志文件中的偏移量 */
 	res = execute("SELECT * from pg_walfile_name_offset(pg_backup_start($1, $2))", 2, params);
 

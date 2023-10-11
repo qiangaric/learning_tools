@@ -114,53 +114,29 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-hello.o: hello.cpp.o
-.PHONY : hello.o
+unionTest.o: unionTest.c.o
+.PHONY : unionTest.o
 
 # target to build an object file
-hello.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/hello.cpp.o
-.PHONY : hello.cpp.o
+unionTest.c.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.o
+.PHONY : unionTest.c.o
 
-hello.i: hello.cpp.i
-.PHONY : hello.i
-
-# target to preprocess a source file
-hello.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/hello.cpp.i
-.PHONY : hello.cpp.i
-
-hello.s: hello.cpp.s
-.PHONY : hello.s
-
-# target to generate assembly for a file
-hello.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/hello.cpp.s
-.PHONY : hello.cpp.s
-
-swap.o: swap.cpp.o
-.PHONY : swap.o
-
-# target to build an object file
-swap.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/swap.cpp.o
-.PHONY : swap.cpp.o
-
-swap.i: swap.cpp.i
-.PHONY : swap.i
+unionTest.i: unionTest.c.i
+.PHONY : unionTest.i
 
 # target to preprocess a source file
-swap.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/swap.cpp.i
-.PHONY : swap.cpp.i
+unionTest.c.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.i
+.PHONY : unionTest.c.i
 
-swap.s: swap.cpp.s
-.PHONY : swap.s
+unionTest.s: unionTest.c.s
+.PHONY : unionTest.s
 
 # target to generate assembly for a file
-swap.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/swap.cpp.s
-.PHONY : swap.cpp.s
+unionTest.c.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.s
+.PHONY : unionTest.c.s
 
 # Help Target
 help:
@@ -171,12 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... hello.o"
-	@echo "... hello.i"
-	@echo "... hello.s"
-	@echo "... swap.o"
-	@echo "... swap.i"
-	@echo "... swap.s"
+	@echo "... unionTest.o"
+	@echo "... unionTest.i"
+	@echo "... unionTest.s"
 .PHONY : help
 
 

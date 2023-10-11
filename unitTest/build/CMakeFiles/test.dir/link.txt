@@ -1,1 +1,1 @@
-/usr/bin/c++       CMakeFiles/test.dir/hello.cpp.o CMakeFiles/test.dir/swap.cpp.o  -o test -rdynamic 
+/usr/bin/gcc  -std=c99    CMakeFiles/test.dir/unionTest.c.o  -o test -rdynamic 

@@ -1,13 +1,12 @@
 # The set of languages for which implicit dependencies are needed:
 SET(CMAKE_DEPENDS_LANGUAGES
-  "CXX"
+  "C"
   )
 # The set of files for implicit dependencies of each language:
-SET(CMAKE_DEPENDS_CHECK_CXX
-  "/pgdata/projetcs/cJSON/unitTest/hello.cpp" "/pgdata/projetcs/cJSON/unitTest/build/CMakeFiles/test.dir/hello.cpp.o"
-  "/pgdata/projetcs/cJSON/unitTest/swap.cpp" "/pgdata/projetcs/cJSON/unitTest/build/CMakeFiles/test.dir/swap.cpp.o"
+SET(CMAKE_DEPENDS_CHECK_C
+  "/pgdata/projetcs/cJSON/unitTest/unionTest.c" "/pgdata/projetcs/cJSON/unitTest/build/CMakeFiles/test.dir/unionTest.c.o"
   )
-SET(CMAKE_CXX_COMPILER_ID "GNU")
+SET(CMAKE_C_COMPILER_ID "GNU")
 
 # Targets to which this target links.
 SET(CMAKE_TARGET_LINKED_INFO_FILES

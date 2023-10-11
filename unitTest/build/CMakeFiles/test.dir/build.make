@@ -52,73 +52,47 @@ include CMakeFiles/test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test.dir/flags.make
 
-CMakeFiles/test.dir/hello.cpp.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/hello.cpp.o: ../hello.cpp
+CMakeFiles/test.dir/unionTest.c.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/unionTest.c.o: ../unionTest.c
 	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/unitTest/build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test.dir/hello.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test.dir/hello.cpp.o -c /pgdata/projetcs/cJSON/unitTest/hello.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/test.dir/unionTest.c.o"
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test.dir/unionTest.c.o   -c /pgdata/projetcs/cJSON/unitTest/unionTest.c
 
-CMakeFiles/test.dir/hello.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test.dir/hello.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /pgdata/projetcs/cJSON/unitTest/hello.cpp > CMakeFiles/test.dir/hello.cpp.i
+CMakeFiles/test.dir/unionTest.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/unionTest.c.i"
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -E /pgdata/projetcs/cJSON/unitTest/unionTest.c > CMakeFiles/test.dir/unionTest.c.i
 
-CMakeFiles/test.dir/hello.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test.dir/hello.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /pgdata/projetcs/cJSON/unitTest/hello.cpp -o CMakeFiles/test.dir/hello.cpp.s
+CMakeFiles/test.dir/unionTest.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/unionTest.c.s"
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -S /pgdata/projetcs/cJSON/unitTest/unionTest.c -o CMakeFiles/test.dir/unionTest.c.s
 
-CMakeFiles/test.dir/hello.cpp.o.requires:
-.PHONY : CMakeFiles/test.dir/hello.cpp.o.requires
+CMakeFiles/test.dir/unionTest.c.o.requires:
+.PHONY : CMakeFiles/test.dir/unionTest.c.o.requires
 
-CMakeFiles/test.dir/hello.cpp.o.provides: CMakeFiles/test.dir/hello.cpp.o.requires
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/hello.cpp.o.provides.build
-.PHONY : CMakeFiles/test.dir/hello.cpp.o.provides
+CMakeFiles/test.dir/unionTest.c.o.provides: CMakeFiles/test.dir/unionTest.c.o.requires
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.o.provides.build
+.PHONY : CMakeFiles/test.dir/unionTest.c.o.provides
 
-CMakeFiles/test.dir/hello.cpp.o.provides.build: CMakeFiles/test.dir/hello.cpp.o
-
-CMakeFiles/test.dir/swap.cpp.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/swap.cpp.o: ../swap.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/unitTest/build/CMakeFiles $(CMAKE_PROGRESS_2)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test.dir/swap.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test.dir/swap.cpp.o -c /pgdata/projetcs/cJSON/unitTest/swap.cpp
-
-CMakeFiles/test.dir/swap.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test.dir/swap.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /pgdata/projetcs/cJSON/unitTest/swap.cpp > CMakeFiles/test.dir/swap.cpp.i
-
-CMakeFiles/test.dir/swap.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test.dir/swap.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /pgdata/projetcs/cJSON/unitTest/swap.cpp -o CMakeFiles/test.dir/swap.cpp.s
-
-CMakeFiles/test.dir/swap.cpp.o.requires:
-.PHONY : CMakeFiles/test.dir/swap.cpp.o.requires
-
-CMakeFiles/test.dir/swap.cpp.o.provides: CMakeFiles/test.dir/swap.cpp.o.requires
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/swap.cpp.o.provides.build
-.PHONY : CMakeFiles/test.dir/swap.cpp.o.provides
-
-CMakeFiles/test.dir/swap.cpp.o.provides.build: CMakeFiles/test.dir/swap.cpp.o
+CMakeFiles/test.dir/unionTest.c.o.provides.build: CMakeFiles/test.dir/unionTest.c.o
 
 # Object files for target test
 test_OBJECTS = \
-"CMakeFiles/test.dir/hello.cpp.o" \
-"CMakeFiles/test.dir/swap.cpp.o"
+"CMakeFiles/test.dir/unionTest.c.o"
 
 # External object files for target test
 test_EXTERNAL_OBJECTS =
 
-test: CMakeFiles/test.dir/hello.cpp.o
-test: CMakeFiles/test.dir/swap.cpp.o
+test: CMakeFiles/test.dir/unionTest.c.o
 test: CMakeFiles/test.dir/build.make
 test: CMakeFiles/test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 CMakeFiles/test.dir/build: test
 .PHONY : CMakeFiles/test.dir/build
 
-CMakeFiles/test.dir/requires: CMakeFiles/test.dir/hello.cpp.o.requires
-CMakeFiles/test.dir/requires: CMakeFiles/test.dir/swap.cpp.o.requires
+CMakeFiles/test.dir/requires: CMakeFiles/test.dir/unionTest.c.o.requires
 .PHONY : CMakeFiles/test.dir/requires
 
 CMakeFiles/test.dir/clean:
