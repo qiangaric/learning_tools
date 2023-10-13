@@ -432,6 +432,7 @@ void pgBackupWriteResultSection(FILE *out, pgBackup *backup)
 }
 
 /* create backup.ini */
+/*初始化backup.ini文件*/
 void pgBackupWriteIni(pgBackup *backup)
 {
 	FILE *fp = NULL;
@@ -759,6 +760,7 @@ void check_system_identifier()
 }
 
 /* get TLI of the current database */
+/* 从检查点中获取TimeLineID*/
 TimeLineID
 get_current_timeline(void)
 {
@@ -770,7 +772,7 @@ get_current_timeline(void)
 	if (fileExists(ControlFilePath))
 	{
 		bool crc_ok;
-
+		printf("control file path ====== %s\n ",ControlFilePath);
 		controlFile = get_controlfile(pgdata, &crc_ok);
 
 		if (!crc_ok)

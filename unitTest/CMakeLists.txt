@@ -8,8 +8,8 @@ find_package(PkgConfig)
 find_package(PkgConfig REQUIRED)
 #Required packages
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
-
-
+include_directories("/pgdata/clone_pg/pg15_3_data/include")
+LINK_LIBRARIES(postgresql)
 
 
 project (test001)

@@ -597,6 +597,7 @@ execute_restartpoint(pgBackupOption bkupopt, pgBackup *backup)
 	}
 
 	/* Perform the restartpoint */
+	/*Ö´ÐÐ¼ì²éµã*/
 	command("CHECKPOINT", 0, NULL);
 
 	/*

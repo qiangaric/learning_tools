@@ -1,1 +1,1 @@
-/usr/bin/gcc  -std=c99    CMakeFiles/test.dir/unionTest01.c.o  -o test -rdynamic 
+/usr/bin/gcc  -std=c99    CMakeFiles/test.dir/unionTest01.c.o  -o test -rdynamic -lpostgresql 
