@@ -270,9 +270,11 @@ catalog_get_last_data_backup(parray *backup_list)
 	pgBackup *backup = NULL;
 
 	/* backup_list is sorted in order of descending ID */
+	printf("parray_num(backup_list) ========== %d \n",parray_num(backup_list));
 	for (i = 0; i < parray_num(backup_list); i++)
 	{
 		backup = (pgBackup *)parray_get(backup_list, i);
+		// printf(backup->);
 
 		/* we need completed database backup */
 		if (backup->status == BACKUP_STATUS_OK && HAVE_DATABASE(backup))
@@ -327,13 +329,15 @@ catalog_get_last_srvlog_backup(parray *backup_list)
 }
 
 /* create backup directory in $BACKUP_PATH */
+/*创建备份目录*/
 int pgBackupCreateDir(pgBackup *backup)
 {
 	int i;
 	char path[MAXPGPATH];
 	char *subdirs[] = {DATABASE_DIR, ARCLOG_DIR, SRVLOG_DIR, NULL};
-
+	printf("000001path = %s \n",path);
 	pgBackupGetPath(backup, path, lengthof(path), NULL);
+	printf("000002path = %s \n",path);
 	dir_create_dir(path, DIR_PERMISSION);
 
 	/* create directories for actual backup files */
@@ -349,6 +353,7 @@ int pgBackupCreateDir(pgBackup *backup)
 /*
  * Write configuration section of backup.in to stream "out".
  */
+
 void pgBackupWriteConfigSection(FILE *out, pgBackup *backup)
 {
 	static const char *modes[] = {"", "ARCHIVE", "INCREMENTAL", "FULL"};
@@ -372,11 +377,16 @@ void pgBackupWriteResultSection(FILE *out, pgBackup *backup)
 
 	fprintf(out, "# result\n");
 	fprintf(out, "TIMELINEID=%d\n", backup->tli);
-
+	// printf("backup->start_lsn ======= %x \n",backup->start_lsn );
 	start_xlogid = (uint32)(backup->start_lsn >> 32);
+	// printf("start_xlogid ====== %x \n",start_xlogid );
 	start_xrecoff = (uint32)backup->start_lsn;
+	printf("start_xrecoff ====== %08x \n",start_xrecoff );
+	// printf("backup->stop_lsn ======= %d \n",backup->stop_lsn);
 	stop_xlogid = (uint32)(backup->stop_lsn >> 32);
+	// printf("stop_xlogid ====== %d \n",stop_xlogid );
 	stop_xrecoff = (uint32)backup->stop_lsn;
+	printf("stop_xrecoff ====== %08x\n",stop_xrecoff );
 
 	fprintf(out, "START_LSN=%x/%08x\n",
 			start_xlogid, start_xrecoff);
@@ -422,12 +432,14 @@ void pgBackupWriteResultSection(FILE *out, pgBackup *backup)
 }
 
 /* create backup.ini */
+/*初始化backup.ini文件*/
 void pgBackupWriteIni(pgBackup *backup)
 {
 	FILE *fp = NULL;
 	char ini_path[MAXPGPATH];
 
 	pgBackupGetPath(backup, ini_path, lengthof(ini_path), BACKUP_INI_FILE);
+	printf("ini_path ============ %s\n",ini_path);
 	fp = fopen(ini_path, "wt");
 	if (fp == NULL)
 		ereport(ERROR,
@@ -436,9 +448,28 @@ void pgBackupWriteIni(pgBackup *backup)
 						strerror(errno))));
 
 	/* configuration section */
+	/*
+	# configuration
+	BACKUP_MODE=FULL
+	FULL_BACKUP_ON_ERROR=false
+	WITH_SERVERLOG=true
+	COMPRESS_DATA=false
+	*/
 	pgBackupWriteConfigSection(fp, backup);
 
 	/* result section */
+	/*
+	# result
+	TIMELINEID=0
+	START_LSN=0/00000000
+	STOP_LSN=0/00000000
+	START_TIME='2023-10-12 11:08:59'
+	RECOVERY_XID=0
+	WRITE_BYTES=0
+	BLOCK_SIZE=8192
+	XLOG_BLOCK_SIZE=8192
+	STATUS=RUNNING
+	*/
 	pgBackupWriteResultSection(fp, backup);
 
 	fclose(fp);
@@ -521,11 +552,22 @@ catalog_read_ini(const char *path)
 	if (start_lsn)
 	{
 		uint32 xlogid, xrecoff;
-
+		printf("backup->start_lsn ===================== %X \n",backup->start_lsn);
 		if (sscanf(start_lsn, "%X/%X", &xlogid, &xrecoff) == 2)
+		{
+			printf("&xlogid ========== %lu \n",&xlogid);
+			printf("&xlogid XXXX ========== %X \n",&xlogid);
+			printf("&xrecoff ========== %lu \n",&xrecoff);
+			printf("&xrecoff XXXX ========== %X \n",&xrecoff);
+			//	
 			backup->start_lsn = (XLogRecPtr)((uint64)xlogid << 32) | xrecoff;
+			printf("backup->start_lsn ========== %lu \n",backup->start_lsn);
+			printf("backup->start_lsnxxxxxxxxxxxx ========== %X \n",backup->start_lsn);
+		}
+			
 		else
 			elog(WARNING, _("invalid START_LSN \"%s\""), start_lsn);
+		
 		free(start_lsn);
 	}
 
@@ -627,14 +669,17 @@ void pgBackupGetPath(const pgBackup *backup, char *path, size_t len, const char 
 {
 	char datetime[20];
 	struct tm *tm;
-
+	// printf("path = %s \n",path);
 	/* generate $BACKUP_PATH/date/time path */
 	tm = localtime(&backup->start_time);
+	/*格式化时间戳*/
 	strftime(datetime, lengthof(datetime), "%Y%m%d/%H%M%S", tm);
+	printf("datetime = %s \n", datetime);
 	if (subdir)
 		snprintf(path, len, "%s/%s/%s", backup_path, datetime, subdir);
 	else
 		snprintf(path, len, "%s/%s", backup_path, datetime);
+	printf("path = %s \n", path);
 }
 
 void catalog_init_config(pgBackup *backup)
@@ -715,6 +760,7 @@ void check_system_identifier()
 }
 
 /* get TLI of the current database */
+/* 从检查点中获取TimeLineID*/
 TimeLineID
 get_current_timeline(void)
 {
@@ -726,7 +772,7 @@ get_current_timeline(void)
 	if (fileExists(ControlFilePath))
 	{
 		bool crc_ok;
-
+		printf("control file path ====== %s\n ",ControlFilePath);
 		controlFile = get_controlfile(pgdata, &crc_ok);
 
 		if (!crc_ok)

@@ -14,9 +14,9 @@
 #include <time.h>
 #include <sys/stat.h>
 
-const char *PROGRAM_VERSION	= "1.3.15";
-const char *PROGRAM_URL		= "http://github.com/ossc-db/pg_rman";
-const char *PROGRAM_ISSUES	= "http://github.com/ossc-db/pg_rman/issues";
+const char *PROGRAM_VERSION = "1.3.15";
+const char *PROGRAM_URL = "http://github.com/ossc-db/pg_rman";
+const char *PROGRAM_ISSUES = "http://github.com/ossc-db/pg_rman/issues";
 
 /* path configuration */
 char *backup_path;
@@ -31,92 +31,90 @@ bool progress = false;
 bool check = false;
 
 /* directory configuration */
-pgBackup	current;
+pgBackup current;
 
 /* backup configuration */
-static bool		smooth_checkpoint;
-static int		keep_arclog_files = KEEP_INFINITE;
-static int		keep_arclog_days = KEEP_INFINITE;
-static int		keep_srvlog_files = KEEP_INFINITE;
-static int		keep_srvlog_days = KEEP_INFINITE;
-static int		keep_data_generations = KEEP_INFINITE;
-static int		keep_data_days = KEEP_INFINITE;
-static char		*standby_host = NULL;
-static char		*standby_port = NULL;
+static bool smooth_checkpoint;
+static int keep_arclog_files = KEEP_INFINITE;
+static int keep_arclog_days = KEEP_INFINITE;
+static int keep_srvlog_files = KEEP_INFINITE;
+static int keep_srvlog_days = KEEP_INFINITE;
+static int keep_data_generations = KEEP_INFINITE;
+static int keep_data_days = KEEP_INFINITE;
+static char *standby_host = NULL;
+static char *standby_port = NULL;
 
 /* restore configuration */
-static char		   *target_time;
-static char		   *target_xid;
-static char		   *target_inclusive;
-static char		   *target_tli_string;
-static char		   *target_action;
-static bool		is_hard_copy = false;
+static char *target_time;
+static char *target_xid;
+static char *target_inclusive;
+static char *target_tli_string;
+static char *target_action;
+static bool is_hard_copy = false;
 
 /* delete configuration */
-static bool		force;
+static bool force;
 
 /* show configuration */
-static bool			show_all = false;
+static bool show_all = false;
 
 static void opt_backup_mode(pgut_option *opt, const char *arg);
 static void parse_range(pgBackupRange *range, const char *arg1, const char *arg2);
 
 static pgut_option options[] =
-{
-	/* directory options */
-	{ 's', 'D', "pgdata"		, &pgdata		, SOURCE_ENV },
-	{ 's', 'A', "arclog-path"	, &arclog_path	, SOURCE_ENV },
-	{ 's', 'B', "backup-path"	, &backup_path	, SOURCE_ENV },
-	{ 's', 'S', "srvlog-path"	, &srvlog_path	, SOURCE_ENV },
-	{ 's', 'G', "pgconf-path"	, &pgconf_path	, SOURCE_ENV },
-	/* common options */
-	{ 'b', 'v', "verbose"		, &verbose },
-	{ 'b', 'P', "progress"		, &progress },
-	{ 'b', 'c', "check"			, &check },
-	/* backup options */
-	{ 'f', 'b', "backup-mode"		    , opt_backup_mode			, SOURCE_ENV },
-	{ 'b', 's', "with-serverlog"	    , &current.with_serverlog	, SOURCE_ENV },
-	{ 'b', 'Z', "compress-data"		    , &current.compress_data	, SOURCE_ENV },
-	{ 'b', 'C', "smooth-checkpoint"	    , &smooth_checkpoint		, SOURCE_ENV },
-	{ 'b', 'F', "full-backup-on-error"	, &current.full_backup_on_error		, SOURCE_ENV },
-	{ 's', 13, "standby-host"	, &standby_host		, SOURCE_ENV },
-	{ 's', 14, "standby-port"	, &standby_port		, SOURCE_ENV },
-	/* delete options */
-	{ 'b', 'f', "force"	, &force		, SOURCE_ENV },
-	/* options with only long name (keep-xxx) */
-	{ 'i',  1, "keep-data-generations"	, &keep_data_generations, SOURCE_ENV },
-	{ 'i',  2, "keep-data-days"			, &keep_data_days		, SOURCE_ENV },
-	{ 'i',  3, "keep-arclog-files"		, &keep_arclog_files	, SOURCE_ENV },
-	{ 'i',  4, "keep-arclog-days"		, &keep_arclog_days		, SOURCE_ENV },
-	{ 'i',  5, "keep-srvlog-files"		, &keep_srvlog_files	, SOURCE_ENV },
-	{ 'i',  6, "keep-srvlog-days"		, &keep_srvlog_days		, SOURCE_ENV },
-	/* restore options */
-	{ 's',  7, "recovery-target-time"		, &target_time		, SOURCE_ENV },
-	{ 's',  8, "recovery-target-xid"		, &target_xid		, SOURCE_ENV },
-	{ 's',  9, "recovery-target-inclusive"	, &target_inclusive	, SOURCE_ENV },
-	{ 's', 10, "recovery-target-timeline"	, &target_tli_string, SOURCE_ENV },
-	{ 's', 11, "recovery-target-action"		, &target_action	, SOURCE_ENV },
-	{ 'b', 12, "hard-copy"	, &is_hard_copy		, SOURCE_ENV },
-	/* catalog options */
-	{ 'b', 'a', "show-all"		, &show_all },
-	{ 0 }
-};
+	{
+		/* directory options */
+		{'s', 'D', "pgdata", &pgdata, SOURCE_ENV},
+		{'s', 'A', "arclog-path", &arclog_path, SOURCE_ENV},
+		{'s', 'B', "backup-path", &backup_path, SOURCE_ENV},
+		{'s', 'S', "srvlog-path", &srvlog_path, SOURCE_ENV},
+		{'s', 'G', "pgconf-path", &pgconf_path, SOURCE_ENV},
+		/* common options */
+		{'b', 'v', "verbose", &verbose},
+		{'b', 'P', "progress", &progress},
+		{'b', 'c', "check", &check},
+		/* backup options */
+		{'f', 'b', "backup-mode", opt_backup_mode, SOURCE_ENV},
+		{'b', 's', "with-serverlog", &current.with_serverlog, SOURCE_ENV},
+		{'b', 'Z', "compress-data", &current.compress_data, SOURCE_ENV},
+		{'b', 'C', "smooth-checkpoint", &smooth_checkpoint, SOURCE_ENV},
+		{'b', 'F', "full-backup-on-error", &current.full_backup_on_error, SOURCE_ENV},
+		{'s', 13, "standby-host", &standby_host, SOURCE_ENV},
+		{'s', 14, "standby-port", &standby_port, SOURCE_ENV},
+		/* delete options */
+		{'b', 'f', "force", &force, SOURCE_ENV},
+		/* options with only long name (keep-xxx) */
+		{'i', 1, "keep-data-generations", &keep_data_generations, SOURCE_ENV},
+		{'i', 2, "keep-data-days", &keep_data_days, SOURCE_ENV},
+		{'i', 3, "keep-arclog-files", &keep_arclog_files, SOURCE_ENV},
+		{'i', 4, "keep-arclog-days", &keep_arclog_days, SOURCE_ENV},
+		{'i', 5, "keep-srvlog-files", &keep_srvlog_files, SOURCE_ENV},
+		{'i', 6, "keep-srvlog-days", &keep_srvlog_days, SOURCE_ENV},
+		/* restore options */
+		{'s', 7, "recovery-target-time", &target_time, SOURCE_ENV},
+		{'s', 8, "recovery-target-xid", &target_xid, SOURCE_ENV},
+		{'s', 9, "recovery-target-inclusive", &target_inclusive, SOURCE_ENV},
+		{'s', 10, "recovery-target-timeline", &target_tli_string, SOURCE_ENV},
+		{'s', 11, "recovery-target-action", &target_action, SOURCE_ENV},
+		{'b', 12, "hard-copy", &is_hard_copy, SOURCE_ENV},
+		/* catalog options */
+		{'b', 'a', "show-all", &show_all},
+		{0}};
 
 /*
  * Entry point of pg_rman command.
  */
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-	const char	   *cmd = NULL;
-	const char	   *range1 = NULL;
-	const char	   *range2 = NULL;
-	bool			show_detail = false;
-	pgBackupRange	range;
-	int				i;
+	const char *cmd = NULL;
+	const char *range1 = NULL;
+	const char *range2 = NULL;
+	bool show_detail = false;
+	pgBackupRange range;
+	int i;
 
 	/* do not buffer progress messages */
-	setvbuf(stdout, 0, _IONBF, 0);	/* TODO: remove this */
+	setvbuf(stdout, 0, _IONBF, 0); /* TODO: remove this */
 
 	/* initialize configuration */
 	catalog_init_config(&current);
@@ -127,8 +125,8 @@ main(int argc, char *argv[])
 	/* BACKUP_PATH is always required */
 	if (backup_path == NULL)
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("required parameter not specified: BACKUP_PATH (-B, --backup-path)")));
+				(errcode(ERROR_ARGS),
+				 errmsg("required parameter not specified: BACKUP_PATH (-B, --backup-path)")));
 
 	for (; i < argc; i++)
 	{
@@ -143,8 +141,8 @@ main(int argc, char *argv[])
 			range2 = argv[i];
 		else
 			ereport(ERROR,
-				(errcode(ERROR_ARGS),
-				 errmsg("too many arguments")));
+					(errcode(ERROR_ARGS),
+					 errmsg("too many arguments")));
 	}
 
 	/* command argument (backup/restore/show/...) is required. */
@@ -165,16 +163,16 @@ main(int argc, char *argv[])
 	/* Read default configuration from file. */
 	if (backup_path)
 	{
-		char	path[MAXPGPATH];
+		char path[MAXPGPATH];
 		/* Check if backup_path is directory. */
 		struct stat stat_buf;
 		int rc = stat(backup_path, &stat_buf);
 
 		/* If rc == -1,  there is no file or directory. So it's OK. */
-		if(rc != -1 && !S_ISDIR(stat_buf.st_mode))
+		if (rc != -1 && !S_ISDIR(stat_buf.st_mode))
 			ereport(ERROR,
-				(errcode(ERROR_ARGS),
-				 errmsg("-B, --backup-path must be a path to directory")));
+					(errcode(ERROR_ARGS),
+					 errmsg("-B, --backup-path must be a path to directory")));
 
 		join_path_components(path, backup_path, PG_RMAN_INI_FILE);
 		pgut_readopt(path, options, ERROR_ARGS);
@@ -183,27 +181,27 @@ main(int argc, char *argv[])
 	/* path must be absolute */
 	if (backup_path != NULL && !is_absolute_path(backup_path))
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("-B, --backup-path must be an absolute path")));
+				(errcode(ERROR_ARGS),
+				 errmsg("-B, --backup-path must be an absolute path")));
 	if (pgdata != NULL && !is_absolute_path(pgdata))
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("-D, --pgdata must be an absolute path")));
+				(errcode(ERROR_ARGS),
+				 errmsg("-D, --pgdata must be an absolute path")));
 	if (arclog_path != NULL && !is_absolute_path(arclog_path))
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("-A, --arclog-path must be an absolute path")));
+				(errcode(ERROR_ARGS),
+				 errmsg("-A, --arclog-path must be an absolute path")));
 	if (srvlog_path != NULL && !is_absolute_path(srvlog_path))
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("-S, --srvlog-path must be an absolute path")));
+				(errcode(ERROR_ARGS),
+				 errmsg("-S, --srvlog-path must be an absolute path")));
 	if (pgconf_path != NULL && !is_absolute_path(pgconf_path))
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("-G, --pgconf-path must be an absolute path")));
+				(errcode(ERROR_ARGS),
+				 errmsg("-G, --pgconf-path must be an absolute path")));
 
 	/* setup exclusion list for file search */
-	for (i = 0; pgdata_exclude[i]; i++)		/* find first empty slot */
+	for (i = 0; pgdata_exclude[i]; i++) /* find first empty slot */
 		;
 	if (arclog_path)
 		pgdata_exclude[i++] = arclog_path;
@@ -216,20 +214,20 @@ main(int argc, char *argv[])
 	else if (pg_strcasecmp(cmd, "backup") == 0)
 	{
 		pgBackupOption bkupopt;
-		bkupopt.smooth_checkpoint	    = smooth_checkpoint;
-		bkupopt.keep_arclog_files	    = keep_arclog_files;
-		bkupopt.keep_arclog_days	    = keep_arclog_days;
-		bkupopt.keep_srvlog_files	    = keep_srvlog_files;
-		bkupopt.keep_srvlog_days	    = keep_srvlog_days;
-		bkupopt.keep_data_generations	= keep_data_generations;
-		bkupopt.keep_data_days		    = keep_data_days;
-		bkupopt.standby_host		    = standby_host;
-		bkupopt.standby_port		    = standby_port;
+		bkupopt.smooth_checkpoint = smooth_checkpoint;
+		bkupopt.keep_arclog_files = keep_arclog_files;
+		bkupopt.keep_arclog_days = keep_arclog_days;
+		bkupopt.keep_srvlog_files = keep_srvlog_files;
+		bkupopt.keep_srvlog_days = keep_srvlog_days;
+		bkupopt.keep_data_generations = keep_data_generations;
+		bkupopt.keep_data_days = keep_data_days;
+		bkupopt.standby_host = standby_host;
+		bkupopt.standby_port = standby_port;
 		return do_backup(bkupopt);
 	}
 	else if (pg_strcasecmp(cmd, "restore") == 0)
 		return do_restore(target_time, target_xid,
-					target_inclusive, target_tli_string, target_action, is_hard_copy);
+						  target_inclusive, target_tli_string, target_action, is_hard_copy);
 	else if (pg_strcasecmp(cmd, "show") == 0)
 		return do_show(&range, show_detail, show_all);
 	else if (pg_strcasecmp(cmd, "validate") == 0)
@@ -240,14 +238,13 @@ main(int argc, char *argv[])
 		return do_purge();
 	else
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("invalid command \"%s\"", cmd)));
+				(errcode(ERROR_ARGS),
+				 errmsg("invalid command \"%s\"", cmd)));
 
 	return 0;
 }
 
-void
-pgut_help(bool details)
+void pgut_help(bool details)
 {
 	printf(_("%s manage backup/recovery of PostgreSQL database.\n\n"), PROGRAM_NAME);
 	printf(_("Usage:\n"));
@@ -310,10 +307,10 @@ pgut_help(bool details)
 static void
 parse_range(pgBackupRange *range, const char *arg1, const char *arg2)
 {
-	size_t		len = strlen(arg1) + strlen(arg2) + 1;
-	char	   *tmp;
-	int			num;
-	struct tm	tm;
+	size_t len = strlen(arg1) + strlen(arg2) + 1;
+	char *tmp;
+	int num;
+	struct tm tm;
 
 	tmp = pgut_malloc(len);
 	tmp[0] = '\0';
@@ -323,26 +320,26 @@ parse_range(pgBackupRange *range, const char *arg1, const char *arg2)
 		remove_not_digit(tmp + strlen(tmp), len - strlen(tmp), arg2);
 
 	memset(&tm, 0, sizeof(tm));
-	tm.tm_year = 0;		/* tm_year is year - 1900 */
-	tm.tm_mon = 0;		/* tm_mon is 0 - 11 */
-	tm.tm_mday = 1;		/* tm_mday is 1 - 31 */
+	tm.tm_year = 0; /* tm_year is year - 1900 */
+	tm.tm_mon = 0;	/* tm_mon is 0 - 11 */
+	tm.tm_mday = 1; /* tm_mday is 1 - 31 */
 	tm.tm_hour = 0;
 	tm.tm_min = 0;
 	tm.tm_sec = 0;
 	num = sscanf(tmp, "%04d %02d %02d %02d %02d %02d",
-		&tm.tm_year, &tm.tm_mon, &tm.tm_mday,
-		&tm.tm_hour, &tm.tm_min, &tm.tm_sec);
+				 &tm.tm_year, &tm.tm_mon, &tm.tm_mday,
+				 &tm.tm_hour, &tm.tm_min, &tm.tm_sec);
 
 	if (num < 1)
 	{
-		if (strcmp(tmp,"") != 0)
+		if (strcmp(tmp, "") != 0)
 			ereport(ERROR,
-				(errcode(ERROR_ARGS),
-				 errmsg("supplied id(%s) is invalid", tmp)));
+					(errcode(ERROR_ARGS),
+					 errmsg("supplied id(%s) is invalid", tmp)));
 		else
 			ereport(ERROR,
-				(errcode(ERROR_ARGS),
-				 errmsg("arguments are invalid. near \"%s\"", arg1)));
+					(errcode(ERROR_ARGS),
+					 errmsg("arguments are invalid. near \"%s\"", arg1)));
 	}
 
 	free(tmp);
@@ -353,33 +350,33 @@ parse_range(pgBackupRange *range, const char *arg1, const char *arg2)
 		tm.tm_mon -= 1;
 	tm.tm_isdst = -1;
 
-	if(!IsValidTime(tm))
+	if (!IsValidTime(tm))
 		ereport(ERROR,
-			(errcode(ERROR_ARGS),
-			 errmsg("supplied time(%s) is invalid", arg1)));
+				(errcode(ERROR_ARGS),
+				 errmsg("supplied time(%s) is invalid", arg1)));
 
 	range->begin = mktime(&tm);
 
 	switch (num)
 	{
-		case 1:
-			tm.tm_year++;
-			break;
-		case 2:
-			tm.tm_mon++;
-			break;
-		case 3:
-			tm.tm_mday++;
-			break;
-		case 4:
-			tm.tm_hour++;
-			break;
-		case 5:
-			tm.tm_min++;
-			break;
-		case 6:
-			tm.tm_sec++;
-			break;
+	case 1:
+		tm.tm_year++;
+		break;
+	case 2:
+		tm.tm_mon++;
+		break;
+	case 3:
+		tm.tm_mday++;
+		break;
+	case 4:
+		tm.tm_hour++;
+		break;
+	case 5:
+		tm.tm_min++;
+		break;
+	case 6:
+		tm.tm_sec++;
+		break;
 	}
 	range->end = mktime(&tm);
 	range->end--;

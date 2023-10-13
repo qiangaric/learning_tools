@@ -117,6 +117,7 @@ typedef struct BackupPageHeader
 
 /* Backup status */
 /* XXX re-order ? */
+/*????*/
 typedef enum BackupStatus
 {
 	BACKUP_STATUS_INVALID,	/* the pgBackup is invalid */
@@ -129,6 +130,7 @@ typedef enum BackupStatus
 	BACKUP_STATUS_CORRUPT	/* files are corrupted, not available */
 } BackupStatus;
 
+/*????*/
 typedef enum BackupMode
 {
 	BACKUP_MODE_INVALID,
@@ -155,7 +157,7 @@ typedef struct pgBackup
 
 	/* Timestamp, etc. */
 	TimeLineID tli;
-
+	/* ¿ªÊ¼lsn*/
 	XLogRecPtr start_lsn;
 	XLogRecPtr stop_lsn;
 

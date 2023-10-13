@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/pgdata/projetcs/cJSON/unitTest/hello.cpp
+iostream
+-
+swap.h
+/pgdata/projetcs/cJSON/unitTest/swap.h
+
+/pgdata/projetcs/cJSON/unitTest/swap.cpp
+swap.h
+/pgdata/projetcs/cJSON/unitTest/swap.h
+
+/pgdata/projetcs/cJSON/unitTest/swap.h
+iostream
+-
+

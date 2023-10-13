@@ -1,0 +1,51 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) 启动",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/test", //可执行文件的位置！
+            "args": [
+                // "--host",
+                // "10.12.2.148",
+                // "-P",
+                // "3306",
+                // "-u",
+                // "dbamanager",
+                // "-p",
+                // "123Gwmfc56",
+                // "-L",
+                // "mydumper0001.log",
+                // "--regex",
+                // "^(test\\.)",
+                // "-c",
+                // "-o",
+                // "/data_ssh/backup/test",
+                // "-L",
+                // "/data_ssh/backup/mydumper.log",
+                // "-v",
+                // "3",
+                // "-F",
+                // "100"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            //下面这行是调试前需要执行的任务，对应上面tasks.json里的Build
+            "preLaunchTask": "Build"
+        }
+    ]
+}

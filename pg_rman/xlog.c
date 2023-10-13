@@ -33,6 +33,7 @@ typedef union XLogPage
  * Return whether the file is a WAL segment or not.
  * based on ValidXLOGHeader() in src/backend/access/transam/xlog.c.
  */
+/*检查是否是一个完整的wal文件*/
 bool
 xlog_is_complete_wal(const pgFile *file, int wal_segment_size)
 {
@@ -74,6 +75,7 @@ xlog_is_complete_wal(const pgFile *file, int wal_segment_size)
 /*
  * based on XLogFileName() in xlog_internal.h
  */
+/*计算出wal名称*/
 void
 xlog_fname(char *fname, size_t len, TimeLineID tli, XLogRecPtr *lsn,
 		   int wal_segment_size)
@@ -82,7 +84,9 @@ xlog_fname(char *fname, size_t len, TimeLineID tli, XLogRecPtr *lsn,
 
 	xlogid = (uint32) (*lsn >> 32);
 	xrecoff = (uint32) *lsn;
-
+	printf("xlogid ============================ %X\n",xlogid);
+	// printf("xrecoff / wal_segment_size ============================ %X\n",xrecoff / wal_segment_size);
 	snprintf(fname, len, "%08X%08X%08X", tli,
 		xlogid, xrecoff / wal_segment_size);
+	printf("fname ================================ %s\n",fname);
 }

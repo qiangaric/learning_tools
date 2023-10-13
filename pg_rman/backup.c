@@ -98,6 +98,7 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	if (!HAVE_DATABASE(&current))
 	{
 		/* check if arclog backup. if arclog backup and no suitable full backup, */
+		printf("HAVE_ARCLOG(&current) = ",HAVE_ARCLOG(&current));
 		if (HAVE_ARCLOG(&current))
 		{
 			pgBackup *prev_backup;
@@ -133,8 +134,16 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 	current.read_data_bytes = 0;
 
 	/* notify start of backup to PostgreSQL server */
+	/*开始备份时间*/
 	time2iso(label, lengthof(label), current.start_time);
+	printf("label = %s \n", label);
+	/*
+	 * strncat（连接两字符串）
+	 * strlen()用来计算指定的字符串s的长度，不包括结束字符"\0"。
+	 * lengthof 预分配长度
+	 */
 	strncat(label, " with pg_rman", lengthof(label) - strlen(label) - 1);
+	printf("label = %s \n", label);
 	pg_backup_start(label, smooth_checkpoint, &current);
 
 	/* Execute restartpoint on standby once replay reaches the backup LSN */
@@ -179,6 +188,7 @@ do_backup_database(parray *backup_list, pgBackupOption bkupopt)
 
 	/* Free no longer needed memory. */
 	parray_walk(files, pgFileFree);
+	/*释放内存*/
 	parray_free(files);
 	files = NULL;
 
@@ -587,6 +597,7 @@ execute_restartpoint(pgBackupOption bkupopt, pgBackup *backup)
 	}
 
 	/* Perform the restartpoint */
+	/*执行检查点*/
 	command("CHECKPOINT", 0, NULL);
 
 	/*
@@ -886,7 +897,7 @@ int do_backup(pgBackupOption bkupopt)
 		current.compress_data = false;
 	}
 #endif
-
+	/*通过读取POSTGRE二级制文件，获取控制文件信息，获取wal_segment_size信息*/
 	controlFile = get_controlfile(pgdata, &crc_ok);
 
 	if (!crc_ok)
@@ -922,6 +933,7 @@ int do_backup(pgBackupOption bkupopt)
 				 errdetail("Another pg_rman is just running. Skip this backup.")));
 
 	/* initialize backup result */
+	/*备份信息初始化*/
 	current.status = BACKUP_STATUS_RUNNING;
 	current.tli = 0; /* get from result of pg_backup_start() */
 	current.start_lsn = current.stop_lsn = (XLogRecPtr)0;
@@ -965,7 +977,10 @@ int do_backup(pgBackupOption bkupopt)
 	 */
 	in_backup = true;
 
-	/* backup data */
+	/* backup data 
+	 * 备份数据库
+	*/
+	// printf("data &s",backup_list->data);
 	files_database = do_backup_database(backup_list, bkupopt);
 
 	/* backup archived WAL */
@@ -977,9 +992,11 @@ int do_backup(pgBackupOption bkupopt)
 	pgut_atexit_pop(backup_cleanup, NULL);
 
 	/* update backup status to DONE */
+	/**/
 	current.end_time = time(NULL);
 	current.status = BACKUP_STATUS_DONE;
 	if (!check)
+		/*修改backup.ini文件*/
 		pgBackupWriteIni(&current);
 
 	if (verbose)
@@ -1041,6 +1058,7 @@ int do_backup(pgBackupOption bkupopt)
 
 /*
  * get server version and confirm block sizes.
+ * 获取版本号、block sizes大小、wal block sizes大小
  */
 static void
 check_server_version(void)
@@ -1052,7 +1070,7 @@ check_server_version(void)
 
 	/* confirm server version */
 	elog(DEBUG, "checking PostgreSQL server version");
-
+	/*获取数据库版本*/
 	server_version = PQserverVersion(connection);
 	if (server_version < 80400)
 		ereport(ERROR,
@@ -1087,6 +1105,11 @@ confirm_block_size(const char *name, int blcksz)
 		ereport(ERROR,
 				(errcode(ERROR_PG_COMMAND),
 				 errmsg("could not get %s: %s", name, PQerrorMessage(connection))));
+	/*
+	 *把参数 str 所指向的字符串根据给定的 base 转换为一个长整数（类型为 long int 型），base 必须介于 2 和 36（包含）之间，或者是特殊值 0。
+	 *  char str[] = "12345"; 
+	 *   转换结果: 12345
+	*/			
 	block_size = strtol(PQgetvalue(res, 0, 0), &endp, 10);
 	if (strcmp(name, "block_size") == 0)
 		elog(DEBUG, "block size is %d", block_size);
@@ -1106,6 +1129,7 @@ confirm_block_size(const char *name, int blcksz)
  * As of now, this always contacts a primary PostgreSQL server, even in the
  * case of taking a backup from standby.
  */
+/*开始备份*/
 static void
 pg_backup_start(const char *label, bool smooth, pgBackup *backup)
 {
@@ -1126,6 +1150,16 @@ pg_backup_start(const char *label, bool smooth, pgBackup *backup)
 	params[1] = smooth ? "false" : "true";
 
 	/* non-exclusive' mode (assumes PG version >= 15) */
+	printf("parameter 参数 =  %s  %s\n", params[0], params[1]);
+	/*
+	查询开始备份时的lsn在日志文件中的偏移量
+
+			file_name         | file_offset
+	--------------------------+-------------
+ 	 00000001000000000000008D |         136
+
+	*/
+
 	res = execute("SELECT * from pg_walfile_name_offset(pg_backup_start($1, $2))", 2, params);
 
 	if (backup != NULL)
@@ -1172,7 +1206,7 @@ wait_for_archive(pgBackup *backup, const char *sql, int nParams,
 			 "%s/pg_wal/archive_status/%s.done", pgdata, PQgetvalue(res, 0, 0));
 
 	PQclear(res);
-
+	/*查看当前事务ID*/
 	res = execute(TXID_CURRENT_SQL, 0, NULL);
 	if (backup != NULL)
 	{
@@ -1251,8 +1285,9 @@ pg_backup_stop(pgBackup *backup)
 				(errcode(ERROR_PG_COMMAND),
 				 errmsg("result of pg_backup_stop($1) is invalid: %s",
 						PQerrorMessage(connection))));
-
+	/*停止备份时的LSN*/
 	backup_lsn = PQgetvalue(res, 0, 0);
+	printf("backup_lsn  ==== %s \n",backup_lsn);
 	backuplabel = PQgetvalue(res, 0, 1);
 	backuplabel_len = PQgetlength(res, 0, 1);
 	tblspcmap = PQgetvalue(res, 0, 2);
@@ -1297,11 +1332,12 @@ pg_switch_wal(pgBackup *backup)
 }
 
 /*
- * Get TimeLineID and LSN from result of pg_walfile_name_offset().
+ * Get TimeLineID and LSN from result of  ().
  */
 static void
 get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 {
+	printf("current lsn =============== %d \n",lsn);
 	uint32 off_upper;
 	uint32 xlogid, xrecoff = 0;
 
@@ -1312,6 +1348,8 @@ get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 						PQerrorMessage(connection))));
 
 	/* get TimeLineID, LSN from result of pg_backup_stop() */
+	printf("pgvaue01 : %-15s \n", PQgetvalue(res, 0, 0));
+	printf("pgvaue02 : %-15s \n", PQgetvalue(res, 0, 1));
 	if (sscanf(PQgetvalue(res, 0, 0), "%08X%08X%08X",
 			   timeline, &xlogid, &off_upper) != 3 ||
 		sscanf(PQgetvalue(res, 0, 1), "%u", &xrecoff) != 1)
@@ -1326,6 +1364,7 @@ get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 	xrecoff += off_upper << ((uint32)log2(wal_segment_size));
 
 	*lsn = (XLogRecPtr)((uint64)xlogid << 32) | xrecoff;
+	printf("current lsn =============== %d \n",lsn);
 	return;
 }
 
