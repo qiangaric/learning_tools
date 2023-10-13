@@ -114,29 +114,29 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-unionTest.o: unionTest.c.o
-.PHONY : unionTest.o
+unionTest01.o: unionTest01.c.o
+.PHONY : unionTest01.o
 
 # target to build an object file
-unionTest.c.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.o
-.PHONY : unionTest.c.o
+unionTest01.c.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest01.c.o
+.PHONY : unionTest01.c.o
 
-unionTest.i: unionTest.c.i
-.PHONY : unionTest.i
+unionTest01.i: unionTest01.c.i
+.PHONY : unionTest01.i
 
 # target to preprocess a source file
-unionTest.c.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.i
-.PHONY : unionTest.c.i
+unionTest01.c.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest01.c.i
+.PHONY : unionTest01.c.i
 
-unionTest.s: unionTest.c.s
-.PHONY : unionTest.s
+unionTest01.s: unionTest01.c.s
+.PHONY : unionTest01.s
 
 # target to generate assembly for a file
-unionTest.c.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.s
-.PHONY : unionTest.c.s
+unionTest01.c.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest01.c.s
+.PHONY : unionTest01.c.s
 
 # Help Target
 help:
@@ -147,9 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... unionTest.o"
-	@echo "... unionTest.i"
-	@echo "... unionTest.s"
+	@echo "... unionTest01.o"
+	@echo "... unionTest01.i"
+	@echo "... unionTest01.s"
 .PHONY : help
 
 

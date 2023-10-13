@@ -15,5 +15,5 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 project (test001)
 #≤‚ ‘
 
-add_executable(test unionTest.c)
+add_executable(test unionTest01.c)
 

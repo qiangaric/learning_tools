@@ -52,37 +52,37 @@ include CMakeFiles/test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test.dir/flags.make
 
-CMakeFiles/test.dir/unionTest.c.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/unionTest.c.o: ../unionTest.c
+CMakeFiles/test.dir/unionTest01.c.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/unionTest01.c.o: ../unionTest01.c
 	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/unitTest/build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/test.dir/unionTest.c.o"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test.dir/unionTest.c.o   -c /pgdata/projetcs/cJSON/unitTest/unionTest.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/test.dir/unionTest01.c.o"
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/test.dir/unionTest01.c.o   -c /pgdata/projetcs/cJSON/unitTest/unionTest01.c
 
-CMakeFiles/test.dir/unionTest.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/unionTest.c.i"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -E /pgdata/projetcs/cJSON/unitTest/unionTest.c > CMakeFiles/test.dir/unionTest.c.i
+CMakeFiles/test.dir/unionTest01.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/test.dir/unionTest01.c.i"
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -E /pgdata/projetcs/cJSON/unitTest/unionTest01.c > CMakeFiles/test.dir/unionTest01.c.i
 
-CMakeFiles/test.dir/unionTest.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/unionTest.c.s"
-	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -S /pgdata/projetcs/cJSON/unitTest/unionTest.c -o CMakeFiles/test.dir/unionTest.c.s
+CMakeFiles/test.dir/unionTest01.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/test.dir/unionTest01.c.s"
+	/usr/bin/gcc  $(C_DEFINES) $(C_FLAGS) -S /pgdata/projetcs/cJSON/unitTest/unionTest01.c -o CMakeFiles/test.dir/unionTest01.c.s
 
-CMakeFiles/test.dir/unionTest.c.o.requires:
-.PHONY : CMakeFiles/test.dir/unionTest.c.o.requires
+CMakeFiles/test.dir/unionTest01.c.o.requires:
+.PHONY : CMakeFiles/test.dir/unionTest01.c.o.requires
 
-CMakeFiles/test.dir/unionTest.c.o.provides: CMakeFiles/test.dir/unionTest.c.o.requires
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest.c.o.provides.build
-.PHONY : CMakeFiles/test.dir/unionTest.c.o.provides
+CMakeFiles/test.dir/unionTest01.c.o.provides: CMakeFiles/test.dir/unionTest01.c.o.requires
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/unionTest01.c.o.provides.build
+.PHONY : CMakeFiles/test.dir/unionTest01.c.o.provides
 
-CMakeFiles/test.dir/unionTest.c.o.provides.build: CMakeFiles/test.dir/unionTest.c.o
+CMakeFiles/test.dir/unionTest01.c.o.provides.build: CMakeFiles/test.dir/unionTest01.c.o
 
 # Object files for target test
 test_OBJECTS = \
-"CMakeFiles/test.dir/unionTest.c.o"
+"CMakeFiles/test.dir/unionTest01.c.o"
 
 # External object files for target test
 test_EXTERNAL_OBJECTS =
 
-test: CMakeFiles/test.dir/unionTest.c.o
+test: CMakeFiles/test.dir/unionTest01.c.o
 test: CMakeFiles/test.dir/build.make
 test: CMakeFiles/test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable test"
@@ -92,7 +92,7 @@ test: CMakeFiles/test.dir/link.txt
 CMakeFiles/test.dir/build: test
 .PHONY : CMakeFiles/test.dir/build
 
-CMakeFiles/test.dir/requires: CMakeFiles/test.dir/unionTest.c.o.requires
+CMakeFiles/test.dir/requires: CMakeFiles/test.dir/unionTest01.c.o.requires
 .PHONY : CMakeFiles/test.dir/requires
 
 CMakeFiles/test.dir/clean:

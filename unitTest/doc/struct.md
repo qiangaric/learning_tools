@@ -17,3 +17,7 @@ struct Student
 }Stu;
 // 就必须用struct Student stu1;或者struct Stu stu1;来声明 
 ```
+
+```
+
+```

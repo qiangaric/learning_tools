@@ -19,7 +19,7 @@
                 "-p",
                 "5435",
                 "--backup-path",
-                "/pgdata/backup/pg_rman/",
+                "/pgdata/backup/pg_rman",
                 "-D",
                 "/pgdata/data15_3/pgdata",
                 "--arclog-path",

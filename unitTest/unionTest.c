@@ -66,5 +66,6 @@ int main(int argc, char const *argv[])
            purchase->quantity * purchase->price);
     free(purchase);
 
+
     return 0;
 }

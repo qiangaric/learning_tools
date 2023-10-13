@@ -24,6 +24,7 @@ struct parray
 parray *
 parray_new(void)
 {
+	/*分配parray内存*/
 	parray *a = pgut_new(parray);
 
 	a->data = NULL;
@@ -51,6 +52,7 @@ void parray_expand(parray *array, size_t newsize)
 	p = pgut_realloc(array->data, sizeof(void *) * newsize);
 
 	/* initialize expanded area to NULL */
+	/*内存初始化 0*/
 	memset(p + array->alloced, 0, (newsize - array->alloced) * sizeof(void *));
 
 	array->alloced = newsize;

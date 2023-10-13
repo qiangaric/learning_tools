@@ -1,6 +1,12 @@
 {
     "files.associations": {
         "pg_rman.h": "c",
-        "xlog_internal.h": "c"
+        "xlog_internal.h": "c",
+        "array": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "pg_control.h": "c"
     }
 }
