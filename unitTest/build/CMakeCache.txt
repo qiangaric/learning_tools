@@ -176,6 +176,18 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 
+//The Set the PostgreSQL_ROOT system variable to where PostgreSQL
+// is found on the machine E.g C:/Program Files/PostgreSQL/8.4
+PostgreSQL_CONFIG_DIR:PATH=/pgdata/pg14_2/data/bin
+
+//Path to a library.
+PostgreSQL_LIBRARY:FILEPATH=PostgreSQL_LIBRARY-NOTFOUND
+
+//The Set the PostgreSQL_INCLUDE_DIR cmake cache entry to the top-level
+// directory containing the PostgreSQL include directories. E.g
+// /usr/local/include/PostgreSQL/8.4 or C:/Program Files/PostgreSQL/8.4/include
+PostgreSQL_TYPE_INCLUDE_DIR:PATH=/pgdata/pg14_2/data/include/postgresql/server
+
 //Value Computed by CMake
 test001_BINARY_DIR:STATIC=/pgdata/projetcs/cJSON/unitTest/build
 
@@ -189,8 +201,6 @@ test001_SOURCE_DIR:STATIC=/pgdata/projetcs/cJSON/unitTest
 
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_BUILD_TOOL
-CMAKE_BUILD_TOOL-ADVANCED:INTERNAL=1
 //What is the target build tool cmake is generating for.
 CMAKE_BUILD_TOOL:INTERNAL=/usr/bin/gmake
 //This is the directory where this CMakeCache.txt was created

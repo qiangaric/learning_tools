@@ -1,4 +1,4 @@
-#include "c.h"
+// #include "postgres.h"
 int main(int argc, char const *argv[])
 {
 
@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 
     printf("b= %lu \n", b);
 
-    uint32_t a = 888;
+    // uint32_t a = 888;
 
     printf("a is %ld", a);
     return 0;

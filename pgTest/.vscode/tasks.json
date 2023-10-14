@@ -1,0 +1,36 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "make",
+            "command": "/usr/bin/make",
+            "args": [
+                // "all"
+            ],
+            "type": "shell",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "clean",
+            "command": "/usr/bin/make",
+            "args": [
+                "clean"
+            ],
+            "type": "shell"
+        },
+        {
+            //对应launch.json里的"preLaunchTask": "Build"
+            //调试前执行cmake和make两条终端命令实现自动编译
+            "label": "Build",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "clean",
+                "make"
+            ],
+        }
+    ]
+}
