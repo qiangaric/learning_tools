@@ -17,8 +17,12 @@ clean:
 	rm -f pg_tail
 
 # 必须添加 -g -Wall 用于调试
-pg_tail: pg_tail.c
-	$(CC) $(CFLAGS) $(INC) $(LIB) -o pg_tail pg_tail.c $(LDFLAGS) -g -Wall
+pg_tail: pg_tail01.c
+	$(CC) $(CFLAGS) $(INC) $(LIB) --std=c99  -o pg_tail pg_tail01.c $(LDFLAGS)
+
+# 必须添加 -g -Wall 用于调试
+# pg_tail: pg_tail.c
+# 	$(CC)   -o pg_tail pg_tail01.c 
 
 install: pg_tail
 	cp pg_tail $(INSTALL)

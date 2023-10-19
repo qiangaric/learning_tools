@@ -1338,7 +1338,10 @@ static void
 get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 {
 	printf("current lsn =============== %d \n",lsn);
+	/*logSEQ wal日志文件的后8位字符  LSN的前两位（需左移24位）*/
 	uint32 off_upper;
+
+	/*逻辑ID、偏移量*/
 	uint32 xlogid, xrecoff = 0;
 
 	if (res == NULL || PQntuples(res) != 1 || PQnfields(res) != 2)
@@ -1350,6 +1353,11 @@ get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 	/* get TimeLineID, LSN from result of pg_backup_stop() */
 	printf("pgvaue01 : %-15s \n", PQgetvalue(res, 0, 0));
 	printf("pgvaue02 : %-15s \n", PQgetvalue(res, 0, 1));
+	/*
+	文件为24字符 ：时间线、逻辑ID、logSEQ
+
+	PQgetvalue(res, 0, 1) 偏移量
+	*/
 	if (sscanf(PQgetvalue(res, 0, 0), "%08X%08X%08X",
 			   timeline, &xlogid, &off_upper) != 3 ||
 		sscanf(PQgetvalue(res, 0, 1), "%u", &xrecoff) != 1)
@@ -1361,6 +1369,8 @@ get_lsn(PGresult *res, TimeLineID *timeline, XLogRecPtr *lsn)
 	}
 
 	Assert(wal_segment_size > 0);
+	printf("wal_segment_size ===  %u \n",wal_segment_size);
+	printf("((uint32)log2(wal_segment_size)) ===  %u \n",((uint32)log2(wal_segment_size)));
 	xrecoff += off_upper << ((uint32)log2(wal_segment_size));
 
 	*lsn = (XLogRecPtr)((uint64)xlogid << 32) | xrecoff;
