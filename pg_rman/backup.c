@@ -1617,6 +1617,9 @@ backup_files(const char *from_root,
 			}
 
 			/* copy the file into backup */
+			/**
+			 * 检查是否是数据文件，如果是，backup_data_file，不是数据文件，直接拷贝
+			*/
 			if (!(file->is_datafile
 					  ? backup_data_file(from_root, to_root, file, lsn, compress, prev_file_not_found)
 					  : copy_file(from_root, to_root, file,

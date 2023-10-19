@@ -8,22 +8,12 @@
             "name": "build debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/pg_rman", //可执行文件的位置！
+            "program": "${workspaceFolder}/binary/flashback", //可执行文件的位置！
             "args": [
-                "backup",
-                "--backup-mode=incremental",
-                "--debug",
-                "-h",
-                "127.0.0.1",
-                "-p",
-                "5435",
-                "--backup-path",
-                "/pgdata/backup/pg_rman",
-                "-D",
-                "/pgdata/data15_3/pgdata",
-                "-Upostgres",
-                "-d",
-                "backuptest"
+                "--binlogFileNames",
+                "/pgdata/projetcs/cJSON/myflash/binlog/mysql-bin.000008",
+                "--outBinlogFileNameBase",
+                "/pgdata/projetcs/cJSON/myflash/output/binlog"
             ],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",

@@ -11,7 +11,8 @@
             "program": "${workspaceFolder}/pg_rman", //可执行文件的位置！
             "args": [
                 "backup",
-                "--backup-mode=incremental",
+                "--backup-mode=full",
+                "--with-serverlog",
                 "--debug",
                 "-h",
                 "127.0.0.1",
@@ -21,6 +22,10 @@
                 "/pgdata/backup/pg_rman",
                 "-D",
                 "/pgdata/data15_3/pgdata",
+                "--arclog-path",
+                "/pgdata/backup/archive",
+                "-S",
+                "/pgdata/data15_3/logs",
                 "-Upostgres",
                 "-d",
                 "backuptest"
