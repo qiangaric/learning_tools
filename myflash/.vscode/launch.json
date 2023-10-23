@@ -13,7 +13,9 @@
                 "--binlogFileNames",
                 "/pgdata/projetcs/cJSON/myflash/binlog/mysql-bin.000008",
                 "--outBinlogFileNameBase",
-                "/pgdata/projetcs/cJSON/myflash/output/binlog"
+                "/pgdata/projetcs/cJSON/myflash/output/binlog",
+                "--logLevel",
+                "cr"
             ],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",

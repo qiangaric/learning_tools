@@ -18,7 +18,7 @@ clean:
 
 # 必须添加 -g -Wall 用于调试
 pg_tail: source/binlogParseGlib.c 
-	gcc -g -w  `pkg-config --cflags --libs glib-2.0` source/binlogParseGlib.c  -o binary/flashback
+	gcc -g3 -w  `pkg-config --cflags --libs glib-2.0` source/binlogParseGlib.c  -o binary/flashback
 #	$(CC) $(CFLAGS) $(INC) $(LIB) --std=c99  -o pg_tail pg_tail01.c $(LDFLAGS)
 
 # 必须添加 -g -Wall 用于调试
