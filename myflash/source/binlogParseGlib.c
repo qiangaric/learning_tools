@@ -10,6 +10,7 @@
 #define MAX_HEADER_LENGTH 200
 #define EVENT_HEADER_LENGTH 19
 #define CHECKSUM_LENGTH 4
+
 // #define g_debug(info) g_print("[%s:%d] : %s \n", __FILE__ ,__LINE__, info)
 #define g_error(...) _torctlmain_log(G_LOG_LEVEL_ERROR, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #define mylogcritical(...) _torctlmain_log(G_LOG_LEVEL_CRITICAL, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
@@ -17,10 +18,8 @@
 #define mylogmessage(...) _torctlmain_log(G_LOG_LEVEL_MESSAGE, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #define myloginfo(...) _torctlmain_log(G_LOG_LEVEL_INFO, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 #define g_debug(...) _torctlmain_log(G_LOG_LEVEL_DEBUG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
- 
+
 #define MYLOG_FUNCALL mylogdebug("enter %s()", __FUNCTION__)
-
-
 
 #define G_LOG_DOMAIN ((gchar *)0)
 // static FormatDescriptionEvent* formatDescriptionEventForGlobalUse=NULL;
@@ -236,6 +235,9 @@ typedef struct _GtidSetInfo
   guint64 stopSeqNo;
 } GtidSetInfo;
 
+/**
+ * 19字节头信息
+ */
 typedef struct _EventHeader
 {
   guint32 binlogTimestamp;
@@ -1014,7 +1016,11 @@ gboolean isTransactionBeginText(gchar *sqlText)
 
 gchar *getStringAndAdvance(gchar *buffer, guint64 stringLength, gchar *stringValue)
 {
+
+  // g_debug("table name is %s", stringValue);
   memcpy(stringValue, buffer, stringLength);
+  // g_debug("table name is %llu", stringValue);
+  // g_debug("stringValue is %s", *stringValue);
   return buffer + stringLength;
 }
 
@@ -1023,12 +1029,21 @@ gchar *getGuint64AndAdvance(gchar *buffer, guint64 *value)
   memcpy(value, buffer, sizeof(guint64));
   return buffer + sizeof(guint64);
 }
-
+/**
+ * 获取tableID
+ * value table id
+ */
 gchar *getGuint48AndAdvance(gchar *buffer, guint64 *value)
 {
   *value = 0;
+  /**
+   * 6字节table id
+   */
   guint64 uint48Length = 6;
   memcpy(value, buffer, uint48Length);
+  // g_debug("uint48Length = %lld", uint48Length);
+  // g_debug("uint48Length = %lld", buffer);
+  // g_debug("buffer= %lld", buffer + uint48Length);
   return buffer + uint48Length;
 }
 
@@ -1061,7 +1076,12 @@ gchar *getPackedIntegerAndAdvance(gchar *buffer, guint64 *value)
 {
   *value = 0;
   guint8 lengthIndicator;
+  // g_debug("table name is %s", buffer);
+  /**
+   * buffer 数据copy到lengthIndicator
+   */
   memcpy(&lengthIndicator, buffer, sizeof(guint8));
+  g_debug("lengthIndicator = %llu", lengthIndicator);
   if (251 >= lengthIndicator)
   {
     lengthIndicator = 1;
@@ -1081,7 +1101,7 @@ gchar *getPackedIntegerAndAdvance(gchar *buffer, guint64 *value)
     lengthIndicator = 8;
     buffer += 1;
   }
-
+  g_debug("lengthIndicator = %llu", lengthIndicator);
   memcpy(value, buffer, lengthIndicator);
 
   return buffer + lengthIndicator;
@@ -1098,6 +1118,9 @@ gboolean isBitmapSet(gchar *bitmap, guint64 bitPos)
   return ((gchar *)bitmap)[bitPos / 8] & (1 << (bitPos & 7));
 }
 
+/**
+ * 解析头信息
+ */
 int parseHeader(gchar *buffer, EventHeader *eventHeader)
 {
 
@@ -1691,6 +1714,14 @@ int initQueryEvent(QueryEvent *queryEvent, EventHeader *eventHeader, gchar *rawQ
   queryEvent->rawQueryEventDataDetail = rawQueryEventDataDetail;
   return 0;
 }
+/**
+ * 函数作用：
+ *    初始化RowEvent结构体
+ * 输入参数
+ *
+ * 返回值
+ *
+ */
 
 int initRowEvent(RowEvent *rowEvent, EventHeader *eventHeader, gchar *rawRowEventDataDetail)
 {
@@ -1799,50 +1830,70 @@ int parseGtidEvent(gchar *dataBuffer, GtidEvent *gtidEvent)
 
 int parseTableMapEventData(gchar *dataBuffer, TableMapEvent *tableMapEvent)
 {
-
+  /*6字节table id*/
   guint64 tableId;
   dataBuffer = getGuint48AndAdvance(dataBuffer, &tableId);
+  // g_debug("dataBuffer === %s \n",dataBuffer);
   tableMapEvent->tableId = tableId;
 
+  /*2字节没用*/
   guint16 skipGuint16;
   dataBuffer = getGuint16AndAdvance(dataBuffer, &skipGuint16);
 
+  /*1字节 db长度*/
   guint8 databaseNameLength;
   dataBuffer = getGuint8AndAdvance(dataBuffer, &databaseNameLength);
   tableMapEvent->databaseNameLength = databaseNameLength;
 
+  /*长度databaseNameLength + 1字节 db名称， 1为\0*/
   gchar *databaseName;
   databaseName = g_new0(gchar, databaseNameLength + 1);
   dataBuffer = getStringAndAdvance(dataBuffer, databaseNameLength + 1, databaseName);
+  g_debug("databaseName is %s", databaseName);
   tableMapEvent->databaseName = databaseName;
 
+  /* 1字节表名称长度 */
   guint8 tableNameLength;
   dataBuffer = getGuint8AndAdvance(dataBuffer, &tableNameLength);
   tableMapEvent->tableNameLength = tableNameLength;
 
+  /* tableNameLength+1字节 表名 */
   gchar *tableName;
   tableName = g_new0(gchar, tableNameLength + 1);
   dataBuffer = getStringAndAdvance(dataBuffer, tableNameLength + 1, tableName);
   tableMapEvent->tableName = tableName;
 
+  /*1字节表列数*/
   guint64 columnNumber;
   dataBuffer = getPackedIntegerAndAdvance(dataBuffer, &columnNumber);
+  g_debug("columnNumber is %llu", columnNumber);
   tableMapEvent->columnNumber = columnNumber;
 
+  /**
+   * 列类型，每个列一个字节
+   */
   gchar *columnTypeArray;
   columnTypeArray = g_new0(gchar, columnNumber);
   int i = 0;
   while (i < columnNumber)
   {
     dataBuffer = getStringAndAdvance(dataBuffer, 1, columnTypeArray);
+    g_debug("columns line number is %d", i + 1);
+    // g_debug("columnTypeArray is %c", *columnTypeArray);
+    g_debug("columnTypeArray is %llu", *columnTypeArray);
     g_byte_array_append(tableMapEvent->columnTypeArray, columnTypeArray, 1 /*column type length*/);
     i++;
   }
 
+  /**
+   * 元数据块的长度 一列一个字节
+   */
   guint16 *columnMetadataArray;
   columnMetadataArray = (guint16 *)malloc(sizeof(guint16) * columnNumber);
+  g_debug("columnMetadataArray is %d", *columnMetadataArray);
   tableMapEvent->columnMetadataArray = columnMetadataArray;
 
+  /*元数据块*/
   guint64 metadataBlockSize = 0;
   dataBuffer = getPackedIntegerAndAdvance(dataBuffer, &metadataBlockSize);
 
@@ -1887,6 +1938,9 @@ int appendToAllEventList(GList **allEventsList, EventHeader *eventHeader, gpoint
   eventWrapper = g_new0(EventWrapper, 1);
   eventWrapper->eventType = eventHeader->eventType;
   eventWrapper->eventPointer = someEvent;
+  /**
+   * 将一个新元素加入到链表头
+   */
   *allEventsList = g_list_prepend(*allEventsList, (gpointer)eventWrapper);
 
   return 0;
@@ -2149,6 +2203,9 @@ int constructLeastExecutionUnitFromAllEventsList(const GList *allEventsList, GLi
     {
       g_debug("skip the event %s\n", Binlog_event_type_name[eventWrapper->eventType]);
     }
+    /**
+     * 指向下一个事件
+     */
     allEventsList = allEventsList->next;
   }
 
@@ -2338,6 +2395,7 @@ int appendFormatDescriptionEventToChannel(GIOChannel *ioChannel)
   }
   GIOStatus ioStatus;
   guint64 bytes_written;
+  g_debug("formatDescriptionEventForGlobalUse->eventHeader->rawEventHeader = %s", formatDescriptionEventForGlobalUse->eventHeader->rawEventHeader);
   ioStatus = g_io_channel_write_chars(ioChannel, formatDescriptionEventForGlobalUse->eventHeader->rawEventHeader, EVENT_HEADER_LENGTH, &bytes_written, NULL);
   if (G_IO_STATUS_NORMAL != ioStatus)
   {
@@ -2345,6 +2403,7 @@ int appendFormatDescriptionEventToChannel(GIOChannel *ioChannel)
     return 1;
   }
 
+  g_debug("formatDescriptionEventForGlobalUse->rawFormatDescriptionEventDataDetail = %s", formatDescriptionEventForGlobalUse->rawFormatDescriptionEventDataDetail);
   ioStatus = g_io_channel_write_chars(ioChannel, formatDescriptionEventForGlobalUse->rawFormatDescriptionEventDataDetail, getRawEventDataLengthWithChecksum(formatDescriptionEventForGlobalUse->eventHeader), &bytes_written, NULL);
   if (G_IO_STATUS_NORMAL != ioStatus)
   {
@@ -2472,10 +2531,15 @@ int constructBinlogFromLeastExecutionUintList(GList *allLeastExecutionUnitList)
   // binlogFlashbackOutFileName=g_new0(gchar, strlen(optOutBinlogFileNameBase)+strlen(binlogFlashbackOutFileNamePostfix)+1+1);
   binlogFlashbackOutFileName = g_strdup_printf("%s.%s", optOutBinlogFileNameBase, binlogFlashbackOutFileNamePostfix);
 
+  g_debug("myflash binlog name = %s", binlogFlashbackOutFileName);
+
   GIOChannel *binlogFlashbackOutChannel;
   binlogFlashbackOutChannel = getIoChannelForWrite(binlogFlashbackOutFileName);
   GIOStatus ioStatus;
   guint64 bytes_written;
+  /**
+   * 4字节魔数写入binlog
+   */
   ioStatus = g_io_channel_write_chars(binlogFlashbackOutChannel, MAGIC_HEADER_CONTENT, sizeof(MAGIC_HEADER_CONTENT), &bytes_written, NULL);
   if (G_IO_STATUS_NORMAL != ioStatus)
   {
@@ -2552,6 +2616,8 @@ int flashbackAllEvents(GList *allEventsList)
   flashbackEventList = NULL;
   GList *tempAllEventList;
   tempAllEventList = allEventsList;
+  //
+  g_debug("g_list_length = %d ",g_list_length(tempAllEventList));
   EventWrapper *tempEventWrapper;
   while (NULL != tempAllEventList)
   {
@@ -2586,6 +2652,9 @@ int flashbackAllEvents(GList *allEventsList)
 
 int processBinlog(GIOChannel *binlogGlibChannel, guint64 fileIndex, gboolean isLastFile)
 {
+  /**
+   * 4字节魔数
+   */
   guint64 MagicHeaderLength = 4;
   guint64 currentPos;
   currentPos = MagicHeaderLength;
@@ -2606,15 +2675,27 @@ int processBinlog(GIOChannel *binlogGlibChannel, guint64 fileIndex, gboolean isL
   {
     EventHeader *eventHeader;
     eventHeader = g_new0(EventHeader, 1);
+    /**
+     * 解析事件头
+     */
     parseHeader(headerBuffer, eventHeader);
     g_warning("currentPos %llu \n", currentPos);
-    g_warning("eventHeader %llu \n", eventHeader->nextEventPos);
+    /**
+     * 下一个事件的开始位置nextEventPos
+     */
+    g_warning("the end of the envent,eventHeader %llu \n", eventHeader->nextEventPos);
     currentPos += EVENT_HEADER_LENGTH;
+    /**
+     * 向前推进19个字节
+     */
     if (G_IO_STATUS_NORMAL != (ioStatus = g_io_channel_seek_position(binlogGlibChannel, currentPos, G_SEEK_SET, NULL)))
     {
       g_warning("failed to seek the pos %ld \n", currentPos);
     }
 
+    /**
+     * 私有事件(dataBuffer):单个事件总大小减去事件头部
+     */
     gchar *dataBuffer = g_new0(gchar, (eventHeader->eventLength - EVENT_HEADER_LENGTH));
     guint64 realDataLength;
 
@@ -2628,13 +2709,22 @@ int processBinlog(GIOChannel *binlogGlibChannel, guint64 fileIndex, gboolean isL
         TableMapEvent *tableMapEvent = g_new0(TableMapEvent, 1);
         initTableMapEvent(tableMapEvent, eventHeader, dataBuffer);
         parseTableMapEventData(dataBuffer, tableMapEvent);
+        /**
+         * preappend到Glist
+         */
         appendToAllEventList(&allEventsList, eventHeader, (gpointer)tableMapEvent);
 
         break;
       }
       case FORMAT_DESCRIPTION_EVENT:
       {
+        /**
+         * 如果是描述性头事件，跳过此次循环
+         */
         FormatDescriptionEvent *formatDescriptionEvent = g_new0(FormatDescriptionEvent, 1);
+        /**
+         *
+         */
         initFormatDescriptionEvent(formatDescriptionEvent, eventHeader, dataBuffer);
         setFormatDescriptionEventForGlobalUse(formatDescriptionEvent);
         g_debug("just skip the FORMAT_DESCRIPTION_EVENT \n");
@@ -2645,7 +2735,13 @@ int processBinlog(GIOChannel *binlogGlibChannel, guint64 fileIndex, gboolean isL
       case UPDATE_ROWS_EVENT:
       case DELETE_ROWS_EVENT:
       {
+        g_debug("DML DATA CHANGE");
         RowEvent *rowEvent = g_new0(RowEvent, 1);
+        /**
+         * 初始化rowEvent
+         *eventHeader 公有事件头
+         *dataBuffer 私有事件（事件头和事件体）
+         */
         initRowEvent(rowEvent, eventHeader, dataBuffer);
         appendToAllEventList(&allEventsList, eventHeader, (gpointer)rowEvent);
 
@@ -2684,7 +2780,11 @@ int processBinlog(GIOChannel *binlogGlibChannel, guint64 fileIndex, gboolean isL
       }
       }
     }
+    /**
+     * 事件长度减去头长度
+     */
     currentPos += (eventHeader->eventLength - EVENT_HEADER_LENGTH);
+    g_debug("after parse the event , currentPos = %llu", currentPos);
 
     gboolean isShouldStop = FALSE;
     isShouldStop = getNextPosOrStop(&currentPos, fileIndex, isLastFile);
@@ -3013,191 +3113,97 @@ int setLogHandler()
 /**
  * 日志设置
  */
-static void my_log_handler(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data)
+
+typedef enum
 {
-  g_print("[%s:%d][LEVEL:%3d] : %s \n", __FILE__, __LINE__, log_level, message);
-}
-
-// #define TORCTL_LOG_DOMAIN "torctl"
-
-// GLogLevelFlags torctlLogFilterLevel = G_LOG_LEVEL_INFO;
-
-// static const gchar *_torctlmain_logLevelToString(GLogLevelFlags logLevel)
-// {
-//   switch (logLevel)
-//   {
-//   case G_LOG_LEVEL_ERROR:
-//     return "error";
-//   case G_LOG_LEVEL_CRITICAL:
-//     return "critical";
-//   case G_LOG_LEVEL_WARNING:
-//     return "warning";
-//   case G_LOG_LEVEL_MESSAGE:
-//     return "message";
-//   case G_LOG_LEVEL_INFO:
-//     return "info";
-//   case G_LOG_LEVEL_DEBUG:
-//     return "debug";
-//   default:
-//     return "default";
-//   }
-// }
-
-// static void _torctlmain_log(GLogLevelFlags level, const gchar *functionName, const gchar *format, ...)
-// {
-//   if (level > torctlLogFilterLevel)
-//   {
-//     return;
-//   }
-
-//   va_list vargs;
-//   va_start(vargs, format);
-
-//   GDateTime *dt = g_date_time_new_now_local();
-//   GString *newformat = g_string_new(NULL);
-
-//   g_string_append_printf(newformat, "%04i-%02i-%02i %02i:%02i:%02i %" G_GINT64_FORMAT ".%06i [%s:%d][%s] [%s] %s",
-//                          g_date_time_get_year(dt), g_date_time_get_month(dt), g_date_time_get_day_of_month(dt),
-//                          g_date_time_get_hour(dt), g_date_time_get_minute(dt), g_date_time_get_second(dt),
-//                          g_date_time_to_unix(dt), g_date_time_get_microsecond(dt),
-//                          __FILE__,
-//                          __LINE__,
-//                          _torctlmain_logLevelToString(level), functionName, format);
-
-//   gchar *message = g_strdup_vprintf(newformat->str, vargs);
-//   g_print("%s\n", message);
-//   g_free(message);
-
-//   g_string_free(newformat, TRUE);
-//   g_date_time_unref(dt);
-
-//   va_end(vargs);
-// }
-
-// #define mylogm(...) _torctlmain_log(G_LOG_LEVEL_MESSAGE, __FUNCTION__, __VA_ARGS__)
-// #define mylogd(...) _torctlmain_log(G_LOG_LEVEL_DEBUG, __FUNCTION__, __VA_ARGS__)
-// #define myloge(...) _torctlmain_log(G_LOG_LEVEL_CRITICAL, __FUNCTION__, __VA_ARGS__)
-
-
-
-
-typedef enum {
-    NOTIME = 0, // display no time
-    HourTime,   // display hour and so
-    ALLTime     // all time include year
+  NOTIME = 0, // display no time
+  HourTime,   // display hour and so
+  ALLTime     // all time include year
 } LogTimeLength;
- 
+
 GLogLevelFlags torctlLogFilterLevel = G_LOG_LEVEL_DEBUG;
 LogTimeLength defaultLogTime = HourTime;
- 
-static const gchar* _torctlmain_logLevelToString(GLogLevelFlags logLevel)
+
+static const gchar *_torctlmain_logLevelToString(GLogLevelFlags logLevel)
 {
-    switch (logLevel) {
-    case G_LOG_LEVEL_ERROR:
-        return "error   ";
-    case G_LOG_LEVEL_CRITICAL:
-        return "critical";
-    case G_LOG_LEVEL_WARNING:
-        return "warning ";
-    case G_LOG_LEVEL_MESSAGE:
-        return "message ";
-    case G_LOG_LEVEL_INFO:
-        return "info    ";
-    case G_LOG_LEVEL_DEBUG:
-        return "debug   ";
-    default:
-        return "default";
-    }
-}
- 
-void _torctlmain_log(GLogLevelFlags level, const gchar* fileName, const gchar* functionName, gint line, const gchar* format, ...)
-{
-    if (level > torctlLogFilterLevel) {
-        return;
-    }
- 
-    va_list vargs;
-    va_start(vargs, format);
- 
-    GDateTime* dt = g_date_time_new_now_local();
-    GString* newformat = g_string_new(NULL);
- 
-    switch (defaultLogTime) {
-    case NOTIME:
-        g_string_append_printf(newformat, "[%s] [%s:%d] [%s] %s",
-            _torctlmain_logLevelToString(level), fileName, line, functionName, format);
-        break;
-    case ALLTime:
-        g_string_append_printf(newformat, "%04i-%02i-%02i %02i:%02i:%02i %" G_GINT64_FORMAT ".%06i [%s] [%s:%d] [%s] %s",
-            g_date_time_get_year(dt), g_date_time_get_month(dt), g_date_time_get_day_of_month(dt),
-            g_date_time_get_hour(dt), g_date_time_get_minute(dt), g_date_time_get_second(dt),
-            g_date_time_to_unix(dt), g_date_time_get_microsecond(dt),
-            _torctlmain_logLevelToString(level), fileName, line, functionName, format);
-        break;
-    case HourTime:
-    default:
-        g_string_append_printf(newformat, "%02i:%02i:%02i .%06i  [%s] [%s:%d] [%s] %s",
-            g_date_time_get_hour(dt), g_date_time_get_minute(dt), g_date_time_get_second(dt),
-            g_date_time_get_microsecond(dt),
-            _torctlmain_logLevelToString(level), fileName, line, functionName, format);
-        break;
-    }
- 
-    gchar* message = g_strdup_vprintf(newformat->str, vargs);
-    g_print("%s\n", message);
-    g_free(message);
- 
-    g_string_free(newformat, TRUE);
-    g_date_time_unref(dt);
- 
-    va_end(vargs);
+  switch (logLevel)
+  {
+  case G_LOG_LEVEL_ERROR:
+    return "error   ";
+  case G_LOG_LEVEL_CRITICAL:
+    return "critical";
+  case G_LOG_LEVEL_WARNING:
+    return "warning ";
+  case G_LOG_LEVEL_MESSAGE:
+    return "message ";
+  case G_LOG_LEVEL_INFO:
+    return "info    ";
+  case G_LOG_LEVEL_DEBUG:
+    return "debug   ";
+  default:
+    return "default";
+  }
 }
 
+void _torctlmain_log(GLogLevelFlags level, const gchar *fileName, const gchar *functionName, gint line, const gchar *format, ...)
+{
+  if (level > torctlLogFilterLevel)
+  {
+    return;
+  }
 
-void _torctlmain_log(GLogLevelFlags level, const gchar* fileName,
-    const gchar* functionName, gint line, const gchar* format, ...);
- 
+  va_list vargs;
+  va_start(vargs, format);
+
+  GDateTime *dt = g_date_time_new_now_local();
+  GString *newformat = g_string_new(NULL);
+
+  switch (defaultLogTime)
+  {
+  case NOTIME:
+    g_string_append_printf(newformat, "[%s] [%s:%d] [%s] %s",
+                           _torctlmain_logLevelToString(level), fileName, line, functionName, format);
+    break;
+  case ALLTime:
+    g_string_append_printf(newformat, "%04i-%02i-%02i %02i:%02i:%02i %" G_GINT64_FORMAT ".%06i [%s] [%s:%d] [%s] %s",
+                           g_date_time_get_year(dt), g_date_time_get_month(dt), g_date_time_get_day_of_month(dt),
+                           g_date_time_get_hour(dt), g_date_time_get_minute(dt), g_date_time_get_second(dt),
+                           g_date_time_to_unix(dt), g_date_time_get_microsecond(dt),
+                           _torctlmain_logLevelToString(level), fileName, line, functionName, format);
+    break;
+  case HourTime:
+  default:
+    g_string_append_printf(newformat, "%02i:%02i:%02i .%06i  [%s] [%s:%d] [%s] %s",
+                           g_date_time_get_hour(dt), g_date_time_get_minute(dt), g_date_time_get_second(dt),
+                           g_date_time_get_microsecond(dt),
+                           _torctlmain_logLevelToString(level), fileName, line, functionName, format);
+    break;
+  }
+
+  gchar *message = g_strdup_vprintf(newformat->str, vargs);
+  g_print("%s\n", message);
+  g_free(message);
+
+  g_string_free(newformat, TRUE);
+  g_date_time_unref(dt);
+
+  va_end(vargs);
+}
+
+void _torctlmain_log(GLogLevelFlags level, const gchar *fileName,
+                     const gchar *functionName, gint line, const gchar *format, ...);
 
 int main(int argc, char **argv)
 {
 
+  /**
+   * 设置日志级别
+   */
   torctlLogFilterLevel = G_LOG_LEVEL_DEBUG;
-
-  gchar hostname[128];
-  memset(hostname, 0, 128);
-  gethostname(hostname, 128);
-  g_debug("Starting torctl program on host %s process id %i", hostname, (gint)getpid());
-
-  // g_log_set_default_handler(my_log_handler, "User_Data");
-
-  // g_setenv("G_MESSAGES_DEBUG", "all", TRUE);
-  // g_log("foo", G_LOG_LEVEL_DEBUG, "foo debug");
-  // g_log("foo", G_LOG_LEVEL_DEBUG, "foo debug");
-  // g_log("foo", G_LOG_LEVEL_INFO, "foo info");
-  // g_log("bar", G_LOG_LEVEL_MESSAGE, "bar message");
-  // g_log("bar", G_LOG_LEVEL_WARNING, "bar warning");
-  // g_log("baz", G_LOG_LEVEL_CRITICAL, "bar critical");
-  // G_LOG_TEST("testttttttttt");
-
-  // g_print("set fatal mask: baz G_LOG_LEVEL_MESSAGE \n");
-  // g_log_set_fatal_mask("baz", G_LOG_LEVEL_MESSAGE);
-
-  // g_log ("foo", G_LOG_LEVEL_DEBUG, "foo debug");
-  // g_log ("foo", G_LOG_LEVEL_INFO, "foo info");
-  // g_log ("foo", G_LOG_LEVEL_MESSAGE, "foo message");
-  // g_log ("bar", G_LOG_LEVEL_MESSAGE, "bar message");
-  // g_log ("bar", G_LOG_LEVEL_WARNING, "bar warning");
-  // g_log ("baz", G_LOG_LEVEL_INFO, "baz info");
-  // g_log ("baz", G_LOG_LEVEL_CRITICAL, "baz critical");
-
-  // g_print("set always fatal: G_LOG_LEVEL_MESSAGE \n");
-  // g_log_set_always_fatal(G_LOG_LEVEL_MESSAGE);
-
-  // g_log ("foo", G_LOG_LEVEL_DEBUG, "foo debug");
-  // g_log ("foo", G_LOG_LEVEL_INFO, "foo info");
-  // g_log ("bar", G_LOG_LEVEL_MESSAGE, "bar message");
-  // g_log ("bar", G_LOG_LEVEL_WARNING, "bar warning");
-  // g_log ("baz", G_LOG_LEVEL_CRITICAL, "baz critical");
+  // gchar hostname[128];
+  // memset(hostname, 0, 128);
+  // gethostname(hostname, 128);
+  // g_debug("Starting torctl program on host %s process id %i", hostname, (gint)getpid());
 
   g_debug("************************");
   parseOption(argc, argv);
@@ -3228,6 +3234,7 @@ int main(int argc, char **argv)
     }
 
     GIOChannel *binlogGlibChannel;
+    g_debug("binlog file name: %s", binlogFileNameArray[i]);
     binlogGlibChannel = g_io_channel_new_file(binlogFileNameArray[i], "r", NULL);
     if (NULL == binlogGlibChannel)
     {
@@ -3240,6 +3247,9 @@ int main(int argc, char **argv)
       g_warning("failed to set to binary mode \n");
     }
     rotateOutputBinlogFileNames(optOutBinlogFileNameBase, 0);
+    /**
+     * 解析binlog
+     */
     processBinlog(binlogGlibChannel, i, (i == (binlogFileNameArraySize - 1)));
     i++;
   }
