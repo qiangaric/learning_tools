@@ -29,7 +29,7 @@ project (test)
 
 #添加源文件
 #test 为可执行文件名称
-add_executable(test test.cpp )
+add_executable(test structPractice.cpp )
  
 #target_link_libraries(hello ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${GLIB_LIBRARIES})
 

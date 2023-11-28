@@ -114,29 +114,29 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-test.o: test.cpp.o
-.PHONY : test.o
+structPractice.o: structPractice.cpp.o
+.PHONY : structPractice.o
 
 # target to build an object file
-test.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.o
-.PHONY : test.cpp.o
+structPractice.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/structPractice.cpp.o
+.PHONY : structPractice.cpp.o
 
-test.i: test.cpp.i
-.PHONY : test.i
+structPractice.i: structPractice.cpp.i
+.PHONY : structPractice.i
 
 # target to preprocess a source file
-test.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.i
-.PHONY : test.cpp.i
+structPractice.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/structPractice.cpp.i
+.PHONY : structPractice.cpp.i
 
-test.s: test.cpp.s
-.PHONY : test.s
+structPractice.s: structPractice.cpp.s
+.PHONY : structPractice.s
 
 # target to generate assembly for a file
-test.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.s
-.PHONY : test.cpp.s
+structPractice.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/structPractice.cpp.s
+.PHONY : structPractice.cpp.s
 
 # Help Target
 help:
@@ -147,9 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... test.o"
-	@echo "... test.i"
-	@echo "... test.s"
+	@echo "... structPractice.o"
+	@echo "... structPractice.i"
+	@echo "... structPractice.s"
 .PHONY : help
 
 

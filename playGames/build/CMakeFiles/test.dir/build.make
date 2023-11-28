@@ -52,37 +52,37 @@ include CMakeFiles/test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test.dir/flags.make
 
-CMakeFiles/test.dir/test.cpp.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/test.cpp.o: ../test.cpp
+CMakeFiles/test.dir/structPractice.cpp.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/structPractice.cpp.o: ../structPractice.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/playGames/build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test.dir/test.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test.dir/test.cpp.o -c /pgdata/projetcs/cJSON/playGames/test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test.dir/structPractice.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test.dir/structPractice.cpp.o -c /pgdata/projetcs/cJSON/playGames/structPractice.cpp
 
-CMakeFiles/test.dir/test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test.dir/test.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /pgdata/projetcs/cJSON/playGames/test.cpp > CMakeFiles/test.dir/test.cpp.i
+CMakeFiles/test.dir/structPractice.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test.dir/structPractice.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /pgdata/projetcs/cJSON/playGames/structPractice.cpp > CMakeFiles/test.dir/structPractice.cpp.i
 
-CMakeFiles/test.dir/test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test.dir/test.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /pgdata/projetcs/cJSON/playGames/test.cpp -o CMakeFiles/test.dir/test.cpp.s
+CMakeFiles/test.dir/structPractice.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test.dir/structPractice.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /pgdata/projetcs/cJSON/playGames/structPractice.cpp -o CMakeFiles/test.dir/structPractice.cpp.s
 
-CMakeFiles/test.dir/test.cpp.o.requires:
-.PHONY : CMakeFiles/test.dir/test.cpp.o.requires
+CMakeFiles/test.dir/structPractice.cpp.o.requires:
+.PHONY : CMakeFiles/test.dir/structPractice.cpp.o.requires
 
-CMakeFiles/test.dir/test.cpp.o.provides: CMakeFiles/test.dir/test.cpp.o.requires
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/test.cpp.o.provides.build
-.PHONY : CMakeFiles/test.dir/test.cpp.o.provides
+CMakeFiles/test.dir/structPractice.cpp.o.provides: CMakeFiles/test.dir/structPractice.cpp.o.requires
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/structPractice.cpp.o.provides.build
+.PHONY : CMakeFiles/test.dir/structPractice.cpp.o.provides
 
-CMakeFiles/test.dir/test.cpp.o.provides.build: CMakeFiles/test.dir/test.cpp.o
+CMakeFiles/test.dir/structPractice.cpp.o.provides.build: CMakeFiles/test.dir/structPractice.cpp.o
 
 # Object files for target test
 test_OBJECTS = \
-"CMakeFiles/test.dir/test.cpp.o"
+"CMakeFiles/test.dir/structPractice.cpp.o"
 
 # External object files for target test
 test_EXTERNAL_OBJECTS =
 
-test: CMakeFiles/test.dir/test.cpp.o
+test: CMakeFiles/test.dir/structPractice.cpp.o
 test: CMakeFiles/test.dir/build.make
 test: CMakeFiles/test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable test"
@@ -92,7 +92,7 @@ test: CMakeFiles/test.dir/link.txt
 CMakeFiles/test.dir/build: test
 .PHONY : CMakeFiles/test.dir/build
 
-CMakeFiles/test.dir/requires: CMakeFiles/test.dir/test.cpp.o.requires
+CMakeFiles/test.dir/requires: CMakeFiles/test.dir/structPractice.cpp.o.requires
 .PHONY : CMakeFiles/test.dir/requires
 
 CMakeFiles/test.dir/clean:
