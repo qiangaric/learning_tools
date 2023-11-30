@@ -6,7 +6,21 @@
 
 #IncludeRegexTransform: 
 
-/pgdata/projetcs/cJSON/playGames/structPractice.cpp
+/pgdata/projetcs/cJSON/playGames/src/circle.h
+iostream
+-
+point.h
+/pgdata/projetcs/cJSON/playGames/src/point.h
+
+/pgdata/projetcs/cJSON/playGames/src/classTest01.cpp
+iostream
+-
+circle.h
+/pgdata/projetcs/cJSON/playGames/src/circle.h
+point.h
+/pgdata/projetcs/cJSON/playGames/src/point.h
+
+/pgdata/projetcs/cJSON/playGames/src/point.h
 iostream
 -
 

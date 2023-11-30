@@ -1,5 +1,7 @@
 FILE(REMOVE_RECURSE
-  "CMakeFiles/test.dir/structPractice.cpp.o"
+  "CMakeFiles/test.dir/src/classTest01.cpp.o"
+  "CMakeFiles/test.dir/src/circle.cpp.o"
+  "CMakeFiles/test.dir/src/point.cpp.o"
   "test.pdb"
   "test"
 )

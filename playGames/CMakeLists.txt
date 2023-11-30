@@ -29,7 +29,11 @@ project (test)
 
 #添加源文件
 #test 为可执行文件名称
-add_executable(test structPractice.cpp )
+file(GLOB SOURCES src/classTest01.cpp src/circle.cpp src/circle.h src/point.h src/point.cpp)
+add_executable(test ${SOURCES})
+
+# file(GLOB SOURCES "src/*.c")
+# add_executable(test ${SOURCES})
  
 #target_link_libraries(hello ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${GLIB_LIBRARIES})
 

@@ -114,29 +114,77 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-structPractice.o: structPractice.cpp.o
-.PHONY : structPractice.o
+src/circle.o: src/circle.cpp.o
+.PHONY : src/circle.o
 
 # target to build an object file
-structPractice.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/structPractice.cpp.o
-.PHONY : structPractice.cpp.o
+src/circle.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/circle.cpp.o
+.PHONY : src/circle.cpp.o
 
-structPractice.i: structPractice.cpp.i
-.PHONY : structPractice.i
+src/circle.i: src/circle.cpp.i
+.PHONY : src/circle.i
 
 # target to preprocess a source file
-structPractice.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/structPractice.cpp.i
-.PHONY : structPractice.cpp.i
+src/circle.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/circle.cpp.i
+.PHONY : src/circle.cpp.i
 
-structPractice.s: structPractice.cpp.s
-.PHONY : structPractice.s
+src/circle.s: src/circle.cpp.s
+.PHONY : src/circle.s
 
 # target to generate assembly for a file
-structPractice.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/structPractice.cpp.s
-.PHONY : structPractice.cpp.s
+src/circle.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/circle.cpp.s
+.PHONY : src/circle.cpp.s
+
+src/classTest01.o: src/classTest01.cpp.o
+.PHONY : src/classTest01.o
+
+# target to build an object file
+src/classTest01.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/classTest01.cpp.o
+.PHONY : src/classTest01.cpp.o
+
+src/classTest01.i: src/classTest01.cpp.i
+.PHONY : src/classTest01.i
+
+# target to preprocess a source file
+src/classTest01.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/classTest01.cpp.i
+.PHONY : src/classTest01.cpp.i
+
+src/classTest01.s: src/classTest01.cpp.s
+.PHONY : src/classTest01.s
+
+# target to generate assembly for a file
+src/classTest01.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/classTest01.cpp.s
+.PHONY : src/classTest01.cpp.s
+
+src/point.o: src/point.cpp.o
+.PHONY : src/point.o
+
+# target to build an object file
+src/point.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/point.cpp.o
+.PHONY : src/point.cpp.o
+
+src/point.i: src/point.cpp.i
+.PHONY : src/point.i
+
+# target to preprocess a source file
+src/point.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/point.cpp.i
+.PHONY : src/point.cpp.i
+
+src/point.s: src/point.cpp.s
+.PHONY : src/point.s
+
+# target to generate assembly for a file
+src/point.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/point.cpp.s
+.PHONY : src/point.cpp.s
 
 # Help Target
 help:
@@ -147,9 +195,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... structPractice.o"
-	@echo "... structPractice.i"
-	@echo "... structPractice.s"
+	@echo "... src/circle.o"
+	@echo "... src/circle.i"
+	@echo "... src/circle.s"
+	@echo "... src/classTest01.o"
+	@echo "... src/classTest01.i"
+	@echo "... src/classTest01.s"
+	@echo "... src/point.o"
+	@echo "... src/point.i"
+	@echo "... src/point.s"
 .PHONY : help
 
 
