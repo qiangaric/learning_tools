@@ -29,7 +29,8 @@ project (test)
 
 #添加源文件
 #test 为可执行文件名称
-file(GLOB SOURCES src/classTest01.cpp src/circle.cpp src/circle.h src/point.h src/point.cpp)
+# file(GLOB SOURCES src/classTest01.cpp src/circle.cpp src/circle.h src/point.h src/point.cpp)
+file(GLOB SOURCES src/testFun.cpp)
 add_executable(test ${SOURCES})
 
 # file(GLOB SOURCES "src/*.c")

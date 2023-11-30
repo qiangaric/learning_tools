@@ -114,77 +114,29 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-src/circle.o: src/circle.cpp.o
-.PHONY : src/circle.o
+src/testFun.o: src/testFun.cpp.o
+.PHONY : src/testFun.o
 
 # target to build an object file
-src/circle.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/circle.cpp.o
-.PHONY : src/circle.cpp.o
+src/testFun.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun.cpp.o
+.PHONY : src/testFun.cpp.o
 
-src/circle.i: src/circle.cpp.i
-.PHONY : src/circle.i
-
-# target to preprocess a source file
-src/circle.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/circle.cpp.i
-.PHONY : src/circle.cpp.i
-
-src/circle.s: src/circle.cpp.s
-.PHONY : src/circle.s
-
-# target to generate assembly for a file
-src/circle.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/circle.cpp.s
-.PHONY : src/circle.cpp.s
-
-src/classTest01.o: src/classTest01.cpp.o
-.PHONY : src/classTest01.o
-
-# target to build an object file
-src/classTest01.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/classTest01.cpp.o
-.PHONY : src/classTest01.cpp.o
-
-src/classTest01.i: src/classTest01.cpp.i
-.PHONY : src/classTest01.i
+src/testFun.i: src/testFun.cpp.i
+.PHONY : src/testFun.i
 
 # target to preprocess a source file
-src/classTest01.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/classTest01.cpp.i
-.PHONY : src/classTest01.cpp.i
+src/testFun.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun.cpp.i
+.PHONY : src/testFun.cpp.i
 
-src/classTest01.s: src/classTest01.cpp.s
-.PHONY : src/classTest01.s
-
-# target to generate assembly for a file
-src/classTest01.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/classTest01.cpp.s
-.PHONY : src/classTest01.cpp.s
-
-src/point.o: src/point.cpp.o
-.PHONY : src/point.o
-
-# target to build an object file
-src/point.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/point.cpp.o
-.PHONY : src/point.cpp.o
-
-src/point.i: src/point.cpp.i
-.PHONY : src/point.i
-
-# target to preprocess a source file
-src/point.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/point.cpp.i
-.PHONY : src/point.cpp.i
-
-src/point.s: src/point.cpp.s
-.PHONY : src/point.s
+src/testFun.s: src/testFun.cpp.s
+.PHONY : src/testFun.s
 
 # target to generate assembly for a file
-src/point.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/point.cpp.s
-.PHONY : src/point.cpp.s
+src/testFun.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun.cpp.s
+.PHONY : src/testFun.cpp.s
 
 # Help Target
 help:
@@ -195,15 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... src/circle.o"
-	@echo "... src/circle.i"
-	@echo "... src/circle.s"
-	@echo "... src/classTest01.o"
-	@echo "... src/classTest01.i"
-	@echo "... src/classTest01.s"
-	@echo "... src/point.o"
-	@echo "... src/point.i"
-	@echo "... src/point.s"
+	@echo "... src/testFun.o"
+	@echo "... src/testFun.i"
+	@echo "... src/testFun.s"
 .PHONY : help
 
 
