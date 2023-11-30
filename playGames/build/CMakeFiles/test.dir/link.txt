@@ -1,1 +1,1 @@
-/usr/bin/c++    -g    CMakeFiles/test.dir/src/testFun01.cpp.o  -o test -rdynamic -lglib-2.0 -lpthread 
+/usr/bin/c++    -g    CMakeFiles/test.dir/src/初始化列表.cpp.o  -o test -rdynamic -lglib-2.0 -lpthread 

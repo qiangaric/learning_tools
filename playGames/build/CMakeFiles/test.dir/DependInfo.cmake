@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/pgdata/projetcs/cJSON/playGames/src/testFun01.cpp" "/pgdata/projetcs/cJSON/playGames/build/CMakeFiles/test.dir/src/testFun01.cpp.o"
+  "/pgdata/projetcs/cJSON/playGames/src/初始化列表.cpp" "/pgdata/projetcs/cJSON/playGames/build/CMakeFiles/test.dir/src/初始化列表.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -52,37 +52,37 @@ include CMakeFiles/test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test.dir/flags.make
 
-CMakeFiles/test.dir/src/testFun01.cpp.o: CMakeFiles/test.dir/flags.make
-CMakeFiles/test.dir/src/testFun01.cpp.o: ../src/testFun01.cpp
+CMakeFiles/test.dir/src/初始化列表.cpp.o: CMakeFiles/test.dir/flags.make
+CMakeFiles/test.dir/src/初始化列表.cpp.o: ../src/初始化列表.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /pgdata/projetcs/cJSON/playGames/build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test.dir/src/testFun01.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test.dir/src/testFun01.cpp.o -c /pgdata/projetcs/cJSON/playGames/src/testFun01.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/test.dir/src/初始化列表.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/test.dir/src/初始化列表.cpp.o -c /pgdata/projetcs/cJSON/playGames/src/初始化列表.cpp
 
-CMakeFiles/test.dir/src/testFun01.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test.dir/src/testFun01.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /pgdata/projetcs/cJSON/playGames/src/testFun01.cpp > CMakeFiles/test.dir/src/testFun01.cpp.i
+CMakeFiles/test.dir/src/初始化列表.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test.dir/src/初始化列表.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /pgdata/projetcs/cJSON/playGames/src/初始化列表.cpp > CMakeFiles/test.dir/src/初始化列表.cpp.i
 
-CMakeFiles/test.dir/src/testFun01.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test.dir/src/testFun01.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /pgdata/projetcs/cJSON/playGames/src/testFun01.cpp -o CMakeFiles/test.dir/src/testFun01.cpp.s
+CMakeFiles/test.dir/src/初始化列表.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test.dir/src/初始化列表.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /pgdata/projetcs/cJSON/playGames/src/初始化列表.cpp -o CMakeFiles/test.dir/src/初始化列表.cpp.s
 
-CMakeFiles/test.dir/src/testFun01.cpp.o.requires:
-.PHONY : CMakeFiles/test.dir/src/testFun01.cpp.o.requires
+CMakeFiles/test.dir/src/初始化列表.cpp.o.requires:
+.PHONY : CMakeFiles/test.dir/src/初始化列表.cpp.o.requires
 
-CMakeFiles/test.dir/src/testFun01.cpp.o.provides: CMakeFiles/test.dir/src/testFun01.cpp.o.requires
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun01.cpp.o.provides.build
-.PHONY : CMakeFiles/test.dir/src/testFun01.cpp.o.provides
+CMakeFiles/test.dir/src/初始化列表.cpp.o.provides: CMakeFiles/test.dir/src/初始化列表.cpp.o.requires
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/初始化列表.cpp.o.provides.build
+.PHONY : CMakeFiles/test.dir/src/初始化列表.cpp.o.provides
 
-CMakeFiles/test.dir/src/testFun01.cpp.o.provides.build: CMakeFiles/test.dir/src/testFun01.cpp.o
+CMakeFiles/test.dir/src/初始化列表.cpp.o.provides.build: CMakeFiles/test.dir/src/初始化列表.cpp.o
 
 # Object files for target test
 test_OBJECTS = \
-"CMakeFiles/test.dir/src/testFun01.cpp.o"
+"CMakeFiles/test.dir/src/初始化列表.cpp.o"
 
 # External object files for target test
 test_EXTERNAL_OBJECTS =
 
-test: CMakeFiles/test.dir/src/testFun01.cpp.o
+test: CMakeFiles/test.dir/src/初始化列表.cpp.o
 test: CMakeFiles/test.dir/build.make
 test: CMakeFiles/test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable test"
@@ -92,7 +92,7 @@ test: CMakeFiles/test.dir/link.txt
 CMakeFiles/test.dir/build: test
 .PHONY : CMakeFiles/test.dir/build
 
-CMakeFiles/test.dir/requires: CMakeFiles/test.dir/src/testFun01.cpp.o.requires
+CMakeFiles/test.dir/requires: CMakeFiles/test.dir/src/初始化列表.cpp.o.requires
 .PHONY : CMakeFiles/test.dir/requires
 
 CMakeFiles/test.dir/clean:

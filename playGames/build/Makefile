@@ -114,29 +114,29 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-src/testFun01.o: src/testFun01.cpp.o
-.PHONY : src/testFun01.o
+src/初始化列表.o: src/初始化列表.cpp.o
+.PHONY : src/初始化列表.o
 
 # target to build an object file
-src/testFun01.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun01.cpp.o
-.PHONY : src/testFun01.cpp.o
+src/初始化列表.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/初始化列表.cpp.o
+.PHONY : src/初始化列表.cpp.o
 
-src/testFun01.i: src/testFun01.cpp.i
-.PHONY : src/testFun01.i
+src/初始化列表.i: src/初始化列表.cpp.i
+.PHONY : src/初始化列表.i
 
 # target to preprocess a source file
-src/testFun01.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun01.cpp.i
-.PHONY : src/testFun01.cpp.i
+src/初始化列表.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/初始化列表.cpp.i
+.PHONY : src/初始化列表.cpp.i
 
-src/testFun01.s: src/testFun01.cpp.s
-.PHONY : src/testFun01.s
+src/初始化列表.s: src/初始化列表.cpp.s
+.PHONY : src/初始化列表.s
 
 # target to generate assembly for a file
-src/testFun01.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun01.cpp.s
-.PHONY : src/testFun01.cpp.s
+src/初始化列表.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/初始化列表.cpp.s
+.PHONY : src/初始化列表.cpp.s
 
 # Help Target
 help:
@@ -147,9 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... src/testFun01.o"
-	@echo "... src/testFun01.i"
-	@echo "... src/testFun01.s"
+	@echo "... src/初始化列表.o"
+	@echo "... src/初始化列表.i"
+	@echo "... src/初始化列表.s"
 .PHONY : help
 
 
