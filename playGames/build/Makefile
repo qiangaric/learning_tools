@@ -114,29 +114,29 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-src/testFun.o: src/testFun.cpp.o
-.PHONY : src/testFun.o
+src/testFun01.o: src/testFun01.cpp.o
+.PHONY : src/testFun01.o
 
 # target to build an object file
-src/testFun.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun.cpp.o
-.PHONY : src/testFun.cpp.o
+src/testFun01.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun01.cpp.o
+.PHONY : src/testFun01.cpp.o
 
-src/testFun.i: src/testFun.cpp.i
-.PHONY : src/testFun.i
+src/testFun01.i: src/testFun01.cpp.i
+.PHONY : src/testFun01.i
 
 # target to preprocess a source file
-src/testFun.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun.cpp.i
-.PHONY : src/testFun.cpp.i
+src/testFun01.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun01.cpp.i
+.PHONY : src/testFun01.cpp.i
 
-src/testFun.s: src/testFun.cpp.s
-.PHONY : src/testFun.s
+src/testFun01.s: src/testFun01.cpp.s
+.PHONY : src/testFun01.s
 
 # target to generate assembly for a file
-src/testFun.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun.cpp.s
-.PHONY : src/testFun.cpp.s
+src/testFun01.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/testFun01.cpp.s
+.PHONY : src/testFun01.cpp.s
 
 # Help Target
 help:
@@ -147,9 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... src/testFun.o"
-	@echo "... src/testFun.i"
-	@echo "... src/testFun.s"
+	@echo "... src/testFun01.o"
+	@echo "... src/testFun01.i"
+	@echo "... src/testFun01.s"
 .PHONY : help
 
 
