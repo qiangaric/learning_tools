@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/pgdata/projetcs/cJSON/sylar/sylar/muti.cpp" "/pgdata/projetcs/cJSON/sylar/build/CMakeFiles/test.dir/sylar/muti.cpp.o"
+  "/pgdata/projetcs/cJSON/sylar/sylar/template10.cpp" "/pgdata/projetcs/cJSON/sylar/build/CMakeFiles/test.dir/sylar/template10.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

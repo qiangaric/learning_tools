@@ -114,29 +114,29 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
-sylar/muti.o: sylar/muti.cpp.o
-.PHONY : sylar/muti.o
+sylar/template10.o: sylar/template10.cpp.o
+.PHONY : sylar/template10.o
 
 # target to build an object file
-sylar/muti.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sylar/muti.cpp.o
-.PHONY : sylar/muti.cpp.o
+sylar/template10.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sylar/template10.cpp.o
+.PHONY : sylar/template10.cpp.o
 
-sylar/muti.i: sylar/muti.cpp.i
-.PHONY : sylar/muti.i
+sylar/template10.i: sylar/template10.cpp.i
+.PHONY : sylar/template10.i
 
 # target to preprocess a source file
-sylar/muti.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sylar/muti.cpp.i
-.PHONY : sylar/muti.cpp.i
+sylar/template10.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sylar/template10.cpp.i
+.PHONY : sylar/template10.cpp.i
 
-sylar/muti.s: sylar/muti.cpp.s
-.PHONY : sylar/muti.s
+sylar/template10.s: sylar/template10.cpp.s
+.PHONY : sylar/template10.s
 
 # target to generate assembly for a file
-sylar/muti.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sylar/muti.cpp.s
-.PHONY : sylar/muti.cpp.s
+sylar/template10.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/sylar/template10.cpp.s
+.PHONY : sylar/template10.cpp.s
 
 # Help Target
 help:
@@ -147,9 +147,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... sylar/muti.o"
-	@echo "... sylar/muti.i"
-	@echo "... sylar/muti.s"
+	@echo "... sylar/template10.o"
+	@echo "... sylar/template10.i"
+	@echo "... sylar/template10.s"
 .PHONY : help
 
 

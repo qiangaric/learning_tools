@@ -1,1 +1,1 @@
-/usr/bin/c++    -g    CMakeFiles/test.dir/sylar/muti.cpp.o  -o test -rdynamic -lglib-2.0 -lpthread 
+/usr/bin/c++    -g    CMakeFiles/test.dir/sylar/template10.cpp.o  -o test -rdynamic -lglib-2.0 -lpthread 

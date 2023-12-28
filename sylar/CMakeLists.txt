@@ -1,23 +1,23 @@
 cmake_minimum_required(VERSION 2.6)
  
-#Ê¹ÓÃgcc ±à¼­
+#ä½¿ç”¨gcc ç¼–è¾‘
 set(CMAKE_C_COMPILER gcc)
 
-#ÉèÖÃdebugÄ£Ê½£¬¿ªÆôdebug?²»È»¶Ïµãµ÷ÊÔÊÇÎŞĞ§µÄ
+#è®¾ç½®debugæ¨¡å¼ï¼Œå¼€å¯debug?ä¸ç„¶æ–­ç‚¹è°ƒè¯•æ˜¯æ— æ•ˆçš„
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-# ÉèÖÃC++±ê×¼
-# set(CMAKE_CXX_STANDARD 11)  # ½« C++ ±ê×¼ÉèÖÃÎª C++ 11
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)  # C++ 11 ÊÇÇ¿ÖÆÒªÇó£¬²»»áË¥ÍËÖÁµÍ°æ±¾
+# è®¾ç½®C++æ ‡å‡†
+# set(CMAKE_CXX_STANDARD 11)  # å°† C++ æ ‡å‡†è®¾ç½®ä¸º C++ 11
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)  # C++ 11 æ˜¯å¼ºåˆ¶è¦æ±‚ï¼Œä¸ä¼šè¡°é€€è‡³ä½ç‰ˆæœ¬
 
-# ÉèÖÃC++±ê×¼
+# è®¾ç½®C++æ ‡å‡†
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-# ´òÓ¡´Ë°æ±¾µÄ CMake µÄÒÑÖª±àÒëÌØĞÔÁĞ±í
+# æ‰“å°æ­¤ç‰ˆæœ¬çš„ CMake çš„å·²çŸ¥ç¼–è¯‘ç‰¹æ€§åˆ—è¡¨
 message("List of compile features: ${CMAKE_CXX_COMPILE_FEATURES}")
 
-# ¼ÓÔØglib2
+# åŠ è½½glib2
 find_package(PkgConfig)
 pkg_search_module(GLIB REQUIRED glib-2.0)
 MESSAGE(STATUS "glib-2.0 dirs:" ${GLIB_INCLUDE_DIRS})
@@ -35,15 +35,15 @@ link_directories(${GLIB_LIBRARY_DIRS})
 option(BUILD_DOCS "Build the documentation" ON)
 
 
-#ÏîÄ¿Ãû³Æ 
+#é¡¹ç›®åç§° 
 project (test)
 
-#Ìí¼ÓÔ´ÎÄ¼ş
-#test Îª¿ÉÖ´ĞĞÎÄ¼şÃû³Æ
+#æ·»åŠ æºæ–‡ä»¶
+#test ä¸ºå¯æ‰§è¡Œæ–‡ä»¶åç§°
 # add_executable(test sylar/parseBinlog.cpp)
-add_executable(test sylar/muti.cpp)
+add_executable(test sylar/template10.cpp)
  
 #target_link_libraries(hello ${GLUT_LIBRARY} ${OPENGL_LIBRARY} ${GLIB_LIBRARIES})
 
-#Ìí¼Ópthread
+#æ·»åŠ pthread
 target_link_libraries(test ${GLIB_LIBRARIES} pthread )

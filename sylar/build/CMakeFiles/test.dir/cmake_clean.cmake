@@ -1,5 +1,5 @@
 FILE(REMOVE_RECURSE
-  "CMakeFiles/test.dir/sylar/muti.cpp.o"
+  "CMakeFiles/test.dir/sylar/template10.cpp.o"
   "test.pdb"
   "test"
 )
