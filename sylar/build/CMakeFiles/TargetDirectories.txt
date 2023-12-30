@@ -1,1 +1,2 @@
-/pgdata/projetcs/cJSON/sylar/build/CMakeFiles/test.dir
+/pgdata/projetcs/cJSON/sylar/build/CMakeFiles/edit_cache.dir
+/pgdata/projetcs/cJSON/sylar/build/CMakeFiles/rebuild_cache.dir

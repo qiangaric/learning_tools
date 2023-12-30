@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include
+#include <mysql.h>
 using namespace std;
 /*
  * @Descripttion:
@@ -8,13 +8,16 @@ using namespace std;
  * @Author: Gao
  * @Date: 2023-12-28 10:30:10
  * @LastEditors: Gao
- * @LastEditTime: 2023-12-28 10:34:53
+ * @LastEditTime: 2023-12-28 11:34:06
  */
 
 class MysqlConn
 {
 private:
+    void freeResult();
     MYSQL *m_conn = nullptr;
+    MYSQL_RES *m_result = nullptr;
+    MYSQL_ROW m_row = nullptr;
 
 public:
     // 初始化数据库连接
@@ -29,7 +32,7 @@ public:
     bool query(string sql);
 
     // 遍历查询得到的结果集
-    bool next(string sql);
+    bool next();
     // 得到结果集中的字段值
     string value(int index);
 
