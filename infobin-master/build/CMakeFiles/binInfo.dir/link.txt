@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/binInfo.dir/binlogInfo/log.c.o CMakeFiles/binInfo.dir/binlogInfo/main.c.o CMakeFiles/binInfo.dir/binlogInfo/total.c.o -o /pgdata/projetcs/cJSON/infobin-master/bin/binInfo  -lpthread 

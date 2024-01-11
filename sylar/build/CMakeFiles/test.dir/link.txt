@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -rdynamic CMakeFiles/test.dir/sylar/vectorTest.cpp.o -o test  -lglib-2.0 -lpthread 

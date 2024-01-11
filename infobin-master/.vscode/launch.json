@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) 启动",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/binInfo", //可执行文件的位置！
+            "args": [
+                "/pgdata/projetcs/cJSON/infobin-master/binlog/mysql-bin.000004",
+                "20",
+                "2000000",
+                "10",
+                "-t"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            //下面这行是调试前需要执行的任务，对应上面tasks.json里的Build
+            "preLaunchTask": "Build"
+        }
+    ]
+}

@@ -1,0 +1,3 @@
+/pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles/binInfo.dir
+/pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles/edit_cache.dir
+/pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles/rebuild_cache.dir
