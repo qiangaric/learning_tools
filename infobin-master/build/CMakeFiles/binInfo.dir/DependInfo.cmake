@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/pgdata/projetcs/cJSON/infobin-master/binlogInfo/log.c" "CMakeFiles/binInfo.dir/binlogInfo/log.c.o" "gcc" "CMakeFiles/binInfo.dir/binlogInfo/log.c.o.d"
+  "/pgdata/projetcs/cJSON/infobin-master/binlogInfo/logger.c" "CMakeFiles/binInfo.dir/binlogInfo/logger.c.o" "gcc" "CMakeFiles/binInfo.dir/binlogInfo/logger.c.o.d"
   "/pgdata/projetcs/cJSON/infobin-master/binlogInfo/main.c" "CMakeFiles/binInfo.dir/binlogInfo/main.c.o" "gcc" "CMakeFiles/binInfo.dir/binlogInfo/main.c.o.d"
   "/pgdata/projetcs/cJSON/infobin-master/binlogInfo/total.c" "CMakeFiles/binInfo.dir/binlogInfo/total.c.o" "gcc" "CMakeFiles/binInfo.dir/binlogInfo/total.c.o.d"
   )

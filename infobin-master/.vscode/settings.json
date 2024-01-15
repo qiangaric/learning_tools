@@ -44,6 +44,10 @@
         "cstring": "cpp",
         "condition_variable": "cpp",
         "event_header.h": "c",
-        "log.h": "c"
+        "log.h": "c",
+        "logger.h": "c",
+        "bitset": "c",
+        "string": "c",
+        "regex": "c"
     }
 }

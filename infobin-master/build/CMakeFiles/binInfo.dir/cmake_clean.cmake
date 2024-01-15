@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "/pgdata/projetcs/cJSON/infobin-master/bin/binInfo.pdb"
   "CMakeFiles/binInfo.dir/binlogInfo/log.c.o"
   "CMakeFiles/binInfo.dir/binlogInfo/log.c.o.d"
+  "CMakeFiles/binInfo.dir/binlogInfo/logger.c.o"
+  "CMakeFiles/binInfo.dir/binlogInfo/logger.c.o.d"
   "CMakeFiles/binInfo.dir/binlogInfo/main.c.o"
   "CMakeFiles/binInfo.dir/binlogInfo/main.c.o.d"
   "CMakeFiles/binInfo.dir/binlogInfo/total.c.o"

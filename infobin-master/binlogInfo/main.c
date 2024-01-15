@@ -1,4 +1,4 @@
-/*************************************************************************
+﻿/*************************************************************************
   > File Name: main.c
   > Author: gaopeng QQ:22389860 all right reserved
   > Mail: gaopp_200217@163.com
@@ -12,6 +12,7 @@
 #include "event_header.h"
 #define LOG_USE_COLOR 1
 #include "log.h"
+#include "logger.h"
 
 static MAP_TAB my_tab;
 static QUERY_EVENT my_query;
@@ -83,7 +84,8 @@ int check_lit(void)
 
 	if (*m == 0x626c)
 	{
-		printf("Check is Little_endian\n");
+		// printf("Check is Little_endian\n");
+		Log(INFO, "Check is Little_endian\n");
 		return 0;
 	}
 	else if (*m == 0x6c62)
@@ -110,6 +112,7 @@ int check_bin_format(FILE *fd)
 	uint16_t flags;
 	uint64_t totalsize;
 
+	// 前4字节魔数
 	memset(bin_maico, 0, 4);
 	memset(mysql_format, 0, 51);
 	fds = fd;
@@ -119,6 +122,15 @@ int check_bin_format(FILE *fd)
 		printf("check_bin_format == NULL? %s %d \n", ERR_POST);
 		return ret;
 	}
+	/***
+	 * size_t fread(void *ptr, size_t size, size_t count, FILE *stream);
+	 * 	ptr：指向要存储数据的内存块的指针。
+	 * 	size：每个数据项的字节数。
+	 *	count：要读取的数据项的数量。
+	 *	stream：指向 FILE 对象的指针，它标识了要读取的文件。
+	 */
+	// 读取FDS前四字节 到bin_maico
+	// Log(INFO,"");
 
 	if (fread(bin_maico, BIN_LOG_HEADER_SIZE, O_MEM, fds) != O_MEM)
 	{
@@ -126,44 +138,66 @@ int check_bin_format(FILE *fd)
 		printf("check_bin_format fread ERROR %s %d \n", ERR_POST);
 		return ret;
 	}
-
+	// Log(WARN, "bin_maico =  %s\n", *bin_maico);
 	bin_maico_nu = (int32_t *)bin_maico;
-
+	// Log(WARN, "bin_maico = %u", bin_maico);
+	Log(WARN, "bin_maico_nu = %ld", *bin_maico_nu);
 	// fseek(fds,LOG_EVENT_HEADER_LEN,SEEK_CUR);
 	// add
+	//
+	// fseek 函数用于在文件中移动文件指针的位置
+	// 向前移动17个字节
+	// 获取移动后的当前位置
+	long currentPosition = ftell(fds);
+	Log(DEBUG, "Current position after fseek: %ld\n", currentPosition);
+
 	fseek(fds, LOG_POS_OFFSET, SEEK_CUR);
+	// 获取移动后的当前位置
+	Log(DEBUG, "Current position after fseek: %ld\n", ftell(fds));
+	// flag信息 19-17=2
 	if (fread(&flags, FLAGS_OFFSET - LOG_POS_OFFSET, O_MEM, fds) != O_MEM)
 	{
 		ret = 20;
 		printf("check_bin_format fread ERROR %s %d \n", ERR_POST);
 		return ret;
 	}
+	Log(DEBUG, "Current position after fseek: %ld\n", ftell(fds));
 
 	// end
+	// binlog_format 版本信息 21-19=2字节
 	if (fread(&binlog_format, FORMAT_V - FLAGS_OFFSET, O_MEM, fds) != O_MEM)
 	{
 		ret = 3;
 		printf("check_bin_format fread ERROR %s %d \n", ERR_POST);
 		return ret;
 	}
+	Log(DEBUG, "Current position after fseek: %ld\n", ftell(fds));
 
 	// fseek(fds,1,SEEK_CUR);
-
+	// 数据库版本信息 52-2=50字节
 	if (fread(mysql_format, FED_MYSQL_FORMAT - FED_BINLOG_FORMAT, O_MEM, fds) != O_MEM)
 	{
 		ret = 4;
 		printf("check_bin_format fread ERROR %s %d \n", ERR_POST);
 		return ret;
 	}
+	Log(DEBUG, "Current position after fseek: %ld\n", ftell(fds));
+	// 从当前位置推进（偏移）4字节
 	fseek(fds, FED_USED - FED_MYSQL_FORMAT, SEEK_CUR);
-
+	// 头长度 57-56
 	if (fread(&event_header_size, FED_EVENT_HEADER - FED_USED, O_MEM, fds) != O_MEM)
 	{
 		ret = 5;
 		printf("check_bin_format fread ERROR %s %d \n", ERR_POST);
 		return ret;
 	}
-
+	Log(DEBUG, "Current position after fseek: %ld\n", ftell(fds));
+	/**
+	 * 什么是魔数
+	 * 魔数通常是4个字节的值。在MySQL 5.6及更高版本中，魔数的十六进制表示为 fe 62 69 6e。
+	 * 具体来说，这4个字节的十六进制值分别是 fe、62、69、6e，对应ASCII字符为 "þ"、"b"、"i"、"n"。因此，这个魔数通常被称为 "bin"。
+	 * 16进制字符串对应关系  https://blog.csdn.net/u010033786/article/details/126275465
+	 */
 	if (*bin_maico_nu != BINLOG_MAICO)
 	{
 		ret = 6;
@@ -171,6 +205,9 @@ int check_bin_format(FILE *fd)
 		return ret;
 	}
 
+	// 判断头长度是否是19字节 bin版本是否是4
+	Log(DEBUG, "BINLOG_HEADER_LENGTH: %ld\n", BINLOG_HEADER_LENGTH, "BINLOG_VERSION = %d", BINLOG_VERSION);
+	Log(DEBUG, "BINLOG_VERSION = %d", BINLOG_VERSION);
 	if (event_header_size != BINLOG_HEADER_LENGTH || binlog_format != BINLOG_VERSION)
 	{
 		ret = 7;
@@ -184,19 +221,32 @@ int check_bin_format(FILE *fd)
 		*/
 	fseek(fds, 0, SEEK_END);
 	totalsize = ftell(fds);
-
-	printf("Check Mysql Version is:%s\n", mysql_format);
-	printf("Check Mysql binlog format ver is:V%u\n", binlog_format);
+	Log(DEBUG, "binlog total size : %ld\n", ftell(fds));
+	// 数据库版本
+	// printf("Check Mysql Version is:%s\n", mysql_format);
+	// printf("Check Mysql binlog format ver is:V%u\n", binlog_format);
+	Log(INFO, "Check Mysql Version is:%s\n ", mysql_format);
+	Log(INFO, "Check Mysql binlog format ver is:V%u", binlog_format);
+	Log(INFO, "flags is:%u", flags);
+	/**
+	 * binlog flags：
+	 * 	 1 为未关闭
+	 * 	 0 关闭
+	 */
 	if (flags == (uint16_t)1)
 	{
-		printf("Warning:Check This binlog is not closed!\n");
+		// printf("Warning:Check This binlog is not closed!\n");
+		Log(WARN, "Check This binlog is not closed!\n");
 	}
 	else
 	{
-		printf("Check This binlog is closed!\n");
+		// printf("Check This binlog is closed!\n");
+		Log(INFO, "Check This binlog is closed!\n");
 	}
-	printf("Check This binlog total size:%lu(bytes)\n", totalsize);
-	printf("Note:load data infile not check!\n");
+	// printf("Check This binlog total size:%lu(bytes)\n", totalsize);
+	// printf("Note:load data infile not check!\n");
+	Log(INFO, "Check This binlog total size:%lu(bytes)\n", totalsize);
+	Log(INFO, "Note:load data infile not check!\n");
 	return ret;
 }
 
@@ -490,6 +540,7 @@ int query_an(FILE *fds, uint32_t event_size, uint32_t event_pos)
 
 int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 {
+
 	int ret = 0;
 	FILE *fds = NULL;
 	uint32_t event_pos = 0;
@@ -506,24 +557,28 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 	uint64_t node = 0;
 
 	fds = fd;
-
+	Log(DEBUG, "bengin to analysis log, current postion : %ld\n", ftell(fds));
 	if (fds == NULL)
 	{
 		ret = 10;
 		printf("analyze_binlog:fds == NULL? ERROR %s %d \n", ERR_POST);
 		return ret;
 	}
+	// 初始化内存块
 	memset(gtid_buf, 0, 25);
 	memset(gtid_co_seq, 0, 16);
 	memset(&HEAD_PI, 0, sizeof(HEAD_P));
 	memset(&HEAD_TRX, 0, sizeof(HEAD_P));
 	fseek(fds, OFFSET_0, SEEK_END);
+	// 文件大小
 	max_file_size = ftell(fds);
 	MAX_FILE_Z = max_file_size;
-
+	Log(DEBUG, " max_file_size : %ld\n", max_file_size);
+	Log(DEBUG, " (uint64_t)pi : %ld\n", (uint64_t)pi);
 	PI_SIZE = max_file_size / ((uint64_t)pi);
 
 	fseek(fds, BIN_LOG_HEADER_SIZE, SEEK_SET);
+	Log(DEBUG, " current postion : %ld\n", ftell(fds));
 	if (GT)
 	{
 		printf("------------Detail now--------------\n");
@@ -531,8 +586,15 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 	while ((max_file_size - (uint64_t)event_next) > LOG_EVENT_HEADER_LEN)
 	{
 		POS_E = 0; // init global var to 0 to check trx end normal?
+		Log(DEBUG, " 事件开始位置: %ld\n", ftell(fds));
+		/**
+		 * event_next 下一个事件位置，初始为4 （除去魔数）
+		 */
+		// 向前推进到事件开始位置
 		fseek(fds, event_next, SEEK_SET);
+		// Log(DEBUG, " current postion : %ld\n", ftell(fds));
 		event_pos = ftell(fds);
+		Log(DEBUG, " 事件position点 : %ld\n", event_pos);
 		test();
 		if (fread(&event_time, EVENT_TIMESTAMP, O_MEM, fds) != O_MEM)
 		{
@@ -540,23 +602,37 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			printf("analyze_binlog:fread ERROR %s %d \n", ERR_POST);
 			return ret;
 		}
-
+		Log(DEBUG, " current postion after event_time : %ld\n", ftell(fds));
+		// 向前偏移1字节
 		if (fread(&event_type, EVENT_TYPE_OFFSET - EVENT_TIMESTAMP, O_MEM, fds) != O_MEM)
 		{
 			ret = 3;
 			printf("analyze_binlog:fread ERROR %s %d \n", ERR_POST);
 			return ret;
 		}
+		Log(DEBUG, " current postion after event_type : %ld\n", ftell(fds));
+		// 向前偏移8字节
 		fseek(fds, EVENT_LEN_OFFSET - EVENT_TYPE_OFFSET, SEEK_CUR);
+		Log(DEBUG, " current postion after server id : %ld\n", ftell(fds));
+
+		// 下一个event 位置 :event_next
 		if (fread(&event_next, LOG_POS_OFFSET - EVENT_LEN_OFFSET, O_MEM, fds) != O_MEM)
 		{
 			ret = 4;
 			printf("analyze_binlog:fread ERROR %s %d \n", ERR_POST);
 			return ret;
 		}
+		Log(DEBUG, " current postion after event_next : %ld\n", ftell(fds));
 
+		Log(DEBUG, " 下一个事件的位置 : %ld\n", event_next);
+		Log(DEBUG, " 事件的Pos点 : %ld\n", event_pos);
 		event_size = event_next - event_pos;
+		Log(DEBUG, " 当前事件的大小 : %ld\n", event_size);
 		EVE_TOTAL++;
+		Log(DEBUG, " 第  %ld 个事件 \n", EVE_TOTAL);
+		Log(DEBUG, " event_size : %ld\n", event_size);
+		Log(DEBUG, " MAX_EVE : %ld\n", MAX_EVE);
+		// 获取最大事件以及pos点
 		if (event_size > MAX_EVE) // get max event info
 		{
 			MAX_EVE = (uint64_t)event_size;
@@ -579,7 +655,7 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 		{
 			END_TIME = event_time;
 		}
-
+		Log(INFO, "事件类型: %lu", event_type);
 		switch (event_type)
 		{
 		case 30:
@@ -703,8 +779,9 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 				printf("-->Query Event:Pos:%u(0X%x) N_Pos:%u(0X%x) Time:%u Event_size:%u(bytes) \n", event_pos, event_pos, event_next, event_next, event_time, event_size);
 			}
 			fseek(fds, FLAGS_OFFSET - LOG_POS_OFFSET, SEEK_CUR);
-			QUR_T = (uint32_t)event_time;  // ���query event ʱ��
-			QUR_POS = (uint32_t)event_pos; // ���query event posλ�� OK
+			QUR_T = (uint32_t)event_time; // 获得query event 时间
+			Log(WARN, "事件开始时间: %u", QUR_T);
+			QUR_POS = (uint32_t)event_pos; // 获得query event pos位置 OK
 
 			if (query_an(fds, event_size, event_pos) != 0)
 			{
@@ -714,19 +791,22 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			}
 
 			break;
+			// 事务16xid
 		case 16:
 			if (GT)
 			{
 				printf(">Xid Event:Pos:%u(0X%x) N_Pos:%u(0X%x) Time:%u Event_size:%u(bytes) \n", event_pos, event_pos, event_next, event_next, event_time, event_size);
 			}
 			POS_E = (uint64_t)event_next;
-			QUR_X = (uint32_t)event_time;		// ���xid eventʱ��  OK
-			QUR_POS_END = (uint64_t)event_next; // ���xid event ����λ��
+			QUR_X = (uint32_t)event_time; // 获得xid event时间  OK
+			Log(ERROR, "事件结束时间: %u", QUR_T);
+			QUR_POS_END = (uint64_t)event_next; // 获得xid event 结束位置
 			TRX_TOTAL++;
 			if (POS_E - POS_T > mi)
 			{
 				if (node < (uint64_t)MAX_MEM_COUNT)
 				{
+					//  POS_E:事件结束位置 bPOS_T：事件开始位置
 					if (init_chain(POS_E, POS_T, &HEAD_TRX) != 0) // add import
 					{
 						node++;
@@ -748,6 +828,15 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			{
 				if (node < (uint64_t)MAX_MEM_COUNT)
 				{
+					/**
+					 * *trx_ar = a;	    // end time
+					 *(trx_ar + 1) = b; // begin time
+					 *(trx_ar + 2) = c; // query pos
+					 *(trx_ar + 3) = d; // query end
+					 *(trx_ar + 4) = e; // query exe_time
+					 *
+					 */
+					// Log(DEBUG, "结束时间 : %s \n", utime_local(QUR_X));
 					if (init_chain2((uint64_t)QUR_X, (uint64_t)QUR_T, (uint64_t)QUR_POS, (uint64_t)QUR_POS_END, (uint64_t)EXE_T, &HEAD_MT) != 0) // add import
 					{
 						node++;
@@ -847,9 +936,9 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 }
 
 // bin_file: fd
-// pi: how many piece split to total part ��ֶ��ٿ�
-// mi: large than mi(MB) will to total part
-// mt: larger than mt(sec) will to toal part
+// pi: how many piece split to total part 拆分多少块
+// mi: large than mi(MB) will to total part 大事件大小阈值
+// mt: larger than mt(sec) will to toal part 大事件事件阈值
 int a_binlog(const char *bin_file, uint32_t pi, uint64_t mi, uint32_t mt)
 {
 	int ret = 0;
@@ -861,6 +950,7 @@ int a_binlog(const char *bin_file, uint32_t pi, uint64_t mi, uint32_t mt)
 		return ret;
 	}
 
+	// 读取binlog文件
 	if ((fd = fopen(bin_file, "r")) == NULL)
 	{
 		ret = 2;
@@ -869,13 +959,14 @@ int a_binlog(const char *bin_file, uint32_t pi, uint64_t mi, uint32_t mt)
 		return ret;
 	}
 
+	// 检查binlog日志信息
 	if (check_bin_format(fd) != 0)
 	{
 		ret = 3;
 		printf("a_binlog:check_bin_format() binlog error %s %d \n", ERR_POST);
 		return ret;
 	}
-
+	// 分析日志
 	if (analyze_binlog(fd, pi, mi, mt) != 0)
 	{
 		ret = 4;
@@ -922,21 +1013,24 @@ static check_force(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 
-	// ��־���
+	// 日志输出
 
 	log_set_level(0);
 	log_set_quiet(0);
 
-	log_debug("debug");
-	log_info("info");
-	log_warn("warn");
+	// log_debug("debug");
+	// log_info("info");
+	// log_warn("warn");
 
 	int ret = 0;
 	uint32_t pi = 0;
 	uint64_t mi = 0;
 	uint32_t mt = 0;
 
-	printf("argv + 1 : ", argv + 1);
+	// printf("argv + 1 : ", argv + 1);
+	// log_info("argv + 1 :  %d", argc);
+	log_info("*(argv + 1) :  %s \n", *(argv + 1));
+	Log(INFO, "this is info %s", *(argv + 1));
 	if (argc == 2 && !strcmp(*(argv + 1), "--help"))
 	{
 		ret = 1;
@@ -976,7 +1070,7 @@ int main(int argc, char *argv[])
 		return ret;
 	}
 
-	// �ӿ���̨��ȡ����
+	// 从控制台读取参数
 	sscanf(*(argv + 2), "%u", &pi);
 	sscanf(*(argv + 3), "%ld", &mi);
 	sscanf(*(argv + 4), "%u", &mt);
@@ -996,6 +1090,7 @@ int main(int argc, char *argv[])
 		return ret;
 	}
 
+	// 检查大端或者 小端
 	if (check_lit() != 0)
 	{
 		ret = 3;
@@ -1010,6 +1105,7 @@ int main(int argc, char *argv[])
 	// 10 pi
 	// mi (kb)
 	// mt (sec)
+	//  *(argv + 1) : /pgdata/projetcs/cJSON/infobin-master/binlog/mysql-bin.000004
 	if (a_binlog(*(argv + 1), pi, mi, mt) != 0)
 	{
 		ret = 2;

@@ -14,4 +14,5 @@ CMakeFiles/binInfo.dir/binlogInfo/total.c.o: \
  /usr/include/stdint.h /usr/include/bits/wchar.h /usr/include/time.h \
  /usr/include/bits/time.h \
  /pgdata/projetcs/cJSON/infobin-master/binlogInfo/log.h \
- /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stdbool.h
+ /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stdbool.h \
+ /pgdata/projetcs/cJSON/infobin-master/binlogInfo/logger.h

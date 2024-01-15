@@ -12,6 +12,7 @@
 #include <time.h>
 #define LOG_USE_COLOR 1
 #include "log.h"
+#include "logger.h"
 
 #define ERR_POST __FILE__, __LINE__
 
@@ -70,6 +71,7 @@ uint32_t QUR_POS_END = 0;
 
 uint32_t EXE_T = 0;
 
+// 格式化时间为字符串
 static unsigned char *utime_local(time_t tim)
 {
 	struct tm ts;
@@ -79,19 +81,21 @@ static unsigned char *utime_local(time_t tim)
 
 	// Format time, "yyyy-mm-dd hh:mm:ss(zzz)"
 	ts = *localtime(&tim);
-
+	// 格式化时间为字符串
 	strftime(TIME_BUF, sizeof(TIME_BUF), "%Y%m%d %H:%M:%S(%Z)", &ts);
 	return TIME_BUF;
 }
 
 int freechain(HEAD_P *head_p);
 
+// a 事务的Pos点  b 为时间错
 int init_chain(uint64_t a, uint64_t b, HEAD_P *head)
 {
 	int ret = 0;
 	uint64_t *trx_ar = NULL;
 	NODE_P *node = NULL;
 
+	// 分配内存 使用 calloc 分配包含两个整数的数组
 	if ((trx_ar = (uint64_t *)calloc(2, sizeof(uint64_t))) == NULL)
 	{
 		ret = 1;
@@ -109,7 +113,13 @@ int init_chain(uint64_t a, uint64_t b, HEAD_P *head)
 
 	*trx_ar = a;	   // end pos
 	*(trx_ar + 1) = b; // begin pos
-
+					   // 打印修改后的数组
+	// for (int i = 0; i < 2; i++)
+	// {
+	// 	// printf(" test :%d ", trx_ar[i]);
+	// 	Log(INFO, " test :%d ", trx_ar[i]);
+	// }
+	// trx_ar pi与时间戳数组
 	node->data = (void *)trx_ar;
 
 	if (head->head == NULL)
@@ -146,6 +156,7 @@ int init_chain2(uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e, HEAD
 {
 	int ret = 0;
 	uint64_t *trx_ar = NULL;
+	// 初始化节点，一个event一个节点
 	NODE_P *node = NULL;
 
 	if ((trx_ar = (uint64_t *)calloc(5, sizeof(uint64_t))) == NULL)
@@ -170,14 +181,17 @@ int init_chain2(uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e, HEAD
 
 	node->data = (void *)trx_ar;
 
+	// 如果head为NULL，设置为头
 	if (head->head == NULL)
 	{
+		// 把node设置为头指针
 		head->head = node;
 		head->end = node;
 		node->next = NULL;
 	}
 	else
 	{
+		// 尾部插入node数据
 		head->end->next = node;
 		head->end = node;
 		node->next = NULL;
@@ -368,13 +382,20 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 	uint64_t trx_qpos_e = 0;
 
 	printf("-------------Total now--------------\n");
-	printf("Trx total[counts]:%ld\n", TRX_TOTAL);
-	printf("Event total[counts]:%ld\n", EVE_TOTAL);
-	printf("Max trx event size:%ld(bytes) Pos:%ld[0X%lX]\n", MAX_EVE, MAX_EVE_P, MAX_EVE_P);
-	printf("Avg binlog size(/sec):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME), (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) / 1024);
-	printf("Avg binlog size(/min):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60, (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60 / 1024);
-	printf("--Piece view:\n");
-	log_info("--Piece view:\n");
+	// printf("Trx total[counts]:%ld\n", TRX_TOTAL);
+	// printf("Event total[counts]:%ld\n", EVE_TOTAL);
+	// printf("Max trx event size:%ld(bytes) Pos:%ld[0X%lX]\n", MAX_EVE, MAX_EVE_P, MAX_EVE_P);
+	// printf("Avg binlog size(/sec):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME), (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) / 1024);
+	// printf("Avg binlog size(/min):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60, (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60 / 1024);
+	// printf("--Piece view:\n");
+
+	// 事件类型为16的
+	Log(INFO, "Trx total[counts]:%ld\n", TRX_TOTAL);
+	Log(INFO, "Event total[counts]:%ld\n", EVE_TOTAL);
+	Log(INFO, " Max trx event size:%ld(bytes) Pos:%ld[0X%lX]\n", MAX_EVE, MAX_EVE_P, MAX_EVE_P);
+	Log(INFO, "Avg binlog size(/sec):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME), (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) / 1024);
+	Log(INFO, "Avg binlog size(/min):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60, (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60 / 1024);
+	Log(INFO, "--Piece view:\n");
 
 	if (head_pi->head != NULL)
 	{
@@ -386,13 +407,15 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 			{
 				be_t = *((uint64_t *)(node_pi->data) + 1);
 				en_t = *((uint64_t *)(node_pi->next->data) + 1);
-				printf("(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
+				// printf("(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
+				// Log(INFO, "(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
 			}
 			if (node_pi->next == NULL)
 			{
 				be_t = *((uint64_t *)(node_pi->data) + 1);
 				en_t = (uint64_t)END_TIME;
-				printf("(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
+				// printf("(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
+				Log(INFO, "(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
 			}
 
 			node_pi = node_pi->next;
@@ -405,7 +428,8 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 		printf("print_total: no piece? %s %d \n", ERR_POST);
 		goto err;
 	}
-	printf("--Large than %ld(bytes) trx:\n", mi);
+	// printf("--Large than %ld(bytes) trx:\n", mi);
+	Log(WARN, "--Large than %ld(bytes) trx:\n", mi);
 	if (head_trx->head != NULL)
 	{
 		i = 1;
@@ -426,25 +450,34 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 		printf("No trx find!\n");
 	}
 
-	printf("--Large than %u(secs) trx:\n", mt);
+	// printf("--Large than %u(secs) trx:\n", mt);
+	Log(WARN, "--Large than %u(secs) trx:\n", mt);
 	if (head_mt->head != NULL)
 	{
 		i = 1;
 		node_trx = head_mt->head;
 		while (node_trx)
 		{
+			// 事件开始时间
 			trx_qb = *((uint64_t *)(node_trx->data) + 1);
+			// 事件结束时间
 			trx_qe = *((uint64_t *)(node_trx->data));
+			// 事件开始pos点
 			trx_qpos = *((uint64_t *)(node_trx->data) + 2);
+			// 事件结束pos
 			trx_qpos_e = *((uint64_t *)(node_trx->data) + 3);
 			/*time */
 			unsigned char trx_bt[80];
 			unsigned char trx_et[80];
 
+			// 事务开始时间
 			strcpy(trx_bt, utime_local(trx_qb));
+			// 事务结束时间
 			strcpy(trx_et, utime_local(trx_qe));
 
-			printf("(%ld)Trx_sec:%ld(sec)  trx_begin_time:[%s] trx_end_time:[%s] trx_begin_pos:%ld trx_end_pos:%ld query_exe_time:%ld \n", i, trx_qe - trx_qb, trx_bt, trx_et, trx_qpos, trx_qpos_e, *((uint64_t *)(node_trx->data) + 4));
+			// printf("(%ld)Trx_sec:%ld(sec)  trx_begin_time:[%s] trx_end_time:[%s] trx_begin_pos:%ld trx_end_pos:%ld query_exe_time:%ld \n", i, trx_qe - trx_qb, trx_bt, trx_et, trx_qpos, trx_qpos_e, *((uint64_t *)(node_trx->data) + 4));
+			Log(INFO, "(%ld)Trx_sec:%ld(sec)  trx_begin_time:[%s] trx_end_time:[%s] trx_begin_pos:%ld trx_end_pos:%ld query_exe_time:%ld \n",
+				i, trx_qe - trx_qb, trx_bt, trx_et, trx_qpos, trx_qpos_e, *((uint64_t *)(node_trx->data) + 4));
 			node_trx = node_trx->next;
 			i++;
 		}
@@ -482,22 +515,30 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 		while (node_trx)
 		{
 			// printf("(%ld)Current Table:%s.%s Insert:size(%ld(Bytes)) times(%ld) Update:size(%ld(Bytes)) times(%ld) Delete:size(%ld(Bytes)) times(%ld) Total:size(%ld(Bytes)) times(%ld)\n",i,((OP_STR*)(node_trx->data))->db_name,((OP_STR*)(node_trx->data))->tab_name,((OP_STR*)(node_trx->data))->ino,((OP_STR*)(node_trx->data))->inoc, ((OP_STR*)(node_trx->data))->upo, ((OP_STR*)(node_trx->data))->upoc ,((OP_STR*)(node_trx->data))->deo,((OP_STR*)(node_trx->data))->deoc,((OP_STR*)(node_trx->data))->cnt,((OP_STR*)(node_trx->data))->cntc);
-			printf("---(%ld)Current Table:%s.%s::\n", i, ((OP_STR *)(node_trx->data))->db_name, ((OP_STR *)(node_trx->data))->tab_name);
-			printf("   Insert:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->ino, ((OP_STR *)(node_trx->data))->inoc);
-			printf("   Update:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->upo, ((OP_STR *)(node_trx->data))->upoc);
-			printf("   Delete:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->deo, ((OP_STR *)(node_trx->data))->deoc);
-			printf("   Total:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->cnt, ((OP_STR *)(node_trx->data))->cntc);
+			// printf("---(%ld)Current Table:%s.%s::\n", i, ((OP_STR *)(node_trx->data))->db_name, ((OP_STR *)(node_trx->data))->tab_name);
+			// printf("   Insert:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->ino, ((OP_STR *)(node_trx->data))->inoc);
+			// printf("   Update:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->upo, ((OP_STR *)(node_trx->data))->upoc);
+			// printf("   Delete:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->deo, ((OP_STR *)(node_trx->data))->deoc);
+			// printf("   Total:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->cnt, ((OP_STR *)(node_trx->data))->cntc);
+
+			Log(INFO, "---(%ld)Current Table:%s.%s::\n", i, ((OP_STR *)(node_trx->data))->db_name, ((OP_STR *)(node_trx->data))->tab_name);
+			Log(INFO, "   Insert:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->ino, ((OP_STR *)(node_trx->data))->inoc);
+			Log(INFO, "   Update:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->upo, ((OP_STR *)(node_trx->data))->upoc);
+			Log(INFO, "   Delete:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->deo, ((OP_STR *)(node_trx->data))->deoc);
+			Log(INFO, "   Total:binlog size(%ld(Bytes)) times(%ld)\n", ((OP_STR *)(node_trx->data))->cnt, ((OP_STR *)(node_trx->data))->cntc);
 
 			end_total += ((OP_STR *)(node_trx->data))->cnt;
 			end_cntc += ((OP_STR *)(node_trx->data))->cntc;
 			node_trx = node_trx->next;
 			i++;
 		}
-		printf("---Total binlog dml event size:%ld(Bytes) times(%ld)\n", end_total, end_cntc);
+		// printf("---Total binlog dml event size:%ld(Bytes) times(%ld)\n", end_total, end_cntc);
+		Log(INFO, "---Total binlog dml event size:%ld(Bytes) times(%ld)\n", end_total, end_cntc);
 	}
 	else
 	{
-		printf("No DML BINLOG find!\n");
+		// printf("No DML BINLOG find!\n");
+		Log(INFO, "No DML BINLOG find!\n");
 	}
 
 	freechain(head_pi);

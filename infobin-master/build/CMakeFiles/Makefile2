@@ -81,12 +81,12 @@ clean: CMakeFiles/binInfo.dir/clean
 CMakeFiles/binInfo.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/binInfo.dir/build.make CMakeFiles/binInfo.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/binInfo.dir/build.make CMakeFiles/binInfo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles --progress-num=1,2,3,4 "Built target binInfo"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target binInfo"
 .PHONY : CMakeFiles/binInfo.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/binInfo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/binInfo.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /pgdata/projetcs/cJSON/infobin-master/build/CMakeFiles 0
 .PHONY : CMakeFiles/binInfo.dir/rule

@@ -153,6 +153,30 @@ binlogInfo/log.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/binInfo.dir/build.make CMakeFiles/binInfo.dir/binlogInfo/log.c.s
 .PHONY : binlogInfo/log.c.s
 
+binlogInfo/logger.o: binlogInfo/logger.c.o
+.PHONY : binlogInfo/logger.o
+
+# target to build an object file
+binlogInfo/logger.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/binInfo.dir/build.make CMakeFiles/binInfo.dir/binlogInfo/logger.c.o
+.PHONY : binlogInfo/logger.c.o
+
+binlogInfo/logger.i: binlogInfo/logger.c.i
+.PHONY : binlogInfo/logger.i
+
+# target to preprocess a source file
+binlogInfo/logger.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/binInfo.dir/build.make CMakeFiles/binInfo.dir/binlogInfo/logger.c.i
+.PHONY : binlogInfo/logger.c.i
+
+binlogInfo/logger.s: binlogInfo/logger.c.s
+.PHONY : binlogInfo/logger.s
+
+# target to generate assembly for a file
+binlogInfo/logger.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/binInfo.dir/build.make CMakeFiles/binInfo.dir/binlogInfo/logger.c.s
+.PHONY : binlogInfo/logger.c.s
+
 binlogInfo/main.o: binlogInfo/main.c.o
 .PHONY : binlogInfo/main.o
 
@@ -213,6 +237,9 @@ help:
 	@echo "... binlogInfo/log.o"
 	@echo "... binlogInfo/log.i"
 	@echo "... binlogInfo/log.s"
+	@echo "... binlogInfo/logger.o"
+	@echo "... binlogInfo/logger.i"
+	@echo "... binlogInfo/logger.s"
 	@echo "... binlogInfo/main.o"
 	@echo "... binlogInfo/main.i"
 	@echo "... binlogInfo/main.s"

@@ -13,6 +13,7 @@ CMakeFiles/binInfo.dir/binlogInfo/main.c.o: \
  /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h \
  /pgdata/projetcs/cJSON/infobin-master/binlogInfo/event_header.h \
+ /pgdata/projetcs/cJSON/infobin-master/binlogInfo/logger.h \
  /pgdata/projetcs/cJSON/infobin-master/binlogInfo/log.h \
  /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/stdbool.h \
  /usr/include/time.h /usr/include/bits/time.h

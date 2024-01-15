@@ -4,7 +4,8 @@
   > Mail: gaopp_200217@163.com
   > Created Time: Thu 02 Mar 2017 08:07:22 PM CST
  ************************************************************************/
-
+#include "logger.h"
+// 'U'代表无符号整数
 #define BIN_LOG_HEADER_SIZE 4U
 #define LOG_EVENT_HEADER_LEN 19U /* the fixed header length */
 #define O_MEM 1
@@ -22,19 +23,32 @@
 #define FLAGS_OFFSET 17
 #endif
 
+// 事件时间戳 4字节
 #define EVENT_TIMESTAMP 4
+// 事件类型 1个字节
 #define EVENT_TYPE_OFFSET 5
+// 服务器ID 4字节
 #define SERVER_ID_OFFSET 9
+// 事件长度 4字节
 #define EVENT_LEN_OFFSET 13
+// 事件pos点 4字节
 #define LOG_POS_OFFSET 17
+
+// 事件flag 2字节
 #define FLAGS_OFFSET 19
-// FED
+
+// FED 版本信息 2字节
 #define FORMAT_V 21
 
+// binlog版本
 // FED event fixed data
 #define FED_BINLOG_FORMAT 2
+// 数据库版本
 #define FED_MYSQL_FORMAT 52
+// 创建时间戳
 #define FED_USED 56
+
+// 事件头长度
 #define FED_EVENT_HEADER 57
 
 // DML event fixed data
@@ -130,7 +144,9 @@ extern uint32_t BEG_TIME;
 extern uint64_t MAX_FILE_Z;
 extern uint64_t MAX_FILE_Z;
 
+// 开始时间
 extern uint32_t QUR_T;
+// 结束时间
 extern uint32_t QUR_X;
 
 extern uint32_t QUR_POS;
