@@ -19,7 +19,7 @@ static QUERY_EVENT my_query;
 static uint64_t GTID_GNO_;
 static HEAD_P HEAD_PI;
 static HEAD_P HEAD_TRX;
-// add 2017 08 12 for lager time trx
+// add 2017 08 12 for lager time trx 存放长时间链表
 static HEAD_P HEAD_MT;
 // add 2017 9 27 for binlog for every table
 static HEAD_P HEAD_TAB;
@@ -452,6 +452,7 @@ int query_an(FILE *fds, uint32_t event_size, uint32_t event_pos)
 	memset(sta, 0, 35);
 
 	fseek(fds, QUERY_T_ID, SEEK_CUR); // skip thread_id 4 bytes
+	// 执行时间
 	if (fread(&my_query.exe_time, QUERY_EXE_T - QUERY_T_ID, O_MEM, fds) != O_MEM)
 	{
 		ret = 1;
@@ -468,6 +469,7 @@ int query_an(FILE *fds, uint32_t event_size, uint32_t event_pos)
 	fseek(fds, QUERY_ERR_CODE - QUERY_DEFAULT_DB_LEN, SEEK_CUR); // skip error_code
 	// printf("%d\n",ftell(fds));
 
+	// 可变数据的长度
 	if (fread(&meta_len, QUERY_META_BLOCK_LEN - QUERY_ERR_CODE, O_MEM, fds) != O_MEM)
 	{
 		ret = 3;
@@ -491,7 +493,7 @@ int query_an(FILE *fds, uint32_t event_size, uint32_t event_pos)
 	}
 
 	fseek(fds, O_MEM, SEEK_CUR);
-
+	// SQL语句     本事件大小  19u头信息         query_event固定数据    可变数据长度  数据库名字长度 默认一个00字节 CRC校验值
 	sta_len = event_size - LOG_EVENT_HEADER_LEN - QUERY_META_BLOCK_LEN - meta_len - db_len - O_MEM - CRC_LEN;
 
 	if ((my_query.statment = (uint8_t *)calloc(O_MEM, sta_len + 5)) == NULL)
@@ -510,16 +512,24 @@ int query_an(FILE *fds, uint32_t event_size, uint32_t event_pos)
 
 	strncpy(sta, my_query.statment, 35);
 	// printf("db_len:%u meta len:%u  sta len: %u \n",db_len,meta_len,sta_len);
+	Log(WARN, "db_len:%u meta len:%u  sta len: %u \n", db_len, meta_len, sta_len);
 	if (GT)
 	{
 		printf("Exe_time:%u  Use_db:%s Statment(35b-trun):%s", my_query.exe_time, my_query.db_name, sta);
 	}
 	// add 2017 08 12
 	EXE_T = my_query.exe_time;
+	// Log(DEBUG, "事件开始pos点: %s", sta);
+	// Log(DEBUG, "sta : %s", sta);
+	// Log(DEBUG, "!strcmp(sta, BEGIN) : %u", !strcmp(sta, "BEGIN") || !strcmp(sta, "B"));
 	if (!strcmp(sta, "BEGIN") || !strcmp(sta, "B"))
+
 	//! strcmp(sta,"B") 5.5 only
 	{
+		Log(DEBUG, "sta : %s", sta);
 		POS_T = (uint64_t)event_pos;
+		Log(DEBUG, "事件开始pos点: %u", POS_T);
+
 		if (GT)
 		{
 			printf(" /*!Trx begin!*/ Gno:%lu\n", GTID_GNO_);
@@ -573,12 +583,12 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 	// 文件大小
 	max_file_size = ftell(fds);
 	MAX_FILE_Z = max_file_size;
-	Log(DEBUG, " max_file_size : %ld\n", max_file_size);
-	Log(DEBUG, " (uint64_t)pi : %ld\n", (uint64_t)pi);
+	// Log(DEBUG, " max_file_size : %ld\n", max_file_size);
+	// Log(DEBUG, " (uint64_t)pi : %ld\n", (uint64_t)pi);
 	PI_SIZE = max_file_size / ((uint64_t)pi);
 
 	fseek(fds, BIN_LOG_HEADER_SIZE, SEEK_SET);
-	Log(DEBUG, " current postion : %ld\n", ftell(fds));
+	// Log(DEBUG, " current postion : %ld\n", ftell(fds));
 	if (GT)
 	{
 		printf("------------Detail now--------------\n");
@@ -586,7 +596,7 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 	while ((max_file_size - (uint64_t)event_next) > LOG_EVENT_HEADER_LEN)
 	{
 		POS_E = 0; // init global var to 0 to check trx end normal?
-		Log(DEBUG, " 事件开始位置: %ld\n", ftell(fds));
+		// Log(DEBUG, " 事件开始位置: %ld\n", ftell(fds));
 		/**
 		 * event_next 下一个事件位置，初始为4 （除去魔数）
 		 */
@@ -594,7 +604,7 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 		fseek(fds, event_next, SEEK_SET);
 		// Log(DEBUG, " current postion : %ld\n", ftell(fds));
 		event_pos = ftell(fds);
-		Log(DEBUG, " 事件position点 : %ld\n", event_pos);
+		// Log(DEBUG, " 事件position点 : %ld\n", event_pos);
 		test();
 		if (fread(&event_time, EVENT_TIMESTAMP, O_MEM, fds) != O_MEM)
 		{
@@ -602,7 +612,7 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			printf("analyze_binlog:fread ERROR %s %d \n", ERR_POST);
 			return ret;
 		}
-		Log(DEBUG, " current postion after event_time : %ld\n", ftell(fds));
+		// Log(DEBUG, " current postion after event_time : %ld\n", ftell(fds));
 		// 向前偏移1字节
 		if (fread(&event_type, EVENT_TYPE_OFFSET - EVENT_TIMESTAMP, O_MEM, fds) != O_MEM)
 		{
@@ -610,10 +620,10 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			printf("analyze_binlog:fread ERROR %s %d \n", ERR_POST);
 			return ret;
 		}
-		Log(DEBUG, " current postion after event_type : %ld\n", ftell(fds));
+		// Log(DEBUG, " current postion after event_type : %ld\n", ftell(fds));
 		// 向前偏移8字节
 		fseek(fds, EVENT_LEN_OFFSET - EVENT_TYPE_OFFSET, SEEK_CUR);
-		Log(DEBUG, " current postion after server id : %ld\n", ftell(fds));
+		// Log(DEBUG, " current postion after server id : %ld\n", ftell(fds));
 
 		// 下一个event 位置 :event_next
 		if (fread(&event_next, LOG_POS_OFFSET - EVENT_LEN_OFFSET, O_MEM, fds) != O_MEM)
@@ -622,16 +632,17 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			printf("analyze_binlog:fread ERROR %s %d \n", ERR_POST);
 			return ret;
 		}
-		Log(DEBUG, " current postion after event_next : %ld\n", ftell(fds));
+		// Log(DEBUG, " current postion after event_next : %ld\n", ftell(fds));
 
-		Log(DEBUG, " 下一个事件的位置 : %ld\n", event_next);
-		Log(DEBUG, " 事件的Pos点 : %ld\n", event_pos);
+		// Log(WARN, " 下一个事件的位置 : %ld\n", event_next);
+		// Log(DEBUG, " 事件的Pos点 : %ld\n", event_pos);
 		event_size = event_next - event_pos;
-		Log(DEBUG, " 当前事件的大小 : %ld\n", event_size);
+		// Log(DEBUG, " 当前事件的大小 : %ld\n", event_size);
 		EVE_TOTAL++;
-		Log(DEBUG, " 第  %ld 个事件 \n", EVE_TOTAL);
-		Log(DEBUG, " event_size : %ld\n", event_size);
-		Log(DEBUG, " MAX_EVE : %ld\n", MAX_EVE);
+		printf("---------------事件分割线--------------- \n");
+		Log(ERROR, " 第  %ld 个事件", EVE_TOTAL);
+		// Log(DEBUG, " event_size : %ld\n", event_size);
+		// Log(DEBUG, " MAX_EVE : %ld\n", MAX_EVE);
 		// 获取最大事件以及pos点
 		if (event_size > MAX_EVE) // get max event info
 		{
@@ -642,6 +653,7 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 		if (event_pos > PI_SIZE * n)
 		{
 			POS_TIME = event_time;
+
 			if (init_chain(PI_SIZE, (uint64_t)POS_TIME, &HEAD_PI) != 0) // add import
 			{
 				ret = 31;
@@ -650,12 +662,16 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			}
 			n++;
 		}
+		// Log(WARN, "测试-------------------------------------------%lu", n);
 
+		// 小于19字节，结束
 		if ((max_file_size - (uint64_t)event_next) < LOG_EVENT_HEADER_LEN) // add
 		{
 			END_TIME = event_time;
 		}
-		Log(INFO, "事件类型: %lu", event_type);
+		Log(WARN, " 当前事件的POS点 : %ld", ftell(fds));
+		Log(WARN, " 下一个事件的位置 : %ld", event_next);
+		Log(WARN, "事件类型: %lu", event_type);
 		switch (event_type)
 		{
 		case 30:
@@ -773,14 +789,16 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			memset(gtid_buf, 0, 25);
 			memset(gtid_co_seq, 0, 16);
 			break;
+			// QUERY_EVENT = 2,
 		case 2:
 			if (GT)
 			{
 				printf("-->Query Event:Pos:%u(0X%x) N_Pos:%u(0X%x) Time:%u Event_size:%u(bytes) \n", event_pos, event_pos, event_next, event_next, event_time, event_size);
 			}
 			fseek(fds, FLAGS_OFFSET - LOG_POS_OFFSET, SEEK_CUR);
+			// 事件开始时间
 			QUR_T = (uint32_t)event_time; // 获得query event 时间
-			Log(WARN, "事件开始时间: %u", QUR_T);
+			Log(DEBUG, "事件开始时间: %u", QUR_T);
 			QUR_POS = (uint32_t)event_pos; // 获得query event pos位置 OK
 
 			if (query_an(fds, event_size, event_pos) != 0)
@@ -791,17 +809,27 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 			}
 
 			break;
-			// 事务16xid
+			//  XID_EVENT = 16
+			/**
+			 * QUERY_EVENT = 2标记着事务开始的时间
+			 * XID_EVENT   = 16 标记着事务结束的时间
+			 */
 		case 16:
 			if (GT)
 			{
 				printf(">Xid Event:Pos:%u(0X%x) N_Pos:%u(0X%x) Time:%u Event_size:%u(bytes) \n", event_pos, event_pos, event_next, event_next, event_time, event_size);
 			}
+			// 事务结束pos点
 			POS_E = (uint64_t)event_next;
-			QUR_X = (uint32_t)event_time; // 获得xid event时间  OK
-			Log(ERROR, "事件结束时间: %u", QUR_T);
+			Log(DEBUG, "事件结束pos点: %u", POS_E);
+			QUR_X = (uint32_t)event_time; // 获得xid event时间   本事件结束时间 OK
+			Log(DEBUG, "事件结束时间: %u", QUR_X);
+			Log(DEBUG, "事件开始时间: %u", QUR_T);
+			Log(DEBUG, "事件总共耗时: %u", QUR_X - QUR_T);
 			QUR_POS_END = (uint64_t)event_next; // 获得xid event 结束位置
 			TRX_TOTAL++;
+			// 大事务判断
+
 			if (POS_E - POS_T > mi)
 			{
 				if (node < (uint64_t)MAX_MEM_COUNT)
@@ -823,7 +851,7 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 				}
 			}
 			node = 0;
-
+			// 长时间事务监控
 			if (QUR_X > QUR_T && QUR_X - QUR_T > mt && QUR_T > 0)
 			{
 				if (node < (uint64_t)MAX_MEM_COUNT)
@@ -831,12 +859,14 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 					/**
 					 * *trx_ar = a;	    // end time
 					 *(trx_ar + 1) = b; // begin time
-					 *(trx_ar + 2) = c; // query pos
-					 *(trx_ar + 3) = d; // query end
+					 *(trx_ar + 2) = c; // query pos pos点开始位置
+					 *(trx_ar + 3) = d; // query end  pos点结束位置
 					 *(trx_ar + 4) = e; // query exe_time
 					 *
 					 */
 					// Log(DEBUG, "结束时间 : %s \n", utime_local(QUR_X));
+					Log(ERROR, " 第  %ld 个事件 \n", EVE_TOTAL);
+					// HEAD_MT 长时间事务
 					if (init_chain2((uint64_t)QUR_X, (uint64_t)QUR_T, (uint64_t)QUR_POS, (uint64_t)QUR_POS_END, (uint64_t)EXE_T, &HEAD_MT) != 0) // add import
 					{
 						node++;
@@ -938,7 +968,7 @@ int analyze_binlog(FILE *fd, uint32_t pi, uint64_t mi, uint32_t mt)
 // bin_file: fd
 // pi: how many piece split to total part 拆分多少块
 // mi: large than mi(MB) will to total part 大事件大小阈值
-// mt: larger than mt(sec) will to toal part 大事件事件阈值
+// mt: larger than mt(sec) will to toal part 长时间事件阈值
 int a_binlog(const char *bin_file, uint32_t pi, uint64_t mi, uint32_t mt)
 {
 	int ret = 0;
@@ -973,6 +1003,7 @@ int a_binlog(const char *bin_file, uint32_t pi, uint64_t mi, uint32_t mt)
 		printf("a_binlog:analyze_binlog() error %s %d \n", ERR_POST);
 		return ret;
 	}
+	// HEAD_TRX 大于2M事务 HEAD_MT 10秒以上事务
 	if (print_total(&HEAD_PI, &HEAD_TRX, &HEAD_MT, &HEAD_TAB, mi, mt) != 0)
 	{
 		ret = 5;
@@ -1022,6 +1053,12 @@ int main(int argc, char *argv[])
 	// log_info("info");
 	// log_warn("warn");
 
+	/**
+	 *第一个20 是分片数量,将binlog分为大小相等的片段，生成时间越短则这段时间生成binlog量越大，则事物越频繁。
+	 *第二个2000000 是大于2M左右的事物定义为大事物。
+	 *第三个10 是大于10秒未提交的事物定义为长期未提交的事物。 *
+	 *第四个-t 代表不做详细event解析输出，仅仅获取相应的结果
+	 */
 	int ret = 0;
 	uint32_t pi = 0;
 	uint64_t mi = 0;

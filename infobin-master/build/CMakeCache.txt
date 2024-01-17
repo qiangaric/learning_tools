@@ -227,9 +227,6 @@ binInfo_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 binInfo_SOURCE_DIR:STATIC=/pgdata/projetcs/cJSON/infobin-master
 
-//The directory containing a CMake configuration file for spdlog.
-spdlog_DIR:PATH=spdlog_DIR-NOTFOUND
-
 
 ########################
 # INTERNAL cache entries

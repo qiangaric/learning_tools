@@ -148,8 +148,9 @@ extern uint64_t MAX_FILE_Z;
 extern uint32_t QUR_T;
 // 结束时间
 extern uint32_t QUR_X;
-
+// event开始pos点
 extern uint32_t QUR_POS;
+// event 结束pos点
 extern uint32_t QUR_POS_END;
 
 extern uint32_t EXE_T;

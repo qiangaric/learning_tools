@@ -1,4 +1,4 @@
-/*************************************************************************
+ï»¿/*************************************************************************
 	> File Name: tatol.c
 	> Author: gaopeng QQ:22389860 all right reserved
 	> Mail: gaopp_200217@163.com
@@ -71,7 +71,7 @@ uint32_t QUR_POS_END = 0;
 
 uint32_t EXE_T = 0;
 
-// ¸ñÊ½»¯Ê±¼äÎª×Ö·û´®
+// æ ¼å¼åŒ–æ—¶é—´ä¸ºå­—ç¬¦ä¸²
 static unsigned char *utime_local(time_t tim)
 {
 	struct tm ts;
@@ -81,21 +81,21 @@ static unsigned char *utime_local(time_t tim)
 
 	// Format time, "yyyy-mm-dd hh:mm:ss(zzz)"
 	ts = *localtime(&tim);
-	// ¸ñÊ½»¯Ê±¼äÎª×Ö·û´®
+	// æ ¼å¼åŒ–æ—¶é—´ä¸ºå­—ç¬¦ä¸²
 	strftime(TIME_BUF, sizeof(TIME_BUF), "%Y%m%d %H:%M:%S(%Z)", &ts);
 	return TIME_BUF;
 }
 
 int freechain(HEAD_P *head_p);
 
-// a ÊÂÎñµÄPosµã  b ÎªÊ±¼ä´í
+// a PI_SIZE åˆ†ç‰‡æ•° b posæ—¶é—´ head HEAD_PIå­˜æ”¾æ‰€æœ‰äº‹ä»¶é“¾è¡¨
 int init_chain(uint64_t a, uint64_t b, HEAD_P *head)
 {
 	int ret = 0;
 	uint64_t *trx_ar = NULL;
 	NODE_P *node = NULL;
 
-	// ·ÖÅäÄÚ´æ Ê¹ÓÃ calloc ·ÖÅä°üº¬Á½¸öÕûÊıµÄÊı×é
+	// åˆ†é…å†…å­˜ ä½¿ç”¨ calloc åˆ†é…åŒ…å«ä¸¤ä¸ªæ•´æ•°çš„æ•°ç»„
 	if ((trx_ar = (uint64_t *)calloc(2, sizeof(uint64_t))) == NULL)
 	{
 		ret = 1;
@@ -113,13 +113,13 @@ int init_chain(uint64_t a, uint64_t b, HEAD_P *head)
 
 	*trx_ar = a;	   // end pos
 	*(trx_ar + 1) = b; // begin pos
-					   // ´òÓ¡ĞŞ¸ÄºóµÄÊı×é
+					   // æ‰“å°ä¿®æ”¹åçš„æ•°ç»„
 	// for (int i = 0; i < 2; i++)
 	// {
 	// 	// printf(" test :%d ", trx_ar[i]);
-	// 	Log(INFO, " test :%d ", trx_ar[i]);
+	// 	Log(ERROR, " test :%d ", trx_ar[i]);
 	// }
-	// trx_ar piÓëÊ±¼ä´ÁÊı×é
+	// trx_ar piä¸æ—¶é—´æˆ³æ•°ç»„
 	node->data = (void *)trx_ar;
 
 	if (head->head == NULL)
@@ -152,11 +152,12 @@ err:
 	return ret;
 }
 
+// å¤§äº10ç§’ äº‹åŠ¡ é“¾è¡¨ï¼Œå†™å…¥head(HEAD_MT)
 int init_chain2(uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e, HEAD_P *head)
 {
 	int ret = 0;
 	uint64_t *trx_ar = NULL;
-	// ³õÊ¼»¯½Úµã£¬Ò»¸öeventÒ»¸ö½Úµã
+	// åˆå§‹åŒ–èŠ‚ç‚¹ï¼Œä¸€ä¸ªeventä¸€ä¸ªèŠ‚ç‚¹
 	NODE_P *node = NULL;
 
 	if ((trx_ar = (uint64_t *)calloc(5, sizeof(uint64_t))) == NULL)
@@ -181,17 +182,17 @@ int init_chain2(uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e, HEAD
 
 	node->data = (void *)trx_ar;
 
-	// Èç¹ûheadÎªNULL£¬ÉèÖÃÎªÍ·
+	// å¦‚æœheadä¸ºNULLï¼Œè®¾ç½®ä¸ºå¤´
 	if (head->head == NULL)
 	{
-		// °ÑnodeÉèÖÃÎªÍ·Ö¸Õë
+		// æŠŠnodeè®¾ç½®ä¸ºå¤´æŒ‡é’ˆ
 		head->head = node;
 		head->end = node;
 		node->next = NULL;
 	}
 	else
 	{
-		// Î²²¿²åÈënodeÊı¾İ
+		// å°¾éƒ¨æ’å…¥nodeæ•°æ®
 		head->end->next = node;
 		head->end = node;
 		node->next = NULL;
@@ -261,7 +262,7 @@ int add_chain_op(const char *db_name, const char *table_name, uint64_t ino, uint
 		goto err;
 	}
 
-	if (!(find_add_chain_op(db_name, table_name, ino, upo, deo, inoc, upoc, deoc, head))) // Èç¹ûÃ»ÓĞÕÒµ½ĞèÒªĞÂ½¨
+	if (!(find_add_chain_op(db_name, table_name, ino, upo, deo, inoc, upoc, deoc, head))) // å¦‚æœæ²¡æœ‰æ‰¾åˆ°éœ€è¦æ–°å»º
 	{
 		if ((data = (OP_STR *)calloc(1, sizeof(OP_STR))) == NULL)
 		{
@@ -343,14 +344,14 @@ int BubbleSort(HEAD_P *head, int count)
 	NODE_P *pMove;
 	pMove = head->head;
 
-	if (count == 1) // bug fixed Èç¹ûcount = 1 È±Ê§Í³¼Æ
+	if (count == 1) // bug fixed å¦‚æœcount = 1 ç¼ºå¤±ç»Ÿè®¡
 	{
 		OP_STR *be = (OP_STR *)pMove->data;
 		be->cnt = be->ino + be->upo + be->deo;
 		be->cntc = be->inoc + be->upoc + be->deoc;
 		return 0;
 	}
-	// ±éÀú´ÎÊıÎªcount-1
+	// éå†æ¬¡æ•°ä¸ºcount-1
 	while (count > 1)
 	{
 		while (pMove->next)
@@ -359,12 +360,12 @@ int BubbleSort(HEAD_P *head, int count)
 			pMove = pMove->next;
 		}
 		count--;
-		// ÖØĞÂÒÆ¶¯µ½µÚÒ»¸ö½Úµã
+		// é‡æ–°ç§»åŠ¨åˆ°ç¬¬ä¸€ä¸ªèŠ‚ç‚¹
 		pMove = head->head;
 	}
 	return 0;
 }
-
+// mi 2M mt 10ç§’
 int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head_tab, uint64_t mi, uint32_t mt)
 {
 	int ret = 0;
@@ -389,14 +390,14 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 	// printf("Avg binlog size(/min):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60, (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60 / 1024);
 	// printf("--Piece view:\n");
 
-	// ÊÂ¼şÀàĞÍÎª16µÄ
+	// äº‹ä»¶ç±»å‹ä¸º16çš„
 	Log(INFO, "Trx total[counts]:%ld\n", TRX_TOTAL);
 	Log(INFO, "Event total[counts]:%ld\n", EVE_TOTAL);
 	Log(INFO, " Max trx event size:%ld(bytes) Pos:%ld[0X%lX]\n", MAX_EVE, MAX_EVE_P, MAX_EVE_P);
 	Log(INFO, "Avg binlog size(/sec):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME), (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) / 1024);
 	Log(INFO, "Avg binlog size(/min):%.3f(bytes)[%.3f(kb)]\n", (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60, (float)MAX_FILE_Z / (float)(END_TIME - BEG_TIME) * 60 / 1024);
 	Log(INFO, "--Piece view:\n");
-
+	// æ¯ä¸ªeventåˆ†æ
 	if (head_pi->head != NULL)
 	{
 		i = 1;
@@ -405,15 +406,25 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 		{
 			if (node_pi->next != NULL)
 			{
+				// å¼€å§‹æ—¶é—´
 				be_t = *((uint64_t *)(node_pi->data) + 1);
+				// ç»“æŸæ—¶é—´
 				en_t = *((uint64_t *)(node_pi->next->data) + 1);
+				// Log(INFO, "node_pi->next != NULL ");
+				// Log(INFO, "å¼€å§‹æ—¶é—´: %lu", be_t);
+				// Log(INFO, "äº‹ä»¶: %lu", en_t);
 				// printf("(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
 				// Log(INFO, "(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
 			}
 			if (node_pi->next == NULL)
 			{
 				be_t = *((uint64_t *)(node_pi->data) + 1);
+				// æœ€åä¸€ä¸ªäº‹ä»¶æ—¶é—´
 				en_t = (uint64_t)END_TIME;
+				// Log(INFO, "node_pi->next == NULL ");
+
+				Log(INFO, "å¼€å§‹æ—¶é—´: %lu", be_t);
+				Log(INFO, "ç»“æŸæ—¶é—´: %lu", en_t);
 				// printf("(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
 				Log(INFO, "(%ld)Time:%ld-%ld(%ld(s)) piece:%ld(bytes)[%.3f(kb)]\n", i, be_t, en_t, en_t - be_t, *((uint64_t *)(node_pi->data)), (float)(*((uint64_t *)(node_pi->data))) / (float)1024);
 			}
@@ -421,6 +432,7 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 			node_pi = node_pi->next;
 			i++;
 		}
+		Log(WARN, "head_pi depth: %lu", i);
 	}
 	else
 	{
@@ -444,6 +456,7 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 			MAX_TRX_CUT += (double)((float)(trx_e - trx_b) / (float)1024);
 		}
 		printf("Total large trx count size(kb):#%.3f(kb)\n", MAX_TRX_CUT);
+		Log(WARN, "head_trx depth: %lu", i);
 	}
 	else
 	{
@@ -458,29 +471,31 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 		node_trx = head_mt->head;
 		while (node_trx)
 		{
-			// ÊÂ¼ş¿ªÊ¼Ê±¼ä
+			// äº‹ä»¶å¼€å§‹æ—¶é—´
 			trx_qb = *((uint64_t *)(node_trx->data) + 1);
-			// ÊÂ¼ş½áÊøÊ±¼ä
+			// äº‹ä»¶ç»“æŸæ—¶é—´
 			trx_qe = *((uint64_t *)(node_trx->data));
-			// ÊÂ¼ş¿ªÊ¼posµã
+			// äº‹ä»¶å¼€å§‹posç‚¹
 			trx_qpos = *((uint64_t *)(node_trx->data) + 2);
-			// ÊÂ¼ş½áÊøpos
+			// äº‹ä»¶ç»“æŸpos
 			trx_qpos_e = *((uint64_t *)(node_trx->data) + 3);
 			/*time */
 			unsigned char trx_bt[80];
 			unsigned char trx_et[80];
 
-			// ÊÂÎñ¿ªÊ¼Ê±¼ä
+			// äº‹åŠ¡å¼€å§‹æ—¶é—´
 			strcpy(trx_bt, utime_local(trx_qb));
-			// ÊÂÎñ½áÊøÊ±¼ä
+			// äº‹åŠ¡ç»“æŸæ—¶é—´
 			strcpy(trx_et, utime_local(trx_qe));
 
 			// printf("(%ld)Trx_sec:%ld(sec)  trx_begin_time:[%s] trx_end_time:[%s] trx_begin_pos:%ld trx_end_pos:%ld query_exe_time:%ld \n", i, trx_qe - trx_qb, trx_bt, trx_et, trx_qpos, trx_qpos_e, *((uint64_t *)(node_trx->data) + 4));
 			Log(INFO, "(%ld)Trx_sec:%ld(sec)  trx_begin_time:[%s] trx_end_time:[%s] trx_begin_pos:%ld trx_end_pos:%ld query_exe_time:%ld \n",
 				i, trx_qe - trx_qb, trx_bt, trx_et, trx_qpos, trx_qpos_e, *((uint64_t *)(node_trx->data) + 4));
+			// ä¸ºæŸ¥è¯¢ä¸‹ä¸€ä¸ªèŠ‚ç‚¹åšå‡†å¤‡
 			node_trx = node_trx->next;
 			i++;
 		}
+		Log(WARN, "head_mt depth: %lu", i);
 	}
 	else
 	{
@@ -501,7 +516,7 @@ int print_total(HEAD_P *head_pi, HEAD_P *head_trx, HEAD_P *head_mt, HEAD_P *head
 
 	if (head_tab->head != NULL)
 	{
-		// ½øĞĞÃ°ÅİµÄÅÅĞò
+		// è¿›è¡Œå†’æ³¡çš„æ’åº
 		BubbleSort(head_tab, i);
 	}
 

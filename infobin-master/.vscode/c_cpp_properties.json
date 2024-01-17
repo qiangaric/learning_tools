@@ -3,9 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                // "/usr/include/glib-2.0/**",
                 "/usr/include/mysql/**",
-                // "/usr/lib64/mysql/**",
                 "${workspaceFolder}/**",
                 "/usr/include/glib-2.0",
                 "/usr/lib64/glib-2.0/include",
@@ -13,7 +11,6 @@
                 "/pgdata/projetcs/cJSON/infobin-master/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++11",
             "intelliSenseMode": "linux-gcc-x64",

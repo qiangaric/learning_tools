@@ -49,5 +49,6 @@
         "bitset": "c",
         "string": "c",
         "regex": "c"
-    }
+    },
+    "C_Cpp.default.compilerPath": "/usr/bin/g++"
 }

@@ -1,16 +1,16 @@
-﻿/*
+﻿#include <stdio.h>
+#include <stdint.h>
+#include <bits/stdc++.h>
+
+using namespace std;
+/*
  * @Descripttion:
  * @version:
  * @Author: Gao
  * @Date: 2024-01-12 15:15:47
  * @LastEditors: Gao
- * @LastEditTime: 2024-01-13 14:45:24
+ * @LastEditTime: 2024-01-17 13:34:09
  */
-
-#include <stdio.h>
-#include <stdint.h>
-#include <bits/stdc++.h>
-using namespace std;
 
 long getFileSize(FILE *file)
 {
@@ -84,7 +84,7 @@ void del(Node *head, int i)
     }
 };
 
-int main()
+int test01()
 {
     cin >> x;
     // 申请头节点
@@ -164,5 +164,52 @@ int main()
     }
     cout << p->data << " " << endl;
     printf("读取结束 \n");
+    return 0;
+}
+
+#include <stdio.h>
+
+// 定义 Log_event_type 枚举类型
+enum Log_event_type
+{
+    UNKNOWN_EVENT = 0,
+    // 添加其他枚举值
+    EVENT_ONE,
+    EVENT_TWO,
+    EVENT_THREE,
+    // ... 添加其他枚举值
+    EVENT_COUNT // 用于获取枚举值的数量
+};
+
+// 获取 Log_event_type 的名字
+const char *getEventName(int eventTypeValue)
+{
+    switch (eventTypeValue)
+    {
+    case UNKNOWN_EVENT:
+        return "Unknown Event";
+    case EVENT_ONE:
+        return "Event One";
+    case EVENT_TWO:
+        return "Event Two";
+    case EVENT_THREE:
+        return "Event Three";
+    // ... 添加其他名字
+    default:
+        return "Invalid Event";
+    }
+}
+
+int main()
+{
+    // 使用 Log_event_type 枚举类型的数值
+    int eventTypeValue = 1; // 例如，0 表示 UNKNOWN_EVENT
+
+    // 获取对应的名字
+    const char *eventName = getEventName(eventTypeValue);
+
+    // 输出名字
+    printf("Event Type: %s\n", eventName);
+
     return 0;
 }
