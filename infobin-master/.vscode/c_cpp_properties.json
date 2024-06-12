@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/include/mysql/**",
+                "${workspaceFolder}/**",
+                "/usr/include/glib-2.0",
+                "/usr/lib64/glib-2.0/include",
+                "/pgdata/projetcs/cJSON/**",
+                "/pgdata/projetcs/cJSON/infobin-master/**"
+            ],
+            "defines": [],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "linux-gcc-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}

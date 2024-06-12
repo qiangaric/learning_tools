@@ -85,7 +85,9 @@ xlog_fname(char *fname, size_t len, TimeLineID tli, XLogRecPtr *lsn,
 	xlogid = (uint32) (*lsn >> 32);
 	xrecoff = (uint32) *lsn;
 	printf("xlogid ============================ %X\n",xlogid);
-	// printf("xrecoff / wal_segment_size ============================ %X\n",xrecoff / wal_segment_size);
+	printf("xrecoff  ============================ %X\n",xrecoff);
+	printf("xrecoff uint  ============================ %d\n",xrecoff);
+	printf("wal_segment_size  ============================ %d\n",wal_segment_size);
 	snprintf(fname, len, "%08X%08X%08X", tli,
 		xlogid, xrecoff / wal_segment_size);
 	printf("fname ================================ %s\n",fname);

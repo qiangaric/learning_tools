@@ -1,0 +1,1 @@
+/usr/bin/c++ "CMakeFiles/test.dir/innblock-master/an_block.cpp.o" "CMakeFiles/test.dir/innblock-master/main.cpp.o" "CMakeFiles/test.dir/innblock-master/tool.cpp.o" "CMakeFiles/test.dir/innblock-master/usage_check.cpp.o" -o test  -lpthread 

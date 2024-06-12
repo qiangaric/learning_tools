@@ -6,11 +6,12 @@
                 // "/usr/include/glib-2.0/**",
                 // "/usr/include/mysql/**",
                 // "/usr/lib64/mysql/**",
+                "/pgdata/clone_pg/pg15_3_data/include/**",
                 "${workspaceFolder}/**",
                 "/usr/include/glib-2.0",
                 "/usr/lib64/glib-2.0/include",
-                "/pgdata/projetcs/cJSON/pg_rman/**",
-                "/pgdata/clone_pg/pg15_3_data/include/**"
+                "/pgdata/projetcs/cJSON/pg_rman/**"
+                
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

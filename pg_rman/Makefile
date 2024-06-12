@@ -25,7 +25,10 @@ OBJS = $(SRCS:.c=.o)
 # pg_crc.c and are copied from PostgreSQL source tree.
 
 # XXX for debug, add -g and disable optimization
-PG_CPPFLAGS = -I$(libpq_srcdir) -lm -g
+
+# flags = `pkg-config`
+# glas = $(shell $(pkg-config)  --cflags --libs glib-2.0)
+PG_CPPFLAGS = -I$(libpq_srcdir) -lm -g -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include  -lglib-2.0
 PG_LIBS = $(libpq_pgport)
 
 REGRESS = init option show delete purge backup backup_management restore restore_checksum backup_from_standby arc_srv_log_management

@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <glib.h>
+
+
 
 const char *PROGRAM_VERSION = "1.3.15";
 const char *PROGRAM_URL = "http://github.com/ossc-db/pg_rman";
@@ -106,6 +109,9 @@ static pgut_option options[] =
  */
 int main(int argc, char *argv[])
 {
+
+
+
 	const char *cmd = NULL;
 	const char *range1 = NULL;
 	const char *range2 = NULL;
